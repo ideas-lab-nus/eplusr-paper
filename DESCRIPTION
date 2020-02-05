@@ -1,4 +1,4 @@
-Package: epluspar-paper
+Package: epluspar.paper
 Title: An R-based framework for conducting parametric analysis on building energy models
 Version: 0.0.0.9000
 Authors@R: c(
