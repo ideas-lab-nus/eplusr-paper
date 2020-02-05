@@ -1,43 +1,44 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# resilience
+# eplusr + epluspar
 
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/ideas-lab-nus/resilience/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/resilience/actions)
+status](https://github.com/ideas-lab-nus/epluspar-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/epluspar-paper/actions)
 <!-- badges: end -->
 
 This repository contains the data and code for our paper:
 
-> Authors, (YYYY). *Resilience of different technologies towards climate
-> change for Singapore*. Name of journal/book <https://doi.org/xxx/xxx>
+> Authors, (YYYY). *An R-based framework for conducting parametric
+> analysis on building energy models*. Name of journal/book
+> <https://doi.org/xxx/xxx>
 
 Our pre-print is online here:
 
-> Authors, (YYYY). *Resilience of different technologies towards climate
-> change for Singapore*. Name of journal/book, Accessed 05 Feb 2020.
-> Online at <https://doi.org/xxx/xxx>
+> Authors, (YYYY). *An R-based framework for conducting parametric
+> analysis on building energy models*. Name of journal/book, Accessed 06
+> Feb 2020. Online at <https://doi.org/xxx/xxx>
 
 ### How to cite
 
 Please cite this compendium as:
 
 > Authors, (2020). *Compendium of R code and data for `r Title`*.
-> Accessed 05 Feb 2020. Online at <https://doi.org/xxx/xxx>
+> Accessed 06 Feb 2020. Online at <https://doi.org/xxx/xxx>
 
 ### How to download or install
 
 You can download the compendium as a zip from from this URL:
-<https://github.com/ideas-lab-nus/resilience/archive/master.zip>
+<https://github.com/ideas-lab-nus/epluspar-paper/archive/master.zip>
 
-Or you can install this compendium as an R package, resilience, from
+Or you can install this compendium as an R package, epluspar-paper, from
 GitHub with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("ideas-lab-nus/resilience")
+remotes::install_github("ideas-lab-nus/epluspar-paper")
 ```
 
 ### Licenses

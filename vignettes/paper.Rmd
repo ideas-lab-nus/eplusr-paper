@@ -1,5 +1,5 @@
 ---
-title: Resilience of different technologies towards climate change for Singapore
+title: An R-based framework for conducting parametric analysis on building energy models
 author:
   - name: Hongyuan Jia
     email: hongyuan.jia@bears-berkeley.sg
@@ -20,7 +20,7 @@ address:
       Singapore
 abstract: |
   This is the abstract.
-journal: "Energy and Buildings"
+journal: "Advances in Engineering Software"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 csl: "templates/elsevier-harvard.csl"

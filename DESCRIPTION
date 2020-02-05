@@ -1,5 +1,5 @@
-Package: resilience
-Title: Resilience of different technologies towards climate change for Singapore
+Package: epluspar-paper
+Title: An R-based framework for conducting parametric analysis on building energy models
 Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Hongyuan",
@@ -14,13 +14,13 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-9486-4728"))
     )
 Description:
-    Resilience of different technologies towards climate change for Singapore
+    An R-based framework for conducting parametric analysis on building energy models
 License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/ideas-lab-nus/resilience
-BugReports: https://github.com/ideas-lab-nus/resilience/issues
+URL: https://github.com/ideas-lab-nus/epluspar-paper
+BugReports: https://github.com/ideas-lab-nus/epluspar-paper/issues
 Imports:
     bookdown,
     eplusr,

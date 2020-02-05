@@ -12,13 +12,13 @@ knitr::opts_chunk$set(
 )
 
 # Please put your title here to include it in the file below.
-Title <- "Resilience of different technologies towards climate change for Singapore"
+Title <- "An R-based framework for conducting parametric analysis on building energy models"
 ```
 
-# resilience
+# eplusr + epluspar
 
 <!-- badges: start -->
-[![R build status](https://github.com/ideas-lab-nus/resilience/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/resilience/actions)
+[![R build status](https://github.com/ideas-lab-nus/epluspar-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/epluspar-paper/actions)
 <!-- badges: end -->
 
 This repository contains the data and code for our paper:
@@ -41,14 +41,14 @@ Please cite this compendium as:
 ### How to download or install
 
 You can download the compendium as a zip from from this URL:
-<https://github.com/ideas-lab-nus/resilience/archive/master.zip>
+<https://github.com/ideas-lab-nus/epluspar-paper/archive/master.zip>
 
-Or you can install this compendium as an R package, resilience, from GitHub with:
+Or you can install this compendium as an R package, epluspar-paper, from GitHub with:
 
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
-remotes::install_github("ideas-lab-nus/resilience")
+remotes::install_github("ideas-lab-nus/epluspar-paper")
 ```
 
 ### Licenses
