@@ -1,0 +1,33 @@
+Package: resilience
+Title: Resilience of different technologies towards climate change for Singapore
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given = "Hongyuan",
+           family = "Jia",
+           role = c("aut", "cre"),
+           email = "hongyuan.jia@bears-berkeley.sg",
+           comment = c(ORCID = "0000-0002-0075-8183")),
+    person(given = "Adrian",
+           family = "Chong",
+           role = c("aut"),
+           email = "bdgczma@nus.edu.sg",
+           comment = c(ORCID = "0000-0002-9486-4728"))
+    )
+Description:
+    Resilience of different technologies towards climate change for Singapore
+License: MIT + file LICENSE
+ByteCompile: true
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/ideas-lab-nus/resilience
+BugReports: https://github.com/ideas-lab-nus/resilience/issues
+Imports:
+    bookdown,
+    eplusr,
+    here,
+    rticles
+Suggests:
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.0.2

@@ -1,0 +1,42 @@
+---
+title: Resilience of different technologies towards climate change for Singapore
+author:
+  - name: Hongyuan Jia
+    email: hongyuan.jia@bears-berkeley.sg
+    affiliation: SinBerBEST
+  - name: Adrian Chong
+    email: adrian.chong@nus.edu.sg
+    affiliation: NUS
+    footnote: Corresponding Author
+address:
+  - code: SinBerBEST
+    address: |
+      SinBerBEST Program, Berkeley Education Alliance for Research in Singapore,
+      Singapore, 138602, Singapore
+  - code: NUS
+    address: |
+      Department of Building, School of Design and Environment, National
+      University of Singapore, 4 Architecture Drive, Singapore, 117566,
+      Singapore
+abstract: |
+  This is the abstract.
+journal: "Energy and Buildings"
+date: "`r Sys.Date()`"
+bibliography: references.bib
+csl: "templates/elsevier-harvard.csl"
+output:
+  bookdown::pdf_book:
+    base_format: rticles::elsevier_article
+    keep_tex: FALSE
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  comment = "#>",
+  fig.path = "../figures/"
+)
+```
