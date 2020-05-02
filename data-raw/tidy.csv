@@ -1,0 +1,11 @@
+case,datetime,key_value,name,units,reporting_ frequency,value
+model,2014-04-21 01:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,16.99
+model,2014-04-21 02:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,17.07
+model,2014-04-21 03:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,17.06
+model,2014-04-21 04:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,17.03
+model,2014-04-21 05:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,16.99
+model,2014-04-21 06:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,16.96
+model,2014-04-21 07:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,16.22
+model,2014-04-21 08:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,14.04
+model,2014-04-21 09:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,14.04
+model,2014-04-21 10:00:00,ROOM1,Zone Total Internal Latent Gain Rate,W,Hourly,14.04

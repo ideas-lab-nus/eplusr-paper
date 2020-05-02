@@ -4,10 +4,10 @@ author:
   - name: Hongyuan Jia
     email: hongyuan.jia@bears-berkeley.sg
     affiliation: SinBerBEST
+    footnote: 1
   - name: Adrian Chong
     email: adrian.chong@nus.edu.sg
     affiliation: NUS
-    footnote: Corresponding Author
 address:
   - code: SinBerBEST
     address: |
@@ -18,12 +18,31 @@ address:
       Department of Building, School of Design and Environment, National
       University of Singapore, 4 Architecture Drive, Singapore, 117566,
       Singapore
+footnote:
+  - code: 1
+    text: "Corresponding Author"
 abstract: |
-  This is the abstract.
+  Parametric analysis using EnergyPlus has been a powerful approach to enable
+  investigation of environmental and energy performance for different design and
+  retrofit design alternatives. However, the absence of streamlined workflow
+  integrating model editing, simulation and output extracting raises problems in
+  the productivity of parametric analysis. This paper presents a newly developed
+  framework for conducting parametric analysis using EnergyPlus via the
+  programming language R package called "eplusr". The proposed framework, with a
+  data-centric design philosophy, focuses on not only EnergyPlus model editing but
+  also parametric simulation output data extraction and analysis. It provides
+  rich-featured interfaces to query and modify models programmatically and a
+  simple yet flexible and extensible prototype of conducting parametric
+  simulations and collecting all results in one go. The paper discusses the
+  philosophy behind the framework, its architecture and core capabilities, and
+  uses simple tasks to demonstrate the streamlined workflow of conducting
+  parametric analysis in R.
 journal: "Advances in Engineering Software"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 csl: "templates/elsevier-harvard.csl"
+header-includes:
+    - \usepackage{tabu}
 output:
   bookdown::pdf_book:
     base_format: rticles::elsevier_article
@@ -31,12 +50,435 @@ output:
 ---
 
 ```{r setup, include = FALSE}
+library(eplusr)
+library(kableExtra)
+library(here)
+
 knitr::opts_chunk$set(
-  collapse = TRUE,
   warning = FALSE,
   message = FALSE,
-  echo = FALSE,
+  echo = TRUE,
+  eval = FALSE,
   comment = "#>",
+  out.width = "\\columnwidth",
   fig.path = "../figures/"
 )
+
+# copy large office reference building model
+file.copy(file.path(eplus_config(9.2)$dir, "ExampleFiles/RefBldgLargeOfficeNew2004_Chicago.idf"), here("Vignettes"))
 ```
+
+# Possible
+
+1. data analytics
+1. Data Interoperability
+1. Programming Interface
+1. It enhances modeling and analysis productivity compared to the manual process.
+1. The algorithm aims to support fully-automated energy compliance checking.
+
+# Introduction
+
+Nowadays, EnergyPlus [@Crawley2001] has been widely used in building performance
+assessment and building regulation compliance. Automating simulation tasks has
+been approved to be an extremely useful way not only for developing and
+analyzing building energy models, but also for conducting large-scale
+parametric analyses [@Roth2018].
+
+It is almost essential to use scripting or other techniques for conducting
+parametric analyses, either for design and retrofit optimization, model input
+calibration, uncertainty analysis. There are several existing EnergyPlus-based
+parametric simulation tools [@Philip2020;@Guglielmetti2011;@BigLadderSoftware2020]
+that are tailored for different purposes. eppy [@Philip2020] is a library for
+manipulating EnergyPlus models programmatically via python programming
+language. It parses EnergyPlus IDF files into a python object and provides
+low-level programmatic access to EnergyPlus inputs. Moreover, eppy also
+provides additional fields for some specific EnergyPlus objects, e.g. building
+surface areas and zone volumes. jEplus [@Yi2020] is a software written in Java
+to perform complex parametric analysis on multiple design parameters. It
+contains tools to create and manage simulation jobs and to collect results.
+Modelkit [@BigLadderSoftware2020] is a free and open-source framework for
+parametric modelling using EnergyPlus. It is capable of automating the
+generation and management of EnergyPlus models via
+its templates and scripting tools.
+
+Tools described above are mostly focusing on creating and managing parametric
+simulations and their simulation output extraction features are kind of basic.
+There is an absence of streamlined workflow integrating model editing,
+simulation and output extracting, which could raise problems in the
+productivity of parametric analysis.
+
+In this paper, we introduce a new parametric simulation framework called eplusr
+[@Jia2020] using the statistical programming language R [@RCoreTeam2019].
+eplusr is different from existing tools because of its data-centric design
+philosophy. The main goal of this framework is to provide a rich-featured R
+toolbox that contains a set of abstractions to help modify EnergyPlus
+simulation inputs in a programmatic way and provides a simple yet flexible and
+extensible prototype of conducting parametric simulations.
+
+# Software architecture
+
+eplusr is developed using the R language [@RCoreTeam2019] and has been
+published on CRAN (The Comprehensive R Archive Network) [@Jia2020]. The source
+code is hosted publicly in a version-controlled repository via GitHub. eplusr
+is released under the MIT license and runs on Linux, macOS and Windows
+operating systems. It can be easily installed via a single command as shown in
+Listing 1.
+
+```{r install}
+install.packages("eplusr")
+```
+
+eplusr adopts the Object-Oriented Programming (OOP) programming paradigm
+[@Wikipedia2020]. As shown in Fig. \@ref(fig:class-structure), it introduces 6
+main classes that can be further classified into three categories based on
+their different focuses:
+
+1. Data schema
+1. Weather and model modification
+1. Simulation and output extraction
+
+```{r class-structure, echo = FALSE, eval = TRUE, fig.cap = "Class structure of the libaray"}
+knitr::include_graphics(here("figures/class_structure.png"))
+```
+
+## Model data schema
+
+EnergyPlus uses a text input file format named IDF (Input Data File) as a model
+file, and each version of an IDF file has a corresponding version of an IDD
+(Input Data Dictionary) file who works as a data format schema. In eplusr,
+`Idd` class and `IddObject` class provides parsing and data-storing
+functionality of an IDD file. These data will be used for subsequent parsing
+and data verification of all IDFs of that version. This makes eplusr be able to
+handle various versions of IDF files at the same time easily.
+
+For most of the time, users do not need to directly interact with `Idd` and
+`IddObject` objects, but instead simply using `Idf` and `IdfObject` objects to
+modify an IDF file.
+
+## Model modification
+
+eplusr uses `Idf` class to present a whole IDF file and `IdfObject` class to
+present a single object in IDF. Both `Idf` and `IdfObject` classes contain
+around thirty member functions for low-level programmatic access to and
+modification of the IDF data. Every modification on the IDF data will be
+verified to make sure the result complies with underlying IDD.
+
+`Idf` class provides rich-featured interfaces to modify models via various
+scope, including scope of a single object, scope of grouped objects level, and
+scope of all objects in a certain class.
+
+```{r idf-set}
+model$set(
+  `Supply Fan 1` = list(Fan_Total_Efficiency = 0.9),
+
+  .("Metal Decking", "Metal Roofing") :=
+      list(Roughness = "Smooth", Thickness = 0.003),
+
+  Lights := list(Watts_per_Zone_Floor_Area = 7.0)
+)
+```
+
+Listing 2 demonstrates the flexible value modifying scopes provided by
+`Idf$set()` method. `model` here is an `Idf` object. In Line 2, the total
+efficiency of a `Fan:VariableVolume` object named `Supply Fan 1` will be
+changed to 0.9; In line 4-5, the roughness and thickness of two materials named
+`Metal Decking` and `Metal Roofing` will be changed; While in line 7, the
+lighting power density of all lights will be changed to 7.0
+$\mathrm{W}/\mathrm{m}^2$.
+
+Besides of `Idf$set()`, `Idf$update()` method provides an interface that can
+achieve the same results but with a `data.frame` input. `data.frame` is an R
+representation of a table where each column contains values of one variable. In
+Listing 3, Line 1, 4 and 8 extract object data into a `data.table`s
+[@Dowle2019], an extension of `data.frame` extremely optimized for speed.
+Line 2, 5, 6 and 9 are used to modify certain field values. Line 11-13 are then call `Idf$update()` method to update object data.
+
+Users can perform any modifications to that data and then update corresponding
+object values by feeding the updated data to `Idf$update()` method.
+
+```{r idf-update}
+fan <- model$to_table("Supply Fan 1")
+fan[field == "Fan Total Efficiency", value := "0.9"]
+
+mat <- model$to_table(c("Metal Decking", "Metal Roofing"))
+mat[field == "Roughness", value := "Smooth"]
+mat[field == "Thickness", value := "0.003"]
+
+lit <- model$to_table(class = "Lights")
+lit[field == "Watts per Zone Floor Area", value := "7.0"]
+
+model$update(fan)
+model$update(mat)
+model$update(lit)
+```
+
+There are several other methods in `Idf` class that can duplicate, rename,
+delete existing objects and also add new ones.
+
+## Weather modification
+
+The weather data format used in EnergyPlus is called EPW (EnergyPlus Weather),
+a simple, text-based format with comma-separated data. eplusr introduces the
+`Epw` class to directly extract both meta data and core weather data of an EPW
+file. Moreover, `Epw` class is capable of creating new and modifying existing
+EPW files, which is usually an essential process when doing model parameter
+calibration.
+
+## Simulation and output extraction
+
+eplusr uses `EplusJob` class and `ParametricJob` class to represent a single
+EnergyPlus simulation job and multiple parametric jobs, respectively. Both
+classes have methods to collect various types of simulation outputs.
+
+```{r job}
+job <- model$run()
+
+job$report_data(
+  key_value = "heat pump cooling mode ahu1",
+  name = "cooling coil total cooling rate", case = "example",
+  all = TRUE, simulation_days = 1, hour = 11, minute = 0
+)
+
+job$tabular_data(
+  report_name = "ComponentSizingSummary",
+  report_for = "entire facility",
+  table_name = "airterminal:singleduct:uncontrolled",
+  column_name = "user-specified maximum air flow rate",
+  row_name = "space5-1 direct air"
+)
+```
+
+# Design philosophy
+
+eplusr keeps a data-centric design philosophy. Everything can be exposed.
+
+This design philosophy is reflected in the design data structure and the return
+format results extraction
+
+* Everything is stored as tables
+* Every results is returned in a tidy-format
+
+## Table data structure
+
+Under the hook, eplusr uses a SQL-like structure to store both IDF and IDD data
+in various tables. As shown in Fig. \@ref(fig:data-structure). Data of an IDF
+is stored in three tables, i.e. object, value, and reference while data of an
+IDD is stored in four tables, i.e. group, class, field and reference. With this
+data structure, to modify an EnergyPlus model in eplusr is equal to change the
+data in those `Idf` tables accordingly, in the context of specific `Idd` data.
+In this sense, all methods in `Idf` and `Idd` classes are just interface
+wrappers which expose the modification process in a more user-friendly manner.
+
+All the data are masked from end users but can be easily extracted when needed.
+
+```{r data-structure, echo = FALSE, eval = TRUE, fig.cap = "Data structure of an Idf and Idd object"}
+knitr::include_graphics(here("figures/data_structure.png"))
+```
+
+## Tidy-format outputs
+
+When extracting simulation results, instead of directly reading and
+manipulating the CSV and HTML files, eplusr uses EnergyPlus SQL output to
+extract results of `Output:Variable`, `Output:Meter*`, and `Output:Table`
+objects specified in the IDF. The main benefit of this approach is that it
+makes sure eplusr always return the simulation results in a *Tidy Data* format.
+
+Tidy data format was first proposed by @Wickham2014, which is a standard way of
+mapping the meaning of a dataset to its structure. A dataset is messy or tidy
+depending on how rows, columns and tables are matched up with observations,
+variables and types. In tidy data:
+
+* Each variable forms a column.
+* Each observation forms a row.
+* Each type of observational unit forms a table.
+
+Tidy data makes it easy for an analyst or a computer to extract needed
+variables because it provides a standard way of structuring a dataset. Tidy
+data is particularly well suited for vectorized programming languages like R,
+because the layout ensures that values of different variables from the same
+observation are always paired.
+
+However, EnergyPlus CSV output does not present data in a tidy way. Taking
+Table \@ref(tab:mess-csv) an example. We are facing one main problems when
+working with this type of EnergyPlus CSV output, i.e. column headers contain
+values, not only variable names.
+
+In EnergyPlus CSV output, column headers are composed in format *Key value*
+(`MEETING_ROOM_1`) + *Variable name* (`Zone Total Internal Gain Rate`) +
+*Units* (`W`) + *Reporting frequency* (`Hourly`). This format often leads to
+additional data cleaning efforts. For instance, to get all outputs for variable
+`Zone Total Internal Latent Gain Rate`, users have to write their methods of
+splitting column headers into different parts or subsetting column using
+regular expressions.
+
+When using eplusr, the same results in Table \@ref(tab:mess-csv) are always
+presented in a tidy format, as shown in Table \@ref(tab:tidy-csv). It
+transforms the original column headers from EnergyPlus CSV outputs into four
+separated columns, i.e. `key_value`, `name`, `units` and `reporting_frequency`.
+Despite those changes, eplusr will also add an additional column named `case`,
+which is by default the IDF file name without extension. `case` column can be
+quite useful and serve as an indicator to separate each simulation results when
+extracting outputs from multiple parametric simulations. Moreover, instead of
+presenting the simulated date and time as strings shown in Table
+\@ref(tab:mess-csv), eplusr will calculate a proper year value for each run
+period and compose a series of `DateTimeClasses` values in the `datetime`
+column. This makes it quite straightforward to apply further time-series
+analysis on the simulation results.
+
+In summary, giving data in a tidy format has several advantages in R, as it
+will make sure the data is always fit for directly handling by the *tidyverse*
+[@Wickham2019] package ecosystem, which is a language for solving data science
+challenges with R code.
+
+Listing 5 shows how easy this data format can be fitted into the tidyverse
+workflow.
+
+```{r tidyverse}
+library(tidyverse)
+result %>%
+  filter(name == "Zone Total Internal Latent Gain Rate") %>%
+  mutate(date = as.Date(datetime)) %>%
+  group_by(case, key_value, date) %>%
+  summarize(value = mean(value)) %>%
+  ggplot() +
+  geom_line(aes(date, value, color = key_value))
+```
+
+The `%>%` is the pipe operator which conveys an object forward into the
+function on the right hand side. We first filter the data to only include
+output variable `Zone Total Internal Latent Gate Rate`, and we then create a
+new `date` column, calculate the daily mean latent loads by the IDF and zone
+names, and we finally draw a line plot to show the latent load variations with
+each zone having a separate color.
+
+```{r mess-csv, echo = FALSE, eval = TRUE}
+knitr::kable(data.table::fread(here("data-raw/mess.csv")), linesep = "",
+    caption = "Example of EnergyPlus CSV output", format = "latex", booktabs = TRUE) %>%
+    kable_styling(font_size = 8, full_width = TRUE) %>%
+    column_spec(1, "2.5cm")
+```
+
+\setlength{\tabcolsep}{0.5pt}
+```{r tidy-csv, echo = FALSE, eval = TRUE}
+knitr::kable(data.table::fread(here("data-raw/tidy.csv")),
+    caption = "Tidy format of EnergyPlus output", format = "latex", booktabs = TRUE) %>%
+    kable_styling(font_size = 8) %>%
+    column_spec(1, "0.9cm") %>%
+    column_spec(2, "1.5cm") %>%
+    column_spec(3, "1.3cm") %>%
+    column_spec(4, "2.0cm") %>%
+    column_spec(5, "0.8cm") %>%
+    column_spec(6, "1.5cm")
+```
+
+# The parametric simulation framework
+
+eplusr provides a class `ParametricJob` to do parametric simulations. It is
+simple to use but is also quite flexible and extensible. It takes full
+advantages of eplusr model editing and result collecting functionalities. The
+overall process of the framework is shown in Fig. \@ref(fig:parametric) and can
+be summarized as follows:
+
+```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation"}
+knitr::include_graphics(here("figures/parametric.png"))
+```
+
+1. Initialize a `ParametricJob` object. Creating a parametric job in eplusr is
+   just a simple call of the constructor `param_job()` function. It takes an
+   IDF file as the *seed* and an EPW file as the *weather* to be used, as shown
+   in Listing 6.
+
+```{r param}
+param <- param_job(idf = model, epw = path_epw)
+```
+
+2. Construct a measure function. Here, the concept of measure in eplusr is
+   inspired by "measures" in OpenStudio [@Guglielmetti2011]. Basically, a
+   measure is a function that takes an `Idf` object and any other arguments as
+   input, and returns a modified `Idf` object as output. This approach makes it
+   easy for users to access to all the model-editing API (Application
+   Programming Interface) that eplusr provides. Listing 7 shows a simple
+   measure example that modifies air change rate (ACH) of infiltration objects
+   for all zones.
+
+```{r mea}
+set_infil_rate <- function (idf, infil_rate) {
+  idf$set(`ZoneInfiltration:DesignFlowRate` :=
+      list(air_changes_per_hour = infil_rate)
+  )
+  idf
+}
+```
+
+3. Create parametric models. The method `ParametricJob$apply_measure()` allows
+   to apply a measure with specified parameter values to an `Idf` and create
+   parametric models for later simulations. How the parameter values will be
+   generated is all left to the users, which makes it possible to leverage all
+   the statistical methods and libraries that R provides. In Listing 8, we
+   create 30 parametric models with ACH changing from 0.1 to 3.0 with a 0.1
+   step.
+
+```{r apply-measure}
+param$apply_measure(set_infil_rate, seq(0.1, 3, by = 0.1))
+```
+
+4. Run simulations and collect results. Calling `ParametricJob$run()` method
+   will run all parametric simulations in parallel and put each simulation
+   outputs in a separate folder. After the simulations complete, all results
+   from different models can be retrieved in one step using all the data
+   collecting APIs, including `ParametricJob$report_data()`,
+   `ParametricJob$tabular_data()`, and `ParametricJob$read_table()`. As
+   described above, the tables returned will always be presented in a
+   tidy-format, which makes it easy to apply any further analyses in the R
+   ecosystem. In Listing 8, we collect the annual total site energy of all
+   simulations.
+
+```{r param-run}
+param$run()
+
+param$tabular_data(
+    table_name = "Site and Source Energy",
+    column_name = "Total Energy",
+    row_name = "Total Site Energy"
+)
+```
+
+## Examples of extension
+
+One good example of extending the parametric framework in eplusr is the
+epluspar [@Jia2020a] R package, which provides new classes for conducting
+parametric analysis on EnergyPlus models, including sensitivity analysis using
+Morris method [@Morris1991] and Bayesian calibration using the method proposed
+by @Chong2017. All the new classes introduced in epluspar package are based on
+the `ParametricJob` class. The main differences lie in applying specific
+statistical methods for sampling parameter values when calling
+`ParametricJob$apply_measure()`.
+
+# Conclusion
+
+Parametric analysis using EnergyPlus has been a powerful approach to enable
+investigation of environmental and energy performance for different design and
+retrofit design alternatives. However, the absence of streamlined workflow
+integrating model editing, simulation and output extracting raises problems in
+the productivity of parametric analysis. This paper presents a newly developed
+framework for conducting parametric analysis using EnergyPlus via the
+programming language R package called "eplusr". The proposed framework, with a
+data-centric design philosophy, focuses on not only EnergyPlus model editing
+but also parametric simulation output data extraction and analysis. It provides
+rich-featured interfaces to query and modify models programmatically and a
+simple yet flexible and extensible prototype of conducting parametric
+simulations and collecting all results in one go. The paper discusses the
+philosophy behind the framework, its architecture and core capabilities, and
+uses simple tasks to demonstrate the streamlined workflow of conducting
+parametric analysis in R.
+
+# Acknowledgements
+
+The authors thank the support from the SinBerBEST program.
+
+```{r clean, eval = TRUE, include = FALSE}
+# remove large office reference building model
+file.remove(here("vignettes/RefBldgLargeOfficeNew2004_Chicago.idf"))
+```
+
+# References {#references .unnumbered}
