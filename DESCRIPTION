@@ -25,6 +25,7 @@ Imports:
     bookdown,
     eplusr,
     here,
+    kableExtra,
     rticles
 Suggests:
     knitr,
