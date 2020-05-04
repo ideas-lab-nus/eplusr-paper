@@ -40,12 +40,16 @@ abstract: |
 journal: "Advances in Engineering Software"
 date: "`r Sys.Date()`"
 bibliography: references.bib
+layout: 3p, times
 colorlinks: yes
 link-citations: yes
+linenumbers: true
+header-includes:
+    - \usepackage{tabu}
 output:
   bookdown::pdf_book:
     base_format: rticles::elsevier_article
-    keep_tex: FALSE
+    keep_tex: yes
 ---
 
 ```{r setup, include = FALSE}
@@ -67,17 +71,279 @@ knitr::opts_chunk$set(
 file.copy(file.path(eplus_config(9.2)$dir, "ExampleFiles/RefBldgLargeOfficeNew2004_Chicago.idf"), here("Vignettes"))
 ```
 
-# Possible
+# Highlights
 
 1. data analytics
-1. Data Interoperability
+1. Data Interoperability between BPS and data analytics
 1. Programming Interface
 1. It enhances modeling and analysis productivity compared to the manual process.
 1. The algorithm aims to support fully-automated energy compliance checking.
+1. Both modelling and data-collecting
+
+# Outlines
+
+* Target audiences/users: researchers. architects?
+
+# Good words
+
+@Purup2020:
+
+> propose a research framework for the development of BPS tools confirmed to
+> fit common design practice in the early design stage.
+
+> The framework consists of four elements:
+> 1. a reflective researcher
+> 1. a framing of the research
+> 1. an iterative workflow procedure
+> 1. a range of qualitative and quantitative research methods and approaches
+
+> The iterative nature of the framework continuously increases the researchers
+> understanding of the underlying mechanisms of the design practice in early
+> design stage enabling them to make better proposals for BPS tools.
+
+> Choosing the appropriate combination of design options is therefore a complex
+> task which requires the management of a large amount of information on the
+> properties of desing options and the simulation of their performance.
+
+Why EnergyPlus is not a good choice
+
+> EnergyPlus and etc. are require expert knowledge and large amounts of input
+> data, rendering them impractical in the early design stages where information
+> is scarce. Furthermore, these types of tools are not fit for evaluation of
+> volatile design ideas and the rapid changes in design that characteristics
+> the process of the early design stage.
+
+Why existing tools are not widely adopted by architects
+
+> There are research-based efforts focusing on proposing
+> procedures for enhancing efficient use of thermal and daylight building
+> simulation tools for proactive performance prediction in the early de-
+> sign stage, e.g. Petersen [6], Attia et al. [7], and Gerber and Lin [8], to
+> cite but a few. However, to our knowledge, there is no research-based
+> evidence on whether any of such procedures are actually being adopted
+> by designers in professional design practice; our notion is that it is rare.
+> A reason might be that current proposals for procedures and meth-
+> odologies are only assumptions of, or they interprets wrong, what ar-
+> chitects actually need [9]
+
+Main barriers for using building simulation tools in the early design phase
+
+ > McKay and Marshall [58] have done a critical review on AR, finding that
+ > literature using AR tends to focus less on the process and data-collecting
+ > techniques than the context and content.
+
+@Ilhan2016:
+
+> Traditional CAD-based design requires a great deal of human intervention and
+> the whole process is time consuming and costly.
+
+Why new software is needed
+
+> Since the construction industry has become more interested in environmentally
+> friendly buildings that can provide both high performance and monetary
+> savings [24], the development of more sophisticated and robust platforms is
+> now necessary to maintain the level of achievement reached so far.
+
+> Lack of interoperability of sustainable data has the effect of limiting the
+> application of BIM in building design and needs to be addressed earlier in
+> the planning stage.
+
+> provide the designer with quantitative predictions of the building's future
+> performance.
+
+The importance of seamless data integration
+
+> Better and more seamless integration between BIM and sustainable design will
+> come with time as the industry continues to standardise file formats, as data
+> sets are developed, and as owners, clients and designers begin to demand more
+> from application developers.
+
+How to describe the benefit:
+
+> Clearly, construction professionals would benefit from an integrated tool
+> that helps optimise the process of material, equipment and systems selection
+> at every stage of the construction project life cycle.
+
+How the describe the contents of the paper:
+
+> This paper presents a framework for such an integrated BIM platform, which
+> would also facilitate the generation of documentation required for green
+> building certification. The framework bridges the gap between the green
+> building assessment processes and BIM simplifying design stage decision
+> making regarding sustainability.
+
+Aim and objectives
+
+> The purpose of this study is to address the problem of BIM and sustainability
+> integration through the development of an automated tool, which can process
+> BIM models, generate a draft green building assessment and highlight
+> potential sustainable design improvements for the user. To this end, the
+> following points are addressed:
+
+*eplusr: encoded the data into a proper format for machining learning and data analysis*
+
+> 1. Extension of the data contained in the BIM model within the BIM software to enable a building assessment and ensuring the data are encoded into the saved BIM model file
+
+*eplusr: reduce the user effort required to produce a reproducible workflow of building energy modelling*
+
+> 2. Creation of a database of materials with the necessary green properties and interfacing it with BIM software to reduce the user effort required to produced a sustainable BIM model containing the extra green data
+
+*eplusr: processing the BPS model to extract data relevant for other software? detailed analysis?*
+
+> 3. Processing the BIM model file to extract data relevant for the green building assessment.
+
+*eplusr: present the results in a clear and intuitive manner/ analytics-friendly manner to the user*
+
+> 4. Calculation of the green score from the extracted data and presentation of the results in a clear and intuitive manner to the user, highlighting potential areas for improvement.
+
+*eplusr: make it possible to organize BPS work as an R project*
+
+> The proposed model aims to provide guidelines for the deign of a project's sustainable features at the design stage when they are most needed. It will allow timely decision making by offering an evaluation of the alternatives for sustainability performance and enable the utilisation of pertinent data stored in the BIM model for green building certification.
+
+Methodology:
+
+> The framework builds a relationship between the BIM and the green building rating processes.
+
+*eplusr: ParametricJob, creating a mapping between IDD and programming language?*
+
+> The main objective is to designate green properties to the BIM objects using the IFC model schema, which is an open, international and standardised specification for BIM data exchanged and shared among software applications used by the various participants in a building, construction or facilities management project.
+
+*eplusr: EnergyPlus model parsing library should be embedded within the software*
+
+> To create BIM design with sustainable information, the property sets and green materials library should be embedded within the software.
+
+*eplusr: the user can determine the necessary data for analytics*
+
+> The user, then can determine the necessary data for certification and evaluate the decisions.
+
+*eplusr: a modular-development methodology is adopted in this study? eplusr (core) + epluspar?*
+
+> For an effective response to the aim and objectives, a two-step methodology is adopted in this study: (1) model development process and (2) user process.
+
+How to describe the process needed:
+
+> The model development process involves the following subprocess:
+
+Should contain a section on **Related Work**
+
+> has been increasingly discussed for more sustainable outcomes.
+
+> Moreover, the difficulty of developing sustainable material and an IFC database, along with the limitation of using current standards, can be mentioned as drawbacks of BIM and sustainability integration in Turkey.
+
+> carried out studies on BIM-based energy analyses to improve the reliability of energy performance modelling.
+
+> A number of studies have also been made with regard to sustainable building certification and BIM integration.
+
+**eplusr: an infrastructure?**
+**data analysis is commensurate with the modelling itself**
+
+> its growing importance is commensurate with the increased demand for green certification.
+
+> indicate that there is still a gap for integrated solution, especially where the whole certification process is concerned.
+
+How to describe current drawbacks
+
+> Even though the importance of using BIM technology for sustainability is discussed in the literature, there are some barriers to full integration, such as lack of functional tools and the complex structure of existing tools. It is, therefore, important to propose a supporting method that facilitates the sustainable project decisions generated by BIM software for an integrated BIM and sustainable data model.
+
+How to describe the tools
+1. Parsing IDD
+2. Parsing IDF
+3. Parsing EPW
+4. Programming interface
+5. Simulation Job
+6. Tidy data interface. Data mining, machine learning
+7. Parametric prototype
+8. Modular structure, easy to extend (epluspar README example)
+9. Reproducible. RMarkdown
+
+> The model is based on the green building assessment tool sustained by three main modules.
+> First module ...., second, last.
+
+How to conclude:
+> This study summarise the importance and justication for the integration of BIM and sustainable data pertinent to construction projects aiming at green certification, and presents an IFC-based integration solution. The changing approach to the design, construction and maintenance of buildings in the construction industry necessitates an integrated collaboration and BIM for sustainable projects.
+
+eplusr simplifies the modelling and analysis process
+
+> Integrated design process with sustainable properties simplifies the certification process in terms of time and cost due to early stage interactions and improved outputs.
+
+@Zibin2016:
+
+> There is a need for automatic software tools to retrieve HVAC trend data to understand operation and performance, analyze variables of interest or performance indices required for ongoing commissioning, and automatcially update the input files of energy analysis programms to assis in the calibration process.
+
+@McGlinn2017:
+
+*eplusr design principle*
+
+> Requirements, Design, and Implementation
+> From this analysis, the following high-level requirements for the BEMS solution and interface were identified. These were to ensure that it be:
+> 1. Usable by FMs to achieve energy savings in their buildings
+> 2. Built upon an integrated knowledge-base, so that the data can be assessed, reasoned over and presented to the FM to support energy management.
+> 3. Scalable, so that it can be quickly deployed in new buildings with minimum costs associated
+> Flexible and extensible, so as to support the types of functions of existing energy monitoring tools, but also support additional novel functionality.
+
+SQL
+
+*In eplusr, it is stored in the EnergyPlus SQL database and each simulation is referenced by through the ID column of the simulation named 'case'.*
+
+> In the proposed implementation, it is stored in an SQL-database and referenced by through the ID of the sensor which is found in the Semantic Model. Each sensor communicates with the data store via SQL updates.
+
+Grasshopper and etc may lack of the full capacities of EnergyPlus
+
+@Tabadkani2019:
+
+> To link the parametric design approach to indoor visual environment, computational tools can be applied effectively to assess qualitative and quantitative aspects of optimizing a prototype once it is formed. Therefore, this research presents an algorithmic and parametric-based design approach developed in Rhino/Grasshopper as a parametric modelling tools.
+
+Description on Grasshopper:
+
+> Grasshopper is a plug-in for Rhinoceros 3D modelling software and is a graphical algorithm editor that allows designers to generative parametric forms, ranging form simple to the complex modules without scripting experiences.
+
+> Fig. 3 illustrates the organization of the research flow and methodology of this study.
+
+> The hypothesis conducted through quantitative method via integrating algorithmic approach towards simulation stage in a back and forth loop.
+
+How to describe the GA algorithm
+
+> Based on the input variables, the algorithm generates all the possible simulation datasets via an evolutionary solver function called Galapagos which is a genetic algorithm framework embedded within Grasshopper to find optimum solutions of the generations. It associates with a feedback loop to the initial phase to reconsider the design variables if necessary, to meet the final fitness.
+
+Eplusr's geometry viewer to view results on geometric changes
+
+@Kiss2020:
+
+How to describe the framework:
+
+> In this paper, a modular parametric optimization framework combining advanced building modelling, LCA, energy calculation and single- and multi-objective environmental optimization was developed and applied to a multi-apartment house in Hungary.
+
+The advantage of apply state-of-art mathematics algorithm in R
+
+> The tools of applied mathematics are increasingly applied to such problems.
+
+> There is a growing body of scientific literature on the application of mathematical optimization to building design.
+
+How to describe epluspar.
+
+eplusr provides a modular framework
+
+eplusr's `apply_measure`. Every measure is replaceable.
+
+> The objective of this paper is to develop a modular framework that combines LCA with comprehensive 3D modelling and optimization in a parametric environment. The goal is to support the architectural design process by showing the options with the lowest environmental impact for the whole life cycle. The framework allows for the assessment of the effect of building geometry, building envelope and building service systems via single- or multi-objective optimization of several environment indicators. In the framework, the calculation modules are replaceable, so different options can be applied depending on data availability and the scope of the optimization. This paper first introduces the concepts behind the framework and its modules, along with its implementation. Next, the application of the framework for th optimization of a multi-apartment building is presented as an illustration.
+
+epluspar, GA. Simulations are running in parallel in each generation.
+
+epwshiftr, an example of the application of eplusr's EPW parsing library.
+
+> Last, the calculations rely on each other, so the inaccuracy of each calculation would influence the final results. To overcome this issue, a modular methodology is proposed, where all the modules are replaceable and verificable indenpendently from each other.
+
+The limitation of framework like GS
+
+> A limitation of the approach is that the optimization acts like a black box and the designers cannot see what is happening in the background. Also, simplications in input data or possible errors in the database have a very high influence on the final results, which could be avoided with a mannual approach but  are not spotted by an automatic algorithm.
+
+How to describe the extensibility?
+
+> The framework and the methodology can be further extended to the simultaneous analysis of an entire building building stock through the assessment of multiple building types. Also, it is possible to implement different energy demand calculation methods to test the sensitivity of the results to be applied methodology in more depth. The assessment of different optimization algorithms is also in the focus of further research.
 
 # Introduction
 
-Nowadays, EnergyPlus[@Crawley2001] has been widely used in building performance
+Nowadays, EnergyPlus [@Crawley2001] has been widely used in building performance
 assessment and building regulation compliance. Automating simulation tasks has
 been approved to be an extremely useful way not only for developing and
 analyzing building energy models, but also for conducting large-scale
@@ -86,18 +352,18 @@ parametric analyses [@Roth2018].
 It is almost essential to use scripting or other techniques for conducting
 parametric analyses, either for design and retrofit optimization, model input
 calibration, uncertainty analysis. There are several existing EnergyPlus-based
-parametric simulation tools
-[@Philip2020;@Guglielmetti2011;@BigLadderSoftware2020] that are tailored for
-different purposes. eppy [@Philip2020] is a library for manipulating EnergyPlus
-models programmatically via python programming language. It parses EnergyPlus
-IDF files into a python object and provides low-level programmatic access to
-EnergyPlus inputs. Moreover, eppy also provides additional fields for some
-specific EnergyPlus objects, e.g. building surface areas and zone volumes.
-jEplus [@Yi2020] is a software written in Java to perform complex parametric
-analysis on multiple design parameters. It contains tools to create and manage
-simulation jobs and to collect results. Modelkit [@BigLadderSoftware2020] is a
-free and open-source framework for parametric modelling using EnergyPlus. It is
-capable of automating the generation and management of EnergyPlus models via
+parametric simulation tools [@Philip2020;@Guglielmetti2011;@BigLadderSoftware2020]
+that are tailored for different purposes. eppy [@Philip2020] is a library for
+manipulating EnergyPlus models programmatically via python programming
+language. It parses EnergyPlus IDF files into a python object and provides
+low-level programmatic access to EnergyPlus inputs. Moreover, eppy also
+provides additional fields for some specific EnergyPlus objects, e.g. building
+surface areas and zone volumes. jEplus [@Yi2020] is a software written in Java
+to perform complex parametric analysis on multiple design parameters. It
+contains tools to create and manage simulation jobs and to collect results.
+Modelkit [@BigLadderSoftware2020] is a free and open-source framework for
+parametric modelling using EnergyPlus. It is capable of automating the
+generation and management of EnergyPlus models via
 its templates and scripting tools.
 
 Tools described above are mostly focusing on creating and managing parametric
