@@ -1,0 +1,14 @@
+% no background color for listings
+\definecolor{shadecolor}{rgb}{1,1,1}
+
+\usepackage{tabu}
+\usepackage{floatrow}
+
+\floatsetup[table]{capposition=top}
+
+\DeclareNewFloatType{chunk}{placement=H, fileext=chk, name=}
+\captionsetup[chunk]{options=chunk}
+\renewcommand{\thechunk}{Listing~\arabic{chunk}}
+\makeatletter
+\@addtoreset{chunk}{section}
+\makeatother

@@ -44,10 +44,10 @@ layout: 3p, times
 colorlinks: yes
 link-citations: yes
 linenumbers: true
-header-includes:
-    - \usepackage{tabu}
 output:
   bookdown::pdf_book:
+    includes:
+      in_header: header.tex
     base_format: rticles::elsevier_article
     keep_tex: yes
 ---
@@ -64,8 +64,22 @@ knitr::opts_chunk$set(
   eval = FALSE,
   comment = "#>",
   out.width = "\\columnwidth",
-  fig.path = "../figures/"
+  fig.path = "../figures/",
+  fig.pos="ht"
 )
+
+# code chunk cross-ref
+Chunk <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function (x, options) {
+    x <- Chunk(x, options)
+    if (is.null(options$label)) return(x)
+    if (!options$include || !options$echo) return(x)
+    # use chunk label as cross-ref label
+    x <- paste0("\\label{", options$label, "}", x)
+
+    if (!is.null(options$codecap)) paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+    x
+})
 
 # copy large office reference building model
 file.copy(file.path(eplus_config(9.2)$dir, "ExampleFiles/RefBldgLargeOfficeNew2004_Chicago.idf"), here("Vignettes"))
