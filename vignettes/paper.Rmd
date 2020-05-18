@@ -1,13 +1,13 @@
 ---
-title: An R-based framework for conducting parametric analysis on building energy models
+title: An integration framework for building energy modelling and data-driven analytics
 author:
   - name: Hongyuan Jia
     email: hongyuan.jia@bears-berkeley.sg
     affiliation: SinBerBEST
-    footnote: 1
   - name: Adrian Chong
     email: adrian.chong@nus.edu.sg
     affiliation: NUS
+    footnote: 1
 address:
   - code: SinBerBEST
     address: |
@@ -37,7 +37,7 @@ abstract: |
   philosophy behind the framework, its architecture and core capabilities, and
   uses simple tasks to demonstrate the streamlined workflow of conducting
   parametric analysis in R.
-journal: "Advances in Engineering Software"
+journal: "Automation in Construction"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 layout: 3p, times
