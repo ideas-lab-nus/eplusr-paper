@@ -1,5 +1,5 @@
 ---
-title: An integration framework for building energy modelling and data-driven analytics
+title: A framework for integrating building energy simulation and data-driven analytics
 author:
   - name: Hongyuan Jia
     email: hongyuan.jia@bears-berkeley.sg
@@ -92,7 +92,7 @@ file.copy(file.path(eplus_config(9.2)$dir, "ExampleFiles/RefBldgLargeOfficeNew20
 # Highlights (Each <= 85 characters with spaces included) {.unnumbered}
 
 1. Reproducibility should be taken into consideration in building energy modelling (BEM)
-2. A framework integrates EnergyPlus with R programming language
+2. A framework integrates EnergyPlus with data science through R
 3. The framework includes a parametric simulation  with flexibility and extensibility
 4. Tidy data format is introduced to facilitate data-driven analytics of BEM research
 5. Docker together with R project management can be adopted to bring reproducible BEMs
