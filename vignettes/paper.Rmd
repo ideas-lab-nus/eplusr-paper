@@ -22,25 +22,25 @@ footnote:
   - code: 1
     text: "Corresponding Author"
 abstract: |
-  It has been widely recognized that incorporating scripting to building
-  performance simulation can improve the XXXX. However, due to an array of
-  challenges, the obstacles between design and energy performance still remain.
-
-  Parametric analysis using EnergyPlus has been a powerful approach to enable
-  investigation of environmental and energy performance for different design and
-  retrofit design alternatives. However, the absence of streamlined workflow
-  integrating model editing, simulation and output extracting raises problems in
-  the productivity of parametric analysis. This paper presents a newly developed
-  framework for conducting parametric analysis using EnergyPlus via the
-  programming language R package called "eplusr". The proposed framework, with a
-  data-centric design philosophy, focuses on not only EnergyPlus model editing but
-  also parametric simulation output data extraction and analysis. It provides
-  rich-featured interfaces to query and modify models programmatically and a
-  simple yet flexible and extensible prototype of conducting parametric
-  simulations and collecting all results in one go. The paper discusses the
+  Building energy simulation (BES) has been widely adopted for the
+  investigation of environmental and energy performance for different design
+  and retrofit alternatives. In BES, data-centric analytics is of commensurate
+  importance in order to turn BES results into understanding, insight, and
+  knowledge. However, there is no widely adopted solution to provide seamless
+  integration of BES and data-centric analytics. This paper presents a newly
+  developed framework 'eplusr' for conducting parametric analysis using
+  EnergyPlus via the R programming language. With a data-centric design
+  philosophy, the proposed framework focuses on better and more seamless
+  integration between BES and data-driven analytics. It provides a Tidy data
+  format for BES that matches the semantics of the simulation results which can
+  be easily fed to various data analytics workflows in R. The framework also
+  provides an infrastructure to bring portable and reusable computation
+  environment for building energy modeling using, which aims to facilitate the
+  reproducibility research in building energy domain. This paper discusses the
   philosophy behind the framework, its architecture and core capabilities, and
-  uses simple tasks to demonstrate the streamlined workflow of conducting
-  parametric analysis in R.
+  demonstrates the streamlined workflow of using this framework to conduct data
+  exploration, parametric simulation, multi-objective optimization, and
+  Bayesian calibration.
 journal: "Automation in Construction"
 date: "`r Sys.Date()`"
 bibliography: references.bib
@@ -85,37 +85,36 @@ knitr::knit_hooks$set(chunk = function (x, options) {
 })
 ```
 
-# Highlights (Each <= 85 characters with spaces included) {.unnumbered}
+# Highlights {.unnumbered}
 
-1. Reproducibility should be taken into consideration in building energy modelling (BEM)
-2. A framework integrates EnergyPlus with data science through R
-3. The framework includes a parametric simulation  with flexibility and extensibility
-4. Tidy data format is introduced to facilitate data-driven analytics of BEM research
-5. Docker together with R project management can be adopted to bring reproducible BEMs
+1. A framework integrates EnergyPlus with data science through R
+2. The framework includes a parametric simulation  with flexibility and extensibility
+3. Tidy data format is introduced to facilitate data-driven analytics of BES research
+4. Docker together with R project management can be adopted to bring reproducible BESs
 
 # Introduction
 
-Building energy modelling (BEM) is increasingly being used for the analysis and
+Building energy simulation (BES) is increasingly being used for the analysis and
 prediction of building energy consumption, measurement and verification and the
 evaluation of energy conservation measures (ECMs) [@Chong2017]. It has played a
 growing role in the design and operation of low energy, high-performance
 buildings and development of policies that drive the achievement of reducing
 energy use and greenhouse-gas emissions in the buildings sector [@Hong2018].
 
-The core tools in the BEM field are the whole-building energy simulation
-programs which provide users with key building performance indicators such as
-energy use and demand, temperature, humidity, and costs [@Crawley2008a]. BEM
-offers an alternative approach that encourages customized, integrated design
-solutions and the development of BEM tools has been pronounced over the decades
-[@Hong2000; @Hong2018]. Among them, EnergyPlus is one of the widely used whole
+BES offers an alternative approach that encourages customized, integrated design
+solutions and the development of BES tools has been pronounced over the decades
+[@Hong2000; @Hong2018]. The core tools in the BES field are the whole-building
+energy simulation programs which provide users with key building performance
+indicators such as energy use and demand, temperature, humidity, and costs
+[@Crawley2008a]. Among them, EnergyPlus is one of the widely used whole
 building energy simulation tools [@Crawley2001] and has been adopted as a core
 component or a building simulation engine of energy performance assessment in
 both free and commercial building design and analysis tools [@See2011; @DesignBuilderSoftwareLtd2020; @Guglielmetti2011; @Yi2020; @Roudsari2013].
 
-Parametric analysis in BEM has been a powerful approach to enable investigation
+Parametric analysis in BES has been a powerful approach to enable investigation
 of environmental and energy performance for different design and retrofit
-design alternatives. Choosing the appropriate combination of design options is
-a complex task which requires the management of a large amount of information
+alternatives. Choosing the appropriate combination of design options is
+a complex task that requires the management of a large amount of information
 on the properties of design options and the simulation of their performance
 [@Purup2020]. Parametric analysis involves tedious file management tasks,
 repeated entry of model parameters, the application of design transformations
@@ -124,9 +123,16 @@ time-consuming and error-prone. Simulation task automation has been approved to
 be an extremely useful way to reduce human intervention and improve the
 efficiency of large parametric analysis. Multiple efforts have been made with
 this regard and there are several existing EnergyPlus-based parametric
-simulation tools developed. Some tools consist of graphical user interfaces
+simulation tools developed as shown in Table \@ref(tab:pat-sum). Some tools consist of graphical user interfaces
 (GUIs) built on EnergyPlus while some use general-purpose scripting languages
 with a full complement of programming features and libraries [@Roth2018].
+
+```{r pat-sum, eval = TRUE, include = TRUE, echo = FALSE}
+compare <- data.table::fread(here::here("data-raw/compare.csv"))
+compare %>%
+    knitr::kable(format = "latex", caption = "Comparison of parametric simulation framework based on EnergyPlus") %>%
+    kableExtra::kable_styling(full_width = TRUE)
+```
 
 OpenStudio [@Guglielmetti2011] is a free open-source software toolkit designed
 for energy modeling and can be used to efficiently create or modify models,
@@ -142,7 +148,7 @@ and perform parametric sensitivity analysis. Ladybug and Honeybee are plug-ins
 developed for Rhino Grasshopper [@Roudsari2013]. Ladybug is capable to import
 and analyze EnergyPlus standard weather data (EPW) in Grasshopper, while
 Honeybee can create, run and visualize the OpenStudio and EnergyPlus simulation
-results. Both Ladybug and Honeybee take fully advantage of the visual scripting
+results. Both Ladybug and Honeybee take full advantage of the visual scripting
 interfaces provided by Grasshopper [@Tabadkani2019]. Since the primary input
 files of EnergyPlus are all ASCII text-based, it is possible to update building
 energy models by directly process and manipulate the text files, without taking
@@ -153,7 +159,7 @@ design parameters. It allows users to describe the parameters and their values
 using customized symbols in a graphical user interface, automatically create
 parametric models using text-substitution [@Zhang2010a]. Modelkit
 [@BigLadderSoftware2020] is a free and open-source framework for parametric
-modelling using EnergyPlus. Compared to jEplus, it is capable of automating the
+model using EnergyPlus. Compared to jEplus, it is capable of automating the
 generation and management of EnergyPlus models via its templates and scripting
 tools written in Ruby. MLE+ integrates EnergyPlus and scientific computation
 and design capacities of Matlab for controller design and can be used to
@@ -164,27 +170,29 @@ EnergyPlus IDF files into a python object and provides low-level programmatic
 access to EnergyPlus inputs. The tools mentioned above may have overlapping in
 features but they are tailored for different purposes and use cases, with the
 primary focus on ease the time-consuming and error-prone process of creating
-and managing parametric simulations.
+and managing parametric simulations. EpXL [ref] is an EnergyPlus Microsoft
+Excel user-interface that enables import/export of IDF data files, parametric
+analysis and optimization.
 
-BEM, with an iterative nature inside, can produce large amount of data. A large
-part of the time has to be spent on the collection and processing of BEM
-simulation data. Even some BEM tools provide summary reports with various
-details, it is still quite common in BEM to perform post-processing and apply
+BES, with an iterative nature inside, can produce a large amount of data. A large
+part of the time has to be spent on the collection and processing of BES
+simulation data. Even some BES tools provide summary reports with various
+details, it is still quite common in BES to perform post-processing and apply
 customized and more advanced algorithms to the simulation results. However,
-less efforts have been made in terms of providing a seamless integrated
-approach to bridge the gap between building energy modelling and data-centric
+fewer efforts have been made in terms of providing a seamless integrated
+approach to bridge the gap between building energy model and data-centric
 analytics. There is a growing body of scientific literature on the application
-of advanced mathematical algorithm to building design [@Kiss2020]. Researches
+of advanced mathematical algorithms for building design [@Kiss2020]. Researches
 on parametric building energy simulations that employ data mining algorithms
 upon large amounts of simulations have emerged [@BurakGunay2019]. Open-source
 programming environments such as R and Python have become widely used research
-tools which provide access to many well-documented packages for various data
+tools that provide access to many well-documented packages for various data
 mining, machine learning and data visualization applications. However, the
-output of common BEM tools are not always friendly in format for applying these
+output of common BES tools is not always friendly in format for applying these
 tools, which highlights the potential areas for improvements in data extraction
-and results presentation in a clear and intuitive manner for data analytics.
+and result presentation in a clear and intuitive manner for data analytics.
 
-BEM is a complex domain which involves multiple scientific processes, and is
+BES is a complex domain that involves multiple scientific processes and is
 often a time-intensive, error-prone and hard-to-reproducible process.
 Reproducibility is defined as the ability to recompute data analytic results,
 given an observed data set and knowledge of the data analysis pipeline
@@ -196,45 +204,43 @@ more than 50% failed to reproduce their own experiments. Moreover, more than
 half of them agreed that there was a significant crisis of reproducibility
 [@Baker2016a].
 
-As BEM becomes more and more integral to many aspects of architecture design,
-and decision-making process, computational reproducibility has become an issue of
+As BES becomes more and more integral to many aspects of architecture design,
+and decision-making processes, computational reproducibility has become an issue of
 increasing importance to researchers, designers and practitioners. Lack of
-credibility in BEM results due to a lack quality and reproducibility is widely
-considered a problem by the energy modelling community [@Fleming2012].
+credibility in BES results due to a lack quality and reproducibility is widely
+considered a problem by the energy model community [@Fleming2012].
 
 Despite the culture of reluctance and a lack of requirements or incentives to
-publish the code used in generating the results, the reasons why BEM is usually
-not easy to reproduce is mainly caused by 3 aspects:
+publish the code used in generating the results, the reasons why BES is usually
+not easy to reproduce is mainly caused by 2 aspects:
 
-(a) Incomplete capability of providing reproducible workflows in GUI BEM applications
+(a) A lack of seamless integration of BES and data-driven analytics workflows
 
-When conducting BEM, most users prefer to use GUI applications which makes it
+When conducting BES, most users prefer to use GUI applications which makes it
 intuitive and easy to execute certain particular tasks. However, GUI tools have
-constrains on flexibility as the users have to specify exactly what and how
+constraints on flexibility as the users have to specify exactly what and how
 features of the design can be manipulated and often are not be able to provide
 a good workflow for repeating that task across a wider range of situations on
 different systems. In this case, manual steps have to be performed using other
-tools, such like a spreadsheet or command line tools, which introduces
+tools, such as a spreadsheet or command-line tools, which introduces
 additional transcription burden and results in a non-reproducible process
-[@Macumber2012]. Sometime, custom solutions have to be created from scratch to
+[@Macumber2012]. Sometimes, custom solutions have to be created from scratch to
 automate part portions of the workflows, which may lead to new inefficiencies
 and potential errors.
 
-(b) A lack of solutions to integrate all scientific processes of BEM workflows
-
-One of the goals of BEM is to turn raw simulation data into understanding,
-insight, and knowledge. BEM projects often encompass an iterative workflow of
+One of the goals of BES is to turn raw simulation data into understanding,
+insight, and knowledge. BES projects often encompass an iterative workflow of
 raw design data importing and tidying, parametric input file generation and
 modification, simulation result collection, processing and analyses, and
-finally, conclusion visualization. Most of the time, data analytics of BEM
-results is of commensurate importance with the modelling itself. Currently,
+finally, conclusion visualization. Most of the time, data analytics of BES
+results is of commensurate importance with the model itself. Currently,
 there is no widely adopted solution that is able to integrate all processes
 into one single platform.
 
-(c) The computational environment of the covering the whole BEM
+(b) The computational environment of the covering the whole BES
 steps is hard to setup
 
-BEM often involves the use of multiple applications, software and platforms.
+BES often involves the use of multiple applications, software and platforms.
 The indispensable step of all To perform crucial scientific processes such as
 replicating the results, extending the approach or testing the conclusions in
 other contexts, the indispensable step is to install the software used by the
@@ -243,48 +249,63 @@ not impossible. It is easy to underestimate the significant barriers raised by
 a lack of familiar, intuitive, and widely adopted tools for addressing the
 challenges of computational reproducibility [@Boettiger2015].
 
-In summary, multiple efforts have been made to improve the wide adoption of BEM
+In summary, multiple efforts have been made to improve the wide adoption of BES
 among researchers, designers and practitioners. However, an overall holistic
 framework to bridge the gap between the building energy simulation and data
 science domains is still undefined. There is still a need for an integrated
 framework to provide a supportive environment to bring reproducible building
-energy modelling.
+energy modeling.
 
 In this paper, we introduce a new parametric simulation framework called eplusr
 [@Jia2020] using the R [@RCoreTeam2019] programming language.
 eplusr is different from existing frameworks because of its data-centric design
 philosophy. The main goals of this framework is to:
 
-1. provide a rich-featured library that contains a set of abstractions to help
+1. provide better and more seamless integration between BES and data-driven
+   analytics tools. A unified data interface is developed which makes sure all
+   simulation data are always stored in a consistent form that matches the
+   semantics of the simulation results that can be easily fed to various data
+   mining and machine learning algorithms using existing tools in R.
+2. provide a rich-featured library that contains a set of abstractions to help
    modify EnergyPlus simulation inputs in a programmatic way and provides a
    simple yet flexible and extensible parametric simulation prototype which can
    be easily extended to perform sensitivity analysis, model calibration and
    optimization.
-2. provide better and more seamless integration between BEM and data-driven
-   analytics tools. An unified data interface is developed which makes sure all
-   simulation data are always stored in a consistent form that matches the
-   semantics of the simulation results which can be easily fed to various data
-   mining and machine learning algorithms using existing tools in R.
 3. provide infrastructure to bring portable and reusable computation
-   environment for building energy modelling using, which aims to facilitate
+   environment for building energy model using, which aims to facilitate
    the reproducibility research in building energy domain.
 
 # Eplusr framework overview
 
-Fig. \@ref(fig:architecture) shows an overview of the eplusr framework. Eplusr contains 5 modules in total:
+Fig. \@ref(fig:architecture) shows an overview of the eplusr framework. Eplusr contains 2 main parts:
 
-1. I/O Processing & Parser
-2. Model API
-3. Tidy Data Extractor
-4. Simulation Manager
-5. Parametric Prototype
+1. An R package called eplusr which integrates whole building simulation
+   software EnergyPlus and the data-driven analytics environment powered by R
+   programming language.
+2. An computation environment powered by Docker that contains all necessary
+   tools to facilitate reproducible BES.
 
 ```{r architecture, echo = FALSE, eval = TRUE, fig.cap = "Eplusr framework architecture", out.width = "40%"}
 knitr::include_graphics(here("figures/overview.png"))
 ```
 
-## Model representation and modification
+## The Structure of eplusr package
 
+The eplsur R package is the core component of the framework which provides a
+programmatic interface of modifying EnergyPlus models, data interface to
+extract simulation results. The package consist of 5 modules:
+
+1. I/O Processing & Parser
+2. Model API (Application Program Interface)
+3. Tidy Data Extractor
+4. Simulation Manager
+5. Parametric Prototype
+
+### Parser and Model API
+
+In eplusr, the I/O processing & parser model aims to read and parse EnergyPlus
+models and store the data in a format that is both flexible to modify and
+capable to store the hierarchical relationship of various model components.
 EnergyPlus uses a text input file format named IDF (Input Data File) as a model
 file, and each version of an IDF file has a corresponding version of an IDD
 (Input Data Dictionary) file who works as a data format schema. In eplusr,
@@ -301,7 +322,7 @@ data structure, to modify an EnergyPlus model in eplusr is equal to change the
 data in those `Idf` tables accordingly, in the context of specific `Idd` data.
 In this sense, all methods in `Idf` and `Idd` classes are just interface
 wrappers which expose the modification process in a more user-friendly manner.
-All the data are masked from end users but can be easily extracted when needed.
+All the data are masked from end-users but can be easily extracted when needed.
 
 ```{r data-structure, echo = FALSE, eval = TRUE, fig.cap = "Data structure of an Idf and Idd object", out.width = "70%"}
 knitr::include_graphics(here("figures/data_structure.png"))
@@ -309,9 +330,9 @@ knitr::include_graphics(here("figures/data_structure.png"))
 
 For most of the time, users do not need to directly interact with `Idd` and
 `IddObject` objects, but instead simply using `Idf` and `IdfObject` objects to
-modify an IDF file.
+modify an IDF file, which provides flexible yet powerful model modification APIs.
 
-eplusr uses `Idf` class to present a whole IDF file and `IdfObject` class to
+In eplusr, the  uses `Idf` class to present a whole IDF file and `IdfObject` class to
 present a single object in IDF. Both `Idf` and `IdfObject` classes contain
 around thirty member functions for low-level programmatic access to and
 modification of the IDF data. Every modification on the IDF data will be
@@ -321,7 +342,7 @@ verified to make sure the result complies with underlying IDD.
 scope, including scope of a single object, scope of grouped objects level, and
 scope of all objects in a certain class.
 
-```{r idf-set}
+```{r idf-set, code.cap = "Example of model API", echo = TRUE}
 model$set(
   `Supply Fan 1` = list(Fan_Total_Efficiency = 0.9),
 
@@ -332,9 +353,9 @@ model$set(
 )
 ```
 
-Listing 2 demonstrates the flexible value modifying scopes provided by
-`Idf$set()` method. `model` here is an `Idf` object. In Line 2, the total
-efficiency of a `Fan:VariableVolume` object named `Supply Fan 1` will be
+Listing \ref{code:idf-set} demonstrates the flexible value modifying scopes
+provided by `Idf$set()` method. `model` here is an `Idf` object. In Line 2, the
+total efficiency of a `Fan:VariableVolume` object named `Supply Fan 1` will be
 changed to 0.9; In line 4-5, the roughness and thickness of two materials named
 `Metal Decking` and `Metal Roofing` will be changed; While in line 7, the
 lighting power density of all lights will be changed to 7.0
@@ -353,18 +374,18 @@ object values by feeding the updated data to `Idf$update()` method.
 
 The weather data format used in EnergyPlus is called EPW (EnergyPlus Weather),
 a simple, text-based format with comma-separated data. eplusr introduces the
-`Epw` class to directly extract both meta data and core weather data of an EPW
+`Epw` class to directly extract both metadata and core weather data of an EPW
 file. Moreover, `Epw` class is capable of creating new and modifying existing
 EPW files, which is usually an essential process when doing model parameter
 calibration.
 
-# Tidy data extractor
+### Tidy data extractor
 
 When extracting simulation results, instead of directly reading and
 manipulating the CSV and HTML files, eplusr uses EnergyPlus SQL output to
 extract results of `Output:Variable`, `Output:Meter*`, and `Output:Table`
 objects specified in the IDF. The main benefit of this approach is that it
-makes sure eplusr always return the simulation results in a *Tidy Data* format.
+makes sure eplusr always returns the simulation results in a *Tidy Data* format.
 
 Tidy data format was first proposed by @Wickham2014, which is a standard way of
 mapping the meaning of a dataset to its structure. A dataset is messy or tidy
@@ -382,7 +403,7 @@ because the layout ensures that values of different variables from the same
 observation are always paired.
 
 However, EnergyPlus CSV output does not present data in a tidy way. Taking
-Table \@ref(tab:mess-csv) an example. We are facing one main problems when
+Table \@ref(tab:mess-csv) an example. We are facing one main problem when
 working with this type of EnergyPlus CSV output, i.e. column headers contain
 values, not only variable names.
 
@@ -397,20 +418,11 @@ regular expressions.
 When using eplusr, the same results in Table \@ref(tab:mess-csv) are always
 presented in a tidy format, as shown in Table \@ref(tab:tidy-csv). It
 transforms the original column headers from EnergyPlus CSV outputs into four
-separated columns, i.e. `key_value`, `name`, `units` and `reporting_frequency`.
+separate columns, i.e. `key_value`, `name`, `units` and `reporting_frequency`.
 Despite those changes, eplusr will also add an additional column named `case`,
 which is by default the IDF file name without extension. `case` column can be
 quite useful and serve as an indicator to separate each simulation results when
-extracting outputs from multiple parametric simulations. Moreover, instead of
-presenting the simulated date and time as strings shown in Table
-\@ref(tab:mess-csv), eplusr will calculate a proper year value for each run
-period and compose a series of `DateTimeClasses` values in the `datetime`
-column. This makes it quite straightforward to apply further time-series
-analysis on the simulation results.
-
-```{r data-interface, echo = FALSE, eval = TRUE, fig.cap = "Data interface", out.width = "80%"}
-knitr::include_graphics(here("figures/result_extraction_interface.png"))
-```
+extracting outputs from multiple parametric simulations.
 
 In summary, giving data in a tidy format has several advantages in R, as it
 will make sure the data is always fit for directly handling by the *tidyverse*
@@ -437,15 +449,39 @@ knitr::kable(data.table::fread(here("data-raw/tidy.csv")), linesep = "", align =
     column_spec(6, "2.9cm")
 ```
 
-# The parametric prototype
+Fig. \@ref(fig:data-interface) shows the schematic diagram of eplusr tidy data
+interface. Unlike the CSV format output, EnergyPlus's SQL output stores all
+simulation results in various tables. For instance, Table. \@ref(tab:tidy-csv)
+will be a result of joint of tables `Time`, `EnvironmentPeriods`,
+`ReportDataDictionary` and `ReportData`, where the `Time` table contains the
+time of simulation, including month, day, hour, day of the week and etc, the
+`EnvironmentPeriods` table contains the names and types of the simulated run
+period, the `ReportDataDictionary` table provides the dictionary of reported
+variables including their parent model component names, variable names, units
+and reported frequency, and the `ReportData` contains the actual values of
+reported variables. Eplusr result extraction interface provides the
+possibilities to query any of the mentioned information which makes it easy and
+quite straightforward to get simulation results of any specified time, units
+and variables in a consistent manner.
+Moreover, instead of presenting the simulated date and time as strings shown in
+Table \@ref(tab:mess-csv), eplusr will calculate a proper year value for each
+run period and compose a series of `DateTimeClasses` values in the `datetime`
+column. This makes it quite straightforward to apply further time-series
+analysis on the simulation results.
+
+```{r data-interface, echo = FALSE, eval = TRUE, fig.cap = "Tidy data interface", out.width = "80%"}
+knitr::include_graphics(here("figures/result_extraction_interface.png"))
+```
+
+### The parametric prototype
 
 eplusr provides a class `ParametricJob` to do parametric simulations. It is
 simple to use but is also quite flexible and extensible. It takes full
-advantages of eplusr model editing and result collecting functionalities. The
-overall process of the framework is shown in Fig. \@ref(fig:parametric) and can
-be summarized as follows:
-
-eplusr's ParametricJob class is capable of defning a number of different analyses including using any of algorithms in R, including optimizations, sensitivity analysis, and sampling problems using a number of user selectable algorithms. Advances in software technology are creating new opportunities for more cost effective analysis that the industry has sorely needed [@Goldwasser2016].
+advantages of eplusr model editing and result collecting functionalities.
+Thus, the `ParametricJob` class is capable of defining various analyses using
+any algorithms available in R, including sensitivity analysis, optimizations,
+and model calibration. The overall process of the framework is shown in Fig.
+\@ref(fig:parametric) and can be summarized as follows:
 
 ```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "70%"}
 knitr::include_graphics(here("figures/parametric.png"))
@@ -484,303 +520,6 @@ knitr::include_graphics(here("figures/parametric.png"))
    ecosystem. In Listing 8, we collect the annual total site energy of all
    simulations.
 
-# Reproducible Building Energy Performance Simulation (RBEM)
-
-In every field of science, scientists are increasingly using electronic tools,
-from collecting their data to publishing their results. With the increase in
-computational tools comes the advantage of reproducibility at an extent not
-previously possible. Unfortunately, reproducibility of results is actually
-becoming increasingly more difficult, owing to the variety of ways of
-approaching analysis and incapability of data structures and file types. This
-is a guide to make scientific research more easily communicated and performed
-by using tools that promote reproducibility.
-
-```{r docker, echo = FALSE, eval = TRUE, fig.cap = "Infrastructures for RBEM", out.width = "60%"}
-knitr::include_graphics(here("figures/eplusr-docker.png"))
-```
-
-## R ecosystem for reproducible research
-
-The goal of reproducible research is to tie specific instructions to data
-analysis and experimental data so that scholarship can be recreated, better
-understood and verified.
-
-The R community has developed numerous packages to facilitate reproducible
-research, covering a wide variety of topics, including  literate programming,
-pipeline toolkits, package reproducibility, project workflows, code/data
-formatting tools, format convertors, and object caching [@Blischak2020].
-
-The primary way that R facilitates reproducible research is using a document
-that is a combination of content and data analysis code.
-
-## Tidyverse
-
-Less abstractly, the tidyverse is a collection of R packages that share a
-high-level design philosophy and low-level grammar and data structures, so that
-learning one package makes it easier to learn the next. The tidyverse
-encompasses the repeated tasks at the heart of every data science project: data
-import, tidying, manipulation, visualisation, and programming.
-
-## Docker
-
-Recently, Docker has risen to prominence for "containerisation" --- the method
-of taking software artefacts and building them in such a way that use becomes
-standardized and portable across operating systems, and has shown a promising
-scalability opportunity [@Nust2020].
-
-The package follows the increasingly used piping paradigm of the tidyverse
-style of programming for chaining R functions representing the instructions in
-a Dockerfile.
-
-The Rocker Project was launched in 2014 as a collaboration to provide
-high-quality Docker images containing the R environment, and has seen both
-considerable uptake in the R community and substantial development and
-evolution [@Boettiger2017]. provides widely used Docker images for R across
-different scenarios .
-
-## Knitr
-
-The R package knitr is a general-purpose literate programming engine, with
-lightweight API's designed to give users full control of the output without
-heavy coding work.
-
-The eplusr-docker image [@Jia2020d] is built upon the `rocker/verse` image. It
-provides the RStudio server IDE, commonly-used dependencies, notably a large
-LaTeX environment
-
-The Sweave function (in the base R utils package) and the knitr package can be
-used to blend the subject matter and R code so that a single document defines
-the content and the analysis.
-
-## rmarkdown
-
-The knitr package can process markdown files without assistance. The packages markdown and rmarkdown have general tools for working with documents in this format.
-
-## TinyTeX
-
-TinyTeX is a lightweight, portable, cross-platform, and easy-to-maintain LaTeX distribution. The R companion package tinytex (Xie 2020e) can help you automatically install missing LaTeX packages when compiling LaTeX or R Markdown documents to PDF, and also ensures a LaTeX document is compiled for the correct number of times to resolve all cross-references.
-
-With the rmarkdown package, RStudio/Pandoc, and LaTeX, you should be able to compile most R Markdown documents
-
-R Markdown provides an authoring framework for data science. You can use a single R Markdown file to both
-
-save and execute code, and
-
-generate high quality reports that can be shared with an audience.
-
-R Markdown was designed for easier reproducibility, since both the computing code and narratives are in the same document, and results are automatically generated from the source code. R Markdown supports dozens of static and dynamic/interactive output formats.
-
-## R package managerment
-
-Successfully completing a data analysis project often requires much more than statistics and visualizations. Efficiently managing the code, data, and results as the project matures helps reduce stress and errors. The following "workflow" packages assist the R programmer by managing project infrastructure and/or facilitating a reproducible workflow.
-
-
-Workflow framework packages provide an organized directory structure and helper functions to assist during the development of the project. As a typical example, ProjectTemplate::create.project() creates an organized setup with many subdirectories, and ProjectTemplate::run.project() executes each R script that is saved in the src/ subdirectory.
-
-knitr has the function pandoc that can call an installed version of Pandoc to convert documents between formats such as Markdown, HTML, LaTeX, PDF and Word.
-
-When using Sweave and knitr it can be advantageous to cache the results of time consuming code chunks if the document will be re-processed (i.e. during debugging). knitr facilitates object caching and the Bioconductor package weaver can be used with Sweave.
-
-## The novelty of eplusr-docker
-
-Yet implementing such environments in containers is not a trivial task, and not
-all implementations provide the same usability, portability or reproducibility.
-Here we have detailed the approach taken by the Rocker project in creating and
-maintaining these environments through an open and community-driven process.
-
-* Management of different design alternatives within a project
-* Customizable templates and libraries for constructions, systems and schedules that can be managed at the user, company and community levels.
-
-To address the above issues, IBPSA has published a futures vision for BPS as a means to
-direct developments toward new functionality [27] [@Clarke2015]
-
-* Define the interactions between domains and the semantic schema to allow the level of tool interoperability required;
-* Develop interface requirements specifications based on formal consultations with practitioners and tool developers and a shared understanding of ultimate BPS functionality;
-
-## Scientific report support
-
-* rmarkdown
-* knitr
-* tinytex
-* RStudio
-
-## Data analysis
-
-* tidyverse
-
-## BEM
-
-* eplusr
-* EnergyPlus
-
-## Reproducibility crisis
-
-[@Macumber2012]
-
-As computational work becomes more and more integral to many aspects of scientific research, computational reproducibility has become an issue of increasing importance to computer systems researchers and domain scientists alike .
-
-A successful reproducible study consists of two major components [@Peng2015]:
-
-* the raw data from the experiment are available
-* and that the statistical code and documentation to reproduce that analysis are also available
-
-From a BEM perspective, the raw data would be the raw building energy models or
-raw data to build the models are available.
-
-Recently, there have been significant efforts to develop software infrastructure to reproducibly perform and communicate data analyses, including knitr [@Xie2015], Jupyter notebook [@Kluyver2016], just to name a few.
-
-In a time where BEM and decision-makings based on BEM are growing in
-complexity, the need for reproducibility is growing significantly.
-
-[@Boettiger2015]
-
-*eplusr: reduce the user effort required to produce a reproducible workflow of building energy modelling*
-
-Creation of a database of materials with the necessary green properties and interfacing it with BIM software to reduce the user effort required to produced a sustainable BIM model containing the extra green data [@Ilhan2016]
-
-*eplusr: make it possible to organize BPS work as an R project*
-
-The proposed model aims to provide guidelines for the deign of a project's sustainable features at the design stage when they are most needed. It will allow timely decision making by offering an evaluation of the alternatives for sustainability performance and enable the utilisation of pertinent data stored in the BIM model for green building certification.
-
-Reproducibility has draw some attention in the field of energy system studies
-
-Reproducibility does not draw enough attention in BEM world.
-
-Example use of Git in building calibration: @Raftery2011a
-
-Reproducibility speeds diagnosis and treatment in the form of screening and rejection of poor data analyses [@Peng2015].
-
-Systems research has long concerned itself with the issues of computational
-reproducibility and the technologies that can facilitate those objectives [6].
-Docker is a new but already very popular open source tool that combines many of
-these approaches in a user friendly implementation, including: (1) performing
-Linux container (LXC) based operating system (OS) level virtualization, (2)
-portable deployment of containers across platforms, (3) component reuse, (4)
-sharing, (5) archiving, and (6) versioning of container images. While Docker’s
-market success has largely focused on the needs of businesses in deploying web
-applications and the potential for a lightweight alternative to full
-virtualization, these features have potentially important implications for
-systems research in the area of scientific reproducibility.
-
-It is worth observing from the outset that the primary barrier to computational
-reproducibility in many domain sciences has nothing to do with the
-technological approaches discussed here, but stems rather from a reluctance to
-publish the code used in generating the results in the first place [2]. Despite
-extensive evidence to the contrary [14], many researchers and journals continue
-to assume that summary descriptions or pseudo-code provide a sufficient
-description of computational methods used in data gathering, processing,
-simulation, visualization, or analysis.
-
-Until such code is available in the first place, one cannot even begin to
-encounter the problems that the approaches discussed here set out to solve. As
-a result, few domain researchers may be fully aware of the challenges involved
-in effectively re-using published code.
-
-A lack of requirements or incentives no doubt plays a crucial role in
-discouraging sharing [2, 24]. Nevertheless, it is easy to underestimate the
-significant barriers raised by a lack of familiar, intuitive, and widely
-adopted tools for addressing the challenges of computational reproducibility.
-Surveys and case studies find that a lack of time, more than innate opposition
-to sharing, discourages researchers from providing code [7, 23].
-
-By restricting ourselves to studies of where code has been made available, I
-will sidestep for the moment the cultural challenges to reproducibility so that
-I may focus on the technical ones; in particular, those challenges for which
-improved tools and techniques rather than merely norms of behavior can
-contribute substantially to improved reproducibility.
-
-Docker is an open source project that builds on many long-familiar technologies
-from operating systems research: LXC containers, virtualization of the OS, and
-a hash-based or git-like versioning and differencing system, among others (see
-docs.docker.com/faq for an excellent overview of what Docker adds to plain
-LXC).
-
-# Examples and applications
-
-## Calculate the difference between heat gains and cooling loads
-
-The most commonly used methods to calculate heating and cooling loads are Heat
-Balance (HB) method and Radiant Time Series (RTS) method. EnergyPlus uses HB
-method and can output a single combined design load for a given zone [@Department2016].
-
-It is important to understand the difference between gains and loads. Space
-heat gain is the rate at which heat enters into and/or is generated within a
-space, while the space cooling load is the rate at which sensible and latent
-heat must be removed from the space to maintain a constant space air
-temperature and humidity. The difference is that for an air-based HVAC system,
-the radiant heat gains which is absorbed by walls, floors, furniture, and etc.,
-contributed to the space cooling load only after a time lag.
-
-EnergyPlus provides a built-in `Component Loads Summary` report to show an
-estimated breakdown of load components from each type of heat gain for each
-zone that is not part of the normal heat balance algorithms. To disaggregate
-the delayed affect of zone radiant portions of the peak load, a pulse of
-radiant internal loads is used to determine custom radiant to convective decay
-curves, essentially replicating part of the RTS method [@Department2016].
-
-Thus, EnergyPlus does not give the heat-balance-based breakdown of the design
-load into component contributions from envelope, infiltration, occupancy,
-lighting and internal equipment, i.e. it does not provide direct report on the
-contribution of heat gains through a specific wall to the total cooling loads.
-This is because each component is not isolated during the heat balance of zone
-air, but coupled with and influenced by other components. For example, the
-convection from a specific surface to the zone air is influenced by the zone
-lights, solar transmitted through the outdoor windows and other surfaces.
-
-In EnergyPlus, the zone sensible cooling load calculation starts with a heat balance on the zone air, as shown in \@ref(eq:hb-air):
-
-\begin{equation}
-C_{z} \frac{d T_{z}}{d t} = \sum_{i=1}^{N_{s l}} \dot{Q}_{i} +
-                            \sum_{i=1}^{N_{surfaces}} h_{i} A_{i}\left(T_{s i}-T_{z}\right) +
-                            \sum_{i=1}^{N_{zones}} \dot{m}_{i} C_{p}\left(T_{z i}-T_{z}\right) +
-                            \dot{m}_{\mathrm{inf}} C_{p}\left(T_{\infty}-T_{z}\right) +
-                            \dot{Q}_{sys}
-(\#eq:hb-air)
-\end{equation}
-
-Where:
-
-* $C_{z} \frac{d T_{z}}{d t}$ is the energy stored in zone air;
-* $\sum_{i=1}^{N_{s l}} \dot{Q}_{i}$ is the sum of the convective internal
-  loads;
-* $\sum_{i=1}^{N_{surfaces}} h_{i} A_{i}\left(T_{s i}-T_{z}\right)$ is the sum
-  of convective heat transfer from the zone surfaces;
-* $\sum_{i=1}^{N_{zones}} \dot{m}_{i} C_{p}\left(T_{z i}-T_{z}\right)$ is the
-  heat transfer due to interzone air mixing;
-* $\dot{m}_{\mathrm{inf}} C_{p}\left(T_{\infty}-T_{z}\right)$ is the heat
-  transfer due to infiltration of outside air;
-* $\dot{Q}_{sys}$ is the air system outputs.
-
-Air systems provide hot or code air to the zones to meet heating or cooling
-loads. $\dot{Q}_{sys}$ can thus be formulated from the difference between the
-supply air enthalpy and the enthalpy of the air leaving the zone as shown
-in \@ref(eq:hb-q-sys).
-
-\begin{equation}
-\dot{Q}_{sys} = \dot{m}_{sys} C_{p} \left(T_{sup} - T_{z}\right)
-(\#eq:hb-q-sys)
-\end{equation}
-
-During zone sizing calculation in EnergyPlus, the real HVAC system is ignored
-and instead an ideal zonal system is used to calculate design loads and flow
-rates. This ideal system supplies heating or cooling air at a fixed, user
-input temperature and humidity (specified in the `Sizing:Zone` objects) with
-infinite capacity, i.e. the flow rate can be any amount.
-
-Based on the heat balance algorithm, for an air-based HVAC system, all left by
-subtracting convection and latent from total heat gains will be radiation part
-and are not part of instantaneous cooling loads.
-
-In this example, we consider 5 sources of heat gains, i.e. envelope, infiltration, people, lighting, equipment
-Since EnergyPlus provides quite detailed outputs for each class and can be
-reported to various frequencies, an estimation of cooling load contributions
-from different
-
-
-How to describe the extensibility?
-
-The framework and the methodology can be further extended to the simultaneous analysis of an entire building building stock through the assessment of multiple building types. Also, it is possible to implement different energy demand calculation methods to test the sensitivity of the results to be applied methodology in more depth. The assessment of different optimization algorithms is also in the focus of further research [@Kiss2020].
-
 One good example of extending the parametric framework in eplusr is the
 epluspar [@Jia2020a] R package, which provides new classes for conducting
 parametric analysis on EnergyPlus models, including sensitivity analysis using
@@ -790,100 +529,339 @@ the `ParametricJob` class. The main differences lie in applying specific
 statistical methods for sampling parameter values when calling
 `ParametricJob$apply_measure()`.
 
+## Reproducible building energy performance simulation environment
 
-## BC-Stan?
+The goal of reproducible research is to tie specific instructions to data
+analysis and experimental data so that scholarship can be recreated, better
+understood and verified. With the increase in computational tools comes the
+advantage of reproducibility at an extent not previously possible. 
 
-[@Zibin2016]
+Recently, Docker has risen to prominence for "containerisation", the method of taking
+software artefacts and building them in such a way that use becomes
+standardized and portable across operating systems, and has shown a promising
+scalability opportunity [@Nust2020].
 
-> There is a need for automatic software tools to retrieve HVAC trend data to understand operation and performance, analyze variables of interest or performance indices required for ongoing commissioning, and automatcially update the input files of energy analysis programms to assis in the calibration process.
+The R community has developed numerous packages to facilitate reproducible
+research, covering a wide variety of topics, including  literate programming,
+pipeline toolkits, package reproducibility, project workflows, code/data
+formatting tools, format convertors, and object caching [@Blischak2020].
 
-## MOO?
+The Rocker Project was launched in 2014 as a collaboration to provide
+high-quality Docker images containing the R environment, and has seen both
+considerable uptake in the R community and substantial development and
+evolution [@Boettiger2017]. The eplusr-Docker image [@Jia2020d] is built upon
+the `rocker/verse` image. It contains an portable and reusable BES computation
+environment powered by the RStudio server R programming environment,
+EnergyPlus, eplusr package, together with all necessary packages for R-based
+data-driven analytics powered by tidyverse package and literate programming
+environment powered by RMarkdown and related packages.
 
-A limitation of the approach is that the optimization acts like a black box and the designers cannot see what is happening in the background. Also, simplications in input data or possible errors in the database have a very high influence on the final results, which could be avoided with a mannual approach but are not spotted by an automatic algorithm [@Kiss2020].
+A successful reproducible project consists of two major components [@Peng2015]:
 
-How to describe the GA algorithm
+* the raw data from the experiment are available
+* and that the statistical code and documentation to reproduce that analysis are also available
 
-> Based on the input variables, the algorithm generates all the possible simulation datasets via an evolutionary solver function called Galapagos which is a genetic algorithm framework embedded within Grasshopper to find optimum solutions of the generations. It associates with a feedback loop to the initial phase to reconsider the design variables if necessary, to meet the final fitness.
+In a time where BES and decision-makings based on BES are growing in
+complexity, the need for reproducibility is growing significantly. From a BES
+perspective, the raw data would be the raw building energy models or raw data
+to build the models are available. 
 
-> Last, the calculations rely on each other, so the inaccuracy of each calculation would influence the final results. To overcome this issue, a modular methodology is proposed, where all the modules are replaceable and verificable indenpendently from each other.
+Recently, there have been significant efforts to develop software
+infrastructure to reproducibly perform and communicate data analyses, including
+RMarkdown [@Xie2015], Jupyter notebook [@Kluyver2016], just to name a few.
+
+The RMarkdown format has been a
+widely adopted authoring framework for data science. It can be used to both
+save and execute code, and generate high-quality reports that can be shared
+with an audience. RMarkdown can be easily adapted to any R-centric workflow and
+is a good solution to facilitate reproducibility of BEM reporting, since both
+the computing code and narratives are in the same document, and results are
+automatically generated from the source code. RMarkdown supports dozens of
+static and dynamic/interactive output formats.
+
+### Tidyverse for data-driven analytics
+
+Tidyverse is a collection of R packages that share a high-level design
+philosophy and low-level grammar and data structures, so that learning one
+package makes it easier to learn the next. The tidyverse encompasses the
+repeated tasks at the heart of every data science project: data import,
+tidying, manipulation, visualisation, and programming [@Wickham2019a].
+
+### RMarkdown for literate programming
+
+The R package knitr is a general-purpose literate programming engine, with
+lightweight API's designed to give users full control of the output without
+heavy coding work. Together with rmarkdown package and tinytex package, knitr
+is able to compile RMarkdown documents to PDF, and also ensures a LaTeX
+document is compiled for the correct number of times to resolve all
+cross-references.
+
+# Examples and applications
+
+## Data exploration
+
+```{r read-idf, eval = FALSE}
+# load package
+library(eplusr)
+
+# use example model and weather file
+path_model <- file.path(eplus_config(9.1)$dir, "ExampleFiles/RefBldgMediumOfficeNew2004_Chicago.idf")
+path_weather <- file.path(eplus_config(9.1)$dir, "WeatherData/USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw")
+
+# read model
+idf <- read_idf(path_model)
+
+idf$Output_Variable
+```
+
+## Data interface
+
+```{r}
+# run simulation
+job <- model$run(path_epw)
+
+# get metadata of all reported variable
+str(job$report_data_dict())
+
+# get the transformer input electric power at 11 a.m for the first day of
+# RunPeriod named `SUMMERDAY`, tag this simulation as case `example`, and
+# return all possible output columns.
+power <- job$report_data("transformer 1", "transformer input electric power", case = "example",
+  all = TRUE, simulation_days = 1, environment_name = "summerday", hour = 11, minute = 0)
+
+# get all report variable with Celsius degree unit
+str(job$report_data(job$report_data_dict()[units == "C"]))
+```
+
+## Parametric simulation of various infiltration rate on energy consumption
+
+```{r}
+# create a ParametricJob object
+param <- param_job(path_idf, path_epw)
+
+# create a measure for modifying infiltration rate
+set_infil_rate <- function (idf, infil_rate) {
+  # validate input value
+  # this is optional, as validations will be made when setting values
+  stopifnot(is.numeric(infil_rate), infil_rate >= 0)
+  if (!idf$is_valid_class("ZoneInfiltration:DesignFlowRate"))
+    stop("Input model does not have any object in class `ZoneInfiltration:DesignFlowRate`")
+  # get all object IDS
+  ids <- idf$object_id("ZoneInfiltration:DesignFlowRate", simplify = TRUE)
+  # make a list of new values to set
+  new_val <- list(design_flow_rate_calculation_method = "AirChanges/Hour", air_changes_per_hour = infil_rate)
+  # create proper format for all objects in that class
+  val <- rep(list(new_val), length(ids))
+  names(val) <- paste0("..", ids)
+  idf$set(val)
+  idf
+}
+
+# create parametric models
+param$apply_measure(set_infil_rate, seq(0, 4, by = 1), .names = NULL)
+
+# run in parallel and collect results
+param$run(wait = TRUE)
+
+# see the variations of total energy
+tab <- param$tabular_data(
+    table_name = "Site and Source Energy",
+    column_name = "Total Energy",
+    row_name = "Total Site Energy"
+)
+total_eng <- tab[, list(case, `Total Energy (GJ)` = as.numeric(value))]
+```
+
+## Multi-optimization using Genetic Algorithm
+
+```{r}
+# specify file paths
+path_db_win <- here::here("win.idf")
+path_db_wall <- here::here("wall.idf")
+
+# create a GA optimization job
+ga <- GAOptimJob$new(path_idf, NULL)
+
+# create a function to modify external walls and windows
+use_tech <- function (idf, extwall_index = 1L, win_name = "ori") {
+    # use ext wall
+    if (extwall_index == 0) return(idf)
+
+    const <- read_idf(path_db_wall)$Construction[[sprintf("concrete wall %i", extwall_index)]]
+    if (is.null(const)) stop("Invalid wall index")
+
+    dt <- data.table::rbindlist(c(list(const$to_table()), lapply(const$ref_to_object(), function (x) x$to_table())))
+    idf$load(dt)
+
+    id_extwall <- idf$to_table(class = "BuildingSurface:Detailed", wide = TRUE)[
+        `Outside Boundary Condition` == "Outdoors" & `Surface Type` == "Wall", id]
+
+    idf$set(.(id_extwall) := list(`Construction Name` = const$name()))
+
+    # use window
+    if (name == "ori") return(idf)
+
+    win <- read_idf(path_db_win)$Construction[[win_name]]
+    dt <- data.table::rbindlist(c(list(win$to_table()), lapply(win$ref_to_object(), function (x) x$to_table())))
+    if (is.null(win)) stop("Invalid window name")
+
+    idf$load(dt)
+    idf$set("FenestrationSurface:Detailed" := list(`Construction Name` = name))
+
+    idf
+}
+
+# specify how to modify the model
+ga$apply_measure(
+    measure = use_tech,
+    extwall_index = integer_space(0:7),
+    win_name = choice_space(c(
+        "ori",
+        "single clear glazing",
+        "double clear 16",
+        "double clear 25",
+        "double lowe 16",
+        "double lowe 25",
+        "double lowe 25 both coated",
+        "triple glazing system",
+        "quadruple glazing system"
+    ))
+)
+
+# define a function to coil desing cooling load
+cal_coilloads <- function (idf) {
+    job <- idf$last_job()
+    stopifnot(!is.null(job))
+
+    job$read_table("ComponentSizes")[comp_type == "Coil:Cooling:Water" & description == "Design Size Design Coil Load", sum(value)]
+}
+
+# specify the objective function
+ga$objective(cal_coilloads, .dir = "min")
+
+# specify the selector
+ga$selector(survival = ecr::selGreedy)
+
+# specify the maximum generation
+ga$terminator(max_gen = 20L)
+
+# run optimization
+ga$run(mu = 10, dir = here::here("results"))
+
+# read optimization results
+read.csv(here::here("Results-2020-05-15.csv"))
+```
+
+## Model calibration using Bayesian theory
+
+The `BayesCalibJob` class in the epluspar package implements Bayesian
+calibration algorithms proposed by @Chong2017. The basic workflows of
+conducting a Bayesian calibration using epluspar package are:
+
+1. Set input and output variables using `$input()` and `$output()`
+   respectively.
+1. Add parameters to calibrate using `$param()` or `$apply_measure()`.
+1. Check parameter sampled values and generated parametric models using
+   `$samples()` and `$models()` respectively.
+1. Run EnergyPlus simulations in parallel using `$eplus_run()`.
+1. Gather simulated data of input and output parameters using `$data_sim()`.
+1. Specify field measured data of input and output parameters using
+   `$data_field()`.
+1.  Specify field measured data of input and output parameters using `$data_field()`.
+1. Specify input data for Stan for Bayesian calibration using `$data_bc()`.
+1. Run Bayesian calibration and get predictions via Stan using `$stan_run()`.
+
+Listing \@ref(code:bc)
+
+```{r bc, code.cap = "Code for Bayesian calibration"}
+# create a `BayesCalibJob` object:
+bc <- bayes_job(path_idf, path_epw)
+
+# setting Input and Output Variables
+bc$input("CoolSys1 Chiller 1", paste("chiller evaporator", c("inlet temperature", "outlet temperature", "mass flow rate")), "hourly")
+bc$output("CoolSys1 Chiller 1", "chiller electric power", "hourly")
+
+# add Parameters to calibrate
+bc$param(
+    `CoolSys1 Chiller 1` = list(reference_cop = c(4, 6), reference_capacity = c(2.5e6, 3.0e6)),
+    .names = c("cop1", "cap1"), .num_sim = 5
+)
+
+# get sample values and parametric models
+bc$samples()
+
+# run simulations and gather data
+bc$eplus_run(dir = tempdir(), run_period = list("example", 7, 1, 7, 3), echo = false)
+bc$data_sim("6 hour")
+
+# specify measured data
+# NOTE: for demonstration, we use the seed model to generate fake measured output data.
+seed <- bc$seed()$clone()
+seed$RunPeriod <- NULL
+seed$add(RunPeriod = list("test", 7, 1, 7, 3))
+seed$SimulationControl$set(
+    `Run Simulation for Sizing Periods` = "No",
+    `Run Simulation for Weather File Run Periods` = "Yes"
+)
+seed$save(tempfile(fileext = ".idf"))
+job <- seed$run(bc$weather(), echo = FALSE)
+fan_power <- epluspar:::report_dt_aggregate(job$report_data(name = bc$output()$variable_name, all = TRUE), "6 hour")
+fan_power <- eplusr:::report_dt_to_wide(fan_power)
+fan_power <- fan_power[, -"Date/Time"][
+    , lapply(.SD, function (x) x + rnorm(length(x), sd = 0.05 * sd(x)))][
+    , lapply(.SD, function (x) {x[x < 0] <- 0; x})
+]
+
+# set field data
+bc$data_field(fan_power)
+
+# specify input data for stan
+str(bc$data_bc())
+
+# run Bayesian calibration using Stan
+res <- bc$stan_run(iter = 300, chains = 3)
+
+# check calibrated results
+rstan::stan_trace(res$fit)
+rstan::stan_hist(res$fit)
+
+# check predicted values
+str(res$y_pred)
+```
 
 # Conclusion
 
-A new, comprehensive GUI for EnergyPlus is being
-developed. User requirements were defined through a
-series of workshops for practitioners. The GUI includes
-a ‘drag and drop’ component-level schematic editor for
-HVAC systems. Building envelope geometry can be
-imported from CAD / BIM tools using IFC’s or gbXML
-or can be generated by the GUI. Partial models from any
-of these sources can be merged into a composite model.
-A rule-based data validation framework has been
-included to support checking of the model for
-compliance with the modeling rules for EnergyPlus. A
-comprehensive set of templates and libraries is being
-developed, as well as an interactive output reporting
-framework. The GUI will include a comprehensive set
-of well-documented API’s to facilitate development of
-third party contributions [@See2011].
+Building energy simulation (BES) has been widely adopted for investigation of
+environmental and energy performance for different design and retrofit
+alternatives. The absence of seamless integration of BES and data-centric
+analysis raises problems in both the productivity and also the credibility of
+BES study. This paper proposed a novel holistic framework called 'eplusr' to
+bridge the gap between the building energy simulation and data science domains.
 
-The support framework for the GUI will address these
-three key issues through development in the following
-areas [@See2011]:
+Eplusr differs from existing frameworks by its data-centric design philosophy.
+It provides a Tidy data format for BES that matches the semantics of the
+simulation results. The result extraction interface provides the possibilities
+to query any of the mentioned information which makes it easy and quite
+straightforward to get simulation results of any specified time, units and
+variables in a consistent manner. The Tidy-formatted results can be easily fed
+to various data-centric analytics using existing tools in R.
 
-* Awareness and promotion - material needed to support the launch of the GUI to bring it to the attention of the different stakeholder groups
-* Documentation  detailed descriptions of the capabilities of the GUI
-* Technical support for GUI users when questions and/or challenges arise
-* Code maintenance
+This framework provides a prototype class to perform parametric simulations. It takes full
+advantages of eplusr model editing API and Tidy data extraction functionalities.
+It is capable of defining various analyses using
+any algorithms available in R. The flexibility and extensibility of the
+parametric simulation prototype in this framework is demonstrated by its easy
+adoption to perform multi-objective optimization and Bayesian calibration.
 
-How to conclude:
-
-> This study summarise the importance and justication for the integration of BIM and sustainable data pertinent to construction projects aiming at green certification, and presents an IFC-based integration solution. The changing approach to the design, construction and maintenance of buildings in the construction industry necessitates an integrated collaboration and BIM for sustainable projects.
-
-eplusr simplifies the modelling and analysis process
-
-> Integrated design process with sustainable properties simplifies the certification process in terms of time and cost due to early stage interactions and improved outputs.
-
-How to describe the benefits
-
-> The successful integration of IFC and Modelica-based BEM requires a reliable and secure data exchange between BIM and BEM tools by using guidelines and software certification based on specific MVDs.
-
-> An advantage of using an intermediate data model is the possibility to insert information at this stage that might not be available within IFC. A direct mapping, on the other hand, imposes that IFC incorporates all BEM-related information (geometry, system, and control) before- hand. The latter approach enables a direct and automated IFC to Modelica translation but requires a more stringent BIM modeling process and a formal data exchange.
-
-> The research presented in the current publication investigates the direct translation of BIM to BEM and proposes an improved workflow that can perform a direct mapping of geometry, system and control representations contained in an IFC4 file to a Modelica-based BEM model. The flexibility of Modelica facilitates the extension of the workflow to different building life cycle stages with different requirements for model complexity. This work emphasizes the advantages and describes remaining bottlenecks of such a workflow.
-
-Parametric analysis using EnergyPlus has been a powerful approach to enable
-investigation of environmental and energy performance for different design and
-retrofit design alternatives. However, the absence of streamlined workflow
-integrating model editing, simulation and output extracting raises problems in
-the productivity of parametric analysis. This paper presents a newly developed
-framework for conducting parametric analysis using EnergyPlus via the
-programming language R package called "eplusr". The proposed framework, with a
-data-centric design philosophy, focuses on not only EnergyPlus model editing
-but also parametric simulation output data extraction and analysis. It provides
-rich-featured interfaces to query and modify models programmatically and a
-simple yet flexible and extensible prototype of conducting parametric
-simulations and collecting all results in one go. The paper discusses the
-philosophy behind the framework, its architecture and core capabilities, and
-uses simple tasks to demonstrate the streamlined workflow of conducting
-parametric analysis in R.
-
+The need for reproducibility in BEM is growing significantly together with the
+ongoing trend of the increasing complexity of BEM project. The eplusr Docker image
+provides a possible solution for this by providing a portable and reusable BES
+computation environment containing EnergyPlus, eplusr R package, together with
+all necessary packages for data-driven analytics and literate programming
+environment.
 
 # Acknowledgements
 
 The authors thank the support from the SinBerBEST program.
 
-# Integration vs Interoperability
-
-Integration refers to connecting applications so that data from one system can be accessed by the other one. But integration involves a third party in software terms, middleware that translates the data and makes it "work" for the receiving system. It's not a direct path for information to get from point A to point B in this scenario.
-
-Interoperability is real-time data exchange between systems without middleware. When systems are interoperable, they have the ability to not only share information, but to interpret incoming data and present it as it was received, preserving its original context.
-
 # References {#references .unnumbered}
-
-# (APPENDIX) Appendix {-} 
-
-# Code for parametric simulation
-
-# Code for Bayesian calibration
-
-# Appendix~C. Code for multiple objective optimization

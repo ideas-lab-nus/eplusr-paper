@@ -1,0 +1,12 @@
+Name,Type of interface,Free,Platform,Interfacing language,Open source,Data exploration,Optimization support,Calibration support,Structure output,Note
+OpenStudio PAT,GUI,Yes,Windows & macOS & Linux,C++ & Ruby,Yes,?,Yes,No,No,
+DesignBuilder,GUI,No* (30-day free),Windows,C#,No,,Yes,No,No,Only max to 2 variables are allowed
+Simergy,GUI,Yes* (Simergy Standard),Windows,?,No,,Yes,No,No,
+Ladybug & Honeybee,GUI,Yes*,Windows,Python,Yes,,Yes,No,No,
+jEplus,GUI,Yes*,Windows & macOS & Linux,Java,Yes,,Yes,No,No,
+Modelkit,GUI,Yes,Windows,Ruby,No,,No,No,No,
+MLE+,GUI,Yes,Windows,Matlab,Yes,,No,No,No,
+EpXL,GUI,Yes,Windows,VB,Yes,,Yes,No,No,
+GenOpt,GUI,Yes,Windows & macOS & Linux,Java,Yes,,Yes,No,No,Mainly for optimization
+ExCalibBEM,GUI,Yes,Windows,VB,No,,No,No,No,Based on GenOpt
+eppy,TUI,Yes,Windows & macOS & Linux,Python,Yes,,No,No,No,
