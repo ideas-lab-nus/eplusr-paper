@@ -528,7 +528,7 @@ the `ParametricJob` class. The main differences lie in applying specific
 statistical methods for sampling parameter values when calling
 `ParametricJob$apply_measure()`.
 
-## Reproducible building energy performance simulation environment
+## Reproducible building energy performance simulation environment \note[HJ]{Further clarification needed}
 
 The goal of reproducible research is to tie specific instructions to data
 analysis and experimental data so that scholarship can be recreated, better
