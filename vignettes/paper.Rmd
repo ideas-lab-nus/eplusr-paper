@@ -488,7 +488,7 @@ analysis, optimizations, and model calibration. The overall process of the
 framework is shown in Fig. \@ref(fig:parametric) and can be summarized as
 follows:
 
-```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "60%"}
+```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "70%", fig.pos = "H"}
 knitr::include_graphics(here("figures/parametric.png"))
 ```
 
