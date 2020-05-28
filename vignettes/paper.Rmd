@@ -248,7 +248,7 @@ into one single platform.
 steps is hard to setup
 
 BES often involves the use of multiple applications, software and platforms.
-The indispensable step of all To perform crucial scientific processes such as
+To perform crucial scientific processes such as
 replicating the results, extending the approach or testing the conclusions in
 other contexts, the indispensable step is to install the software used by the
 original researchers, which sometimes can become immensely time-consuming if
@@ -271,7 +271,7 @@ philosophy. The main goals of this framework is to:
 1. provide better and more seamless integration between BES and data-driven
    analytics tools. A unified data interface is developed which makes sure all
    simulation data are always stored in a consistent form that matches the
-   semantics of the simulation results that can be easily fed to various data
+   semantics of the simulation results and thus can be easily fed to various data
    mining and machine learning algorithms using existing tools in R.
 2. provide a rich-featured library that contains a set of abstractions to help
    modify EnergyPlus simulation inputs in a programmatic way and provides a
@@ -287,9 +287,9 @@ philosophy. The main goals of this framework is to:
 Fig. \@ref(fig:architecture) shows an overview of the eplusr framework. Eplusr contains 2 main parts:
 
 1. An R package called eplusr which integrates whole building simulation
-   software EnergyPlus and the data-driven analytics environment powered by R
-   programming language.
-2. An computation environment powered by Docker that contains all necessary
+   software EnergyPlus and the data-driven analytics environment powered by the
+   R programming language.
+2. A computation environment powered by Docker that contains all necessary
    tools to facilitate reproducible BES.
 
 ```{r architecture, echo = FALSE, eval = TRUE, fig.cap = "Eplusr framework architecture", out.width = "40%"}
@@ -300,7 +300,7 @@ knitr::include_graphics(here("figures/overview.png"))
 
 The eplsur R package is the core component of the framework which provides a
 programmatic interface of modifying EnergyPlus models, data interface to
-extract simulation results. The package consist of 5 modules:
+extract simulation results. The R package consist of 5 modules:
 
 1. I/O Processing & Parser
 2. Model API (Application Program Interface)
@@ -322,7 +322,7 @@ and data verification of all IDFs of that version. This makes eplusr be able to
 handle various versions of IDF files at the same time easily.
 
 Under the hook, eplusr uses a SQL-like structure to store both IDF and IDD data
-in various tables. As shown in Fig. \@ref(fig:data-structure). Data of an IDF
+in various tables, as shown in Fig. \@ref(fig:data-structure). Data of an IDF
 is stored in three tables, i.e. object, value, and reference while data of an
 IDD is stored in four tables, i.e. group, class, field and reference. With this
 data structure, to modify an EnergyPlus model in eplusr is equal to change the
@@ -502,18 +502,13 @@ knitr::include_graphics(here("figures/parametric.png"))
    inspired by "measures" in OpenStudio [@Guglielmetti2011]. Basically, a
    measure is a function that takes an `Idf` object and any other arguments as
    input, and returns a modified `Idf` object as output. This approach makes it
-   easy for users to access to all the model-editing API (Application
-   Programming Interface) that eplusr provides. Listing 7 shows a simple
-   measure example that modifies air change rate (ACH) of infiltration objects
-   for all zones.
+   easy for users to access to all the model-editing API that eplusr provides.
 
 3. Create parametric models. The method `ParametricJob$apply_measure()` allows
    to apply a measure with specified parameter values to an `Idf` and create
    parametric models for later simulations. How the parameter values will be
    generated is all left to the users, which makes it possible to leverage all
-   the statistical methods and libraries that R provides. In Listing 8, we
-   create 30 parametric models with ACH changing from 0.1 to 3.0 with a 0.1
-   step.
+   the statistical methods and libraries that R provides.
 
 4. Run simulations and collect results. Calling `ParametricJob$run()` method
    will run all parametric simulations in parallel and put each simulation
@@ -523,8 +518,7 @@ knitr::include_graphics(here("figures/parametric.png"))
    `ParametricJob$tabular_data()`, and `ParametricJob$read_table()`. As
    described above, the tables returned will always be presented in a
    tidy-format, which makes it easy to apply any further analyses in the R
-   ecosystem. In Listing 8, we collect the annual total site energy of all
-   simulations.
+   ecosystem.
 
 One good example of extending the parametric framework in eplusr is the
 epluspar [@Jia2020a] R package, which provides new classes for conducting
@@ -556,11 +550,11 @@ The Rocker Project was launched in 2014 as a collaboration to provide
 high-quality Docker images containing the R environment, and has seen both
 considerable uptake in the R community and substantial development and
 evolution [@Boettiger2017]. The eplusr-Docker image [@Jia2020d] is built upon
-the `rocker/verse` image. It contains an portable and reusable BES computation
+the `rocker/verse` image. It contains a portable and reusable BES computation
 environment powered by the RStudio server R programming environment,
 EnergyPlus, eplusr package, together with all necessary packages for R-based
-data-driven analytics powered by tidyverse package and literate programming
-environment powered by RMarkdown and related packages.
+data-driven analytics using the tidyverse package and literate programming
+environment using RMarkdown format and related packages.
 
 A successful reproducible project consists of two major components [@Peng2015]:
 
