@@ -80,7 +80,14 @@ knitr::knit_hooks$set(chunk = function (x, options) {
     if (!options$echo) return(x)
     if (!is.null(options$fig.cap)) return(x)
     # use chunk label as cross-ref label
-    x <- paste0(x, "\n\\captionof{code}{", options$code.cap, "\\label{code:", options$label, "}}")
+    x <- paste0(
+        # use Pandoc raw-attribute to preserve raw LaTeX content
+        # https://pandoc.org/MANUAL.html#extension-raw_attribute
+        "`\\begin{Shaded}`{=latex}\n",
+        x, "\n",
+        "\\captionof{code}{", options$code.cap, "\\label{code:", options$label, "}}\n",
+        "`\\end{Shaded}`{=latex}\n"
+    )
     x
 })
 ```
@@ -358,8 +365,7 @@ provided by `Idf$set()` method. `model` here is an `Idf` object. In Line 2, the
 total efficiency of a `Fan:VariableVolume` object named `Supply Fan 1` will be
 changed to 0.9; In line 4-5, the roughness and thickness of two materials named
 `Metal Decking` and `Metal Roofing` will be changed; While in line 7, the
-lighting power density of all lights will be changed to 7.0
-$\mathrm{W}/\mathrm{m}^2$.
+lighting power density of all lights will be changed to 7.0 $\mathrm{W}/\mathrm{m}^2$.
 
 Besides of `Idf$set()`, `Idf$update()` method provides an interface that can
 achieve the same results but with a `data.frame` input. `data.frame` is an R
