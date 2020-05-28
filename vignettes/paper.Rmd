@@ -338,12 +338,10 @@ knitr::include_graphics(here("figures/data_structure.png"))
 For most of the time, users do not need to directly interact with `Idd` and
 `IddObject` objects, but instead simply using `Idf` and `IdfObject` objects to
 modify an IDF file, which provides flexible yet powerful model modification APIs.
-
-In eplusr, the  uses `Idf` class to present a whole IDF file and `IdfObject` class to
-present a single object in IDF. Both `Idf` and `IdfObject` classes contain
-around thirty member functions for low-level programmatic access to and
-modification of the IDF data. Every modification on the IDF data will be
-verified to make sure the result complies with underlying IDD.
+Both `Idf` and `IdfObject` classes contain around thirty member functions for
+low-level programmatic access to and modification of the IDF data. Every
+modification on the IDF data will be verified to make sure the result complies
+with underlying IDD.
 
 `Idf` class provides rich-featured interfaces to modify models via various
 scope, including scope of a single object, scope of grouped objects level, and
@@ -485,11 +483,12 @@ eplusr provides a class `ParametricJob` to do parametric simulations. It is
 simple to use but is also quite flexible and extensible. It takes full
 advantages of eplusr model editing and result collecting functionalities.
 Thus, the `ParametricJob` class is capable of defining various analyses using
-any algorithms available in R, including sensitivity analysis, optimizations,
-and model calibration. The overall process of the framework is shown in Fig.
-\@ref(fig:parametric) and can be summarized as follows:
+any algorithms available in R, including but not limited to sensitivity
+analysis, optimizations, and model calibration. The overall process of the
+framework is shown in Fig. \@ref(fig:parametric) and can be summarized as
+follows:
 
-```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "70%"}
+```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "60%"}
 knitr::include_graphics(here("figures/parametric.png"))
 ```
 
@@ -533,8 +532,9 @@ statistical methods for sampling parameter values when calling
 
 The goal of reproducible research is to tie specific instructions to data
 analysis and experimental data so that scholarship can be recreated, better
-understood and verified. With the increase in computational tools comes the
-advantage of reproducibility at an extent not previously possible. 
+understood and verified [@Blischak2020]. With the increase in computational
+tools comes the advantage of reproducibility at an extent not previously
+possible.
 
 Recently, Docker has risen to prominence for "containerisation", the method of taking
 software artefacts and building them in such a way that use becomes
@@ -559,16 +559,17 @@ environment using RMarkdown format and related packages.
 A successful reproducible project consists of two major components [@Peng2015]:
 
 * the raw data from the experiment are available
-* and that the statistical code and documentation to reproduce that analysis are also available
+* and that the statistical code and documentation to reproduce that analysis
+  are also available
 
 In a time where BES and decision-makings based on BES are growing in
 complexity, the need for reproducibility is growing significantly. From a BES
 perspective, the raw data would be the raw building energy models or raw data
-to build the models are available. 
+to build the models are available.
 
 Recently, there have been significant efforts to develop software
 infrastructure to reproducibly perform and communicate data analyses, including
-RMarkdown [@Xie2015], Jupyter notebook [@Kluyver2016], just to name a few.
+RMarkdown [@Grolemund2018], Jupyter notebook [@Kluyver2016], just to name a few.
 
 The RMarkdown format has been a
 widely adopted authoring framework for data science. It can be used to both
@@ -589,12 +590,12 @@ tidying, manipulation, visualisation, and programming [@Wickham2019a].
 
 ### RMarkdown for literate programming
 
-The R package knitr is a general-purpose literate programming engine, with
-lightweight API's designed to give users full control of the output without
-heavy coding work. Together with rmarkdown package and tinytex package, knitr
-is able to compile RMarkdown documents to PDF, and also ensures a LaTeX
-document is compiled for the correct number of times to resolve all
-cross-references.
+The R package knitr [@Xie2015] is a general-purpose literate programming
+engine, with lightweight API's designed to give users full control of the
+output without heavy coding work. Together with rmarkdown [@Allaire2020]
+package and tinytex [@Xie2019] package, knitr is able to compile RMarkdown
+documents to PDF, and also ensures a LaTeX document is compiled for the correct
+number of times to resolve all cross-references.
 
 # Examples and applications
 
