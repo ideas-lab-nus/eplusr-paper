@@ -1,15 +1,22 @@
-% no background color for listings
-\usepackage{color}
-\definecolor{shadecolor}{rgb}{1,1,1}
-
 \usepackage{tabu}
+
+% cross-reference code chunks
+% Reference: https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
 \usepackage{floatrow}
+\usepackage{caption}
 
 \floatsetup[table]{capposition=top}
 
-\DeclareNewFloatType{chunk}{placement=H, fileext=chk, name=}
-\captionsetup[chunk]{options=chunk}
-\renewcommand{\thechunk}{Listing~\arabic{chunk}}
-\makeatletter
-\@addtoreset{chunk}{section}
-\makeatother
+% add caption for codes
+\DeclareNewFloatType{code}{placement=H, fileext=code, name=Listing}
+\captionsetup[code]{aboveskip=0pt, belowskip=15pt}
+
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{%
+    commandchars=\\\{\},
+    fontsize=\small,
+    numbers=left,
+    numbersep=5pt,
+    frame=single
+}
+
+\renewenvironment{Shaded}{}{}

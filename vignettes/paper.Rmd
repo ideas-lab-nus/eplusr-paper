@@ -77,16 +77,12 @@ Chunk <- knitr::knit_hooks$get("chunk")
 knitr::knit_hooks$set(chunk = function (x, options) {
     x <- Chunk(x, options)
     if (is.null(options$label)) return(x)
-    if (!options$include || !options$echo) return(x)
+    if (!options$echo) return(x)
+    if (!is.null(options$fig.cap)) return(x)
     # use chunk label as cross-ref label
-    x <- paste0("\\label{", options$label, "}", x)
-
-    if (!is.null(options$codecap)) paste0("\\captionof{chunk}{", options$code.cap, "}", x)
+    x <- paste0(x, "\n\\captionof{code}{", options$code.cap, "\\label{code:", options$label, "}}")
     x
 })
-
-# copy large office reference building model
-file.copy(file.path(eplus_config(9.2)$dir, "ExampleFiles/RefBldgLargeOfficeNew2004_Chicago.idf"), here("Vignettes"))
 ```
 
 # Highlights (Each <= 85 characters with spaces included) {.unnumbered}
