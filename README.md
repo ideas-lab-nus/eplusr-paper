@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# eplusr + epluspar
+# eplusr framework
 
 <!-- badges: start -->
 
@@ -11,24 +11,34 @@ status](https://github.com/ideas-lab-nus/epluspar-paper/workflows/build-paper/ba
 
 This repository contains the data and code for our paper:
 
-> Authors, (YYYY). *An R-based framework for conducting parametric
-> analysis on building energy models*. Name of journal/book
-> <https://doi.org/xxx/xxx>
+> Hongyuan Jia and Adrian Chong, (2020). *A framework for integrating
+> building energy simulation and data-driven analytics*. Energy and
+> Buildings <https://doi.org/xxx/xxx>
 
 Our pre-print is online here:
 
-> Authors, (YYYY). *An R-based framework for conducting parametric
-> analysis on building energy models*. Name of journal/book, Accessed 06
-> Feb 2020. Online at <https://doi.org/xxx/xxx>
+> Hongyuan Jia and Adrian Chong, (2020). *A framework for integrating
+> building energy simulation and data-driven analytics*. Energy and
+> Buildings, Accessed 29 May 2020. Online at <https://doi.org/xxx/xxx>
 
 ### How to cite
 
 Please cite this compendium as:
 
-> Authors, (2020). *Compendium of R code and data for `r Title`*.
-> Accessed 06 Feb 2020. Online at <https://doi.org/xxx/xxx>
+> Hongyuan Jia and Adrian Chong, (2020). *Compendium of R code and data
+> for A framework for integrating building energy simulation and
+> data-driven analytics*. Accessed 29 May 2020. Online at
+> <https://doi.org/xxx/xxx>
 
 ### How to download or install
+
+**(a) Option 1: Download the compiled draft PDF**
+
+The latest compiled draft PDF can be downloaded from the `Artifacts`.
+
+<img src="/mnt/c/Users/hongy/Dropbox/github_repo/epluspar-paper/figures/artifact.png" width="412" />
+
+**(b) Option 2: Download the compendium and compile the PDF**
 
 You can download the compendium as a zip from from this URL:
 <https://github.com/ideas-lab-nus/epluspar-paper/archive/master.zip>
@@ -39,6 +49,12 @@ GitHub with:
 ``` r
 # install.packages("remotes")
 remotes::install_github("ideas-lab-nus/epluspar-paper")
+```
+
+The PDF can be compiled via:
+
+``` r
+rmarkdown::render('vignettes/paper.Rmd')
 ```
 
 ### Licenses

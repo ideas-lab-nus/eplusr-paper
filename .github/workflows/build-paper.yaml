@@ -60,8 +60,8 @@ jobs:
         run: Rscript -e "rmarkdown::render('vignettes/paper.Rmd', output_dir = here::here('paper'))"
 
       - name: Upload
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
-          name: epluspar-paper
-          path: paper
+          name: eplusr-paper
+          path: vignettes/paper.pdf
         if: success()

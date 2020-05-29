@@ -12,10 +12,12 @@ knitr::opts_chunk$set(
 )
 
 # Please put your title here to include it in the file below.
-Title <- "An R-based framework for conducting parametric analysis on building energy models"
+Title <- "A framework for integrating building energy simulation and data-driven analytics"
+Author <- "Hongyuan Jia and Adrian Chong"
+Journal <- "Energy and Buildings"
 ```
 
-# eplusr + epluspar
+# eplusr framework
 
 <!-- badges: start -->
 [![R build status](https://github.com/ideas-lab-nus/epluspar-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/epluspar-paper/actions)
@@ -23,22 +25,31 @@ Title <- "An R-based framework for conducting parametric analysis on building en
 
 This repository contains the data and code for our paper:
 
-> Authors, (YYYY). _`r Title`_. Name of journal/book <https://doi.org/xxx/xxx>
+> `r Author`, (2020). _`r Title`_. `r Journal` <https://doi.org/xxx/xxx>
 
 Our pre-print is online here:
 
-> Authors, (YYYY). _`r Title`_. Name of journal/book, Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
+> `r Author`, (2020). _`r Title`_. `r Journal`, Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
 
 
 ### How to cite
 
 Please cite this compendium as:
 
-> Authors, (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r
-> Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at
-> <https://doi.org/xxx/xxx>
+> `r Author`, (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
 
 ### How to download or install
+
+**(a) Option 1: Download the compiled draft PDF**
+
+The latest compiled draft PDF can be downloaded from the `Artifacts`.
+
+```{r, echo = FALSE}
+knitr::include_graphics(here::here("figures/artifact.png"))
+```
+
+
+**(b) Option 2: Download the compendium and compile the PDF**
 
 You can download the compendium as a zip from from this URL:
 <https://github.com/ideas-lab-nus/epluspar-paper/archive/master.zip>
@@ -49,6 +60,12 @@ Or you can install this compendium as an R package, epluspar-paper, from GitHub 
 ```{r gh-installation, eval = FALSE}
 # install.packages("remotes")
 remotes::install_github("ideas-lab-nus/epluspar-paper")
+```
+
+The PDF can be compiled via:
+
+```{r, eval = FALSE}
+rmarkdown::render('vignettes/paper.Rmd')
 ```
 
 ### Licenses
