@@ -44,7 +44,7 @@ Please cite this compendium as:
 
 The latest compiled draft PDF can be downloaded from the `Artifacts`.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, out.width = "30%"}
 knitr::include_graphics("figures/artifact.png")
 ```
 

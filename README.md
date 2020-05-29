@@ -36,7 +36,7 @@ Please cite this compendium as:
 
 The latest compiled draft PDF can be downloaded from the `Artifacts`.
 
-<img src="figures/artifact.png" width="412" />
+<img src="figures/artifact.png" width="30%" />
 
 **(b) Option 2: Download the compendium and compile the PDF**
 
