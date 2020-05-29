@@ -45,9 +45,8 @@ Please cite this compendium as:
 The latest compiled draft PDF can be downloaded from the `Artifacts`.
 
 ```{r, echo = FALSE}
-knitr::include_graphics(here::here("figures/artifact.png"))
+knitr::include_graphics("figures/artifact.png")
 ```
-
 
 **(b) Option 2: Download the compendium and compile the PDF**
 
