@@ -64,4 +64,4 @@ jobs:
         with:
           name: eplusr-paper
           path: vignettes/paper.pdf
-        if: success()
+        if: success() && "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
