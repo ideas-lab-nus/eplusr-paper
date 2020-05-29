@@ -1,4 +1,4 @@
-Package: epluspar.paper
+Package: eplusr.paper
 Title: An R-based framework for conducting parametric analysis on building energy models
 Version: 0.0.0.9000
 Authors@R: c(
@@ -19,8 +19,8 @@ License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/ideas-lab-nus/epluspar-paper
-BugReports: https://github.com/ideas-lab-nus/epluspar-paper/issues
+URL: https://github.com/ideas-lab-nus/eplusr-paper
+BugReports: https://github.com/ideas-lab-nus/eplusr-paper/issues
 Imports:
     bookdown,
     eplusr,

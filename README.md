@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/ideas-lab-nus/epluspar-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/epluspar-paper/actions)
+status](https://github.com/ideas-lab-nus/eplusr-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/eplusr-paper/actions)
 <!-- badges: end -->
 
 This repository contains the data and code for our paper:
@@ -41,14 +41,14 @@ The latest compiled draft PDF can be downloaded from the `Artifacts`.
 **(b) Option 2: Download the compendium and compile the PDF**
 
 You can download the compendium as a zip from from this URL:
-<https://github.com/ideas-lab-nus/epluspar-paper/archive/master.zip>
+<https://github.com/ideas-lab-nus/eplusr-paper/archive/master.zip>
 
-Or you can install this compendium as an R package, epluspar-paper, from
+Or you can install this compendium as an R package, eplusr-paper, from
 GitHub with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("ideas-lab-nus/epluspar-paper")
+remotes::install_github("ideas-lab-nus/eplusr-paper")
 ```
 
 The PDF can be compiled via:
