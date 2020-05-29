@@ -10,6 +10,7 @@ name: epluspar-paper
 
 jobs:
   build-paper:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
     runs-on: ubuntu-latest
     container: hongyuanjia/eplusr:9.1.0-verse
 
@@ -64,4 +65,4 @@ jobs:
         with:
           name: eplusr-paper
           path: vignettes/paper.pdf
-        if: success() && ! contains(toJSON(github.event.commits.*.message), '[skip-ci]')
+        if: success()
