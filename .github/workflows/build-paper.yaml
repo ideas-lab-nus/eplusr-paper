@@ -6,7 +6,7 @@ on:
     branches:
       - master
 
-name: epluspar-paper
+name: eplusr-paper
 
 jobs:
   build-paper:
