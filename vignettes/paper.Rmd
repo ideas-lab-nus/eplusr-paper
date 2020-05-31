@@ -102,11 +102,12 @@ knitr::knit_hooks$set(chunk = function (x, options) {
 # Introduction
 
 Building energy simulation (BES) is increasingly being used for the analysis and
-prediction of building energy consumption, measurement and verification and the
-evaluation of energy conservation measures (ECMs) [@Chong2017]. It has played a
-growing role in the design and operation of low energy, high-performance
-buildings and development of policies that drive the achievement of reducing
-energy use and greenhouse-gas emissions in the buildings sector [@Hong2018].
+prediction of building energy consumption, measurement and verification,
+life-cycle carbon evaluation and cost analysis of energy conservation measures
+(ECMs) [@Chong2017; @Kneifel2010]. It has played a growing role in the design
+and operation of low energy, high-performance buildings and development of
+policies that drive the achievement of reducing energy use and greenhouse-gas
+emissions in the buildings sector [@Hong2018].
 
 BES offers an alternative approach that encourages customized, integrated design
 solutions and the development of BES tools has been pronounced over the decades
