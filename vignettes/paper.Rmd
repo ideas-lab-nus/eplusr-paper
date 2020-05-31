@@ -1,5 +1,5 @@
 ---
-title: A framework for integrating building energy simulation and data-driven analytics
+title: "eplusr: A framework for integrating building energy simulation and data-driven analytics"
 author:
   - name: Hongyuan Jia
     email: hongyuan.jia@bears-berkeley.sg
