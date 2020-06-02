@@ -127,13 +127,14 @@ on the properties of design options and the simulation of their performance
 [@Purup2020]. Parametric analysis involves tedious file management tasks,
 repeated entry of model parameters, the application of design transformations
 and the execution of large-scale analyses [@Macumber2012], which can be
-time-consuming and error-prone. Simulation task automation has been approved to
+time-consuming and error-prone. Parametric simulation task automation has been approved to
 be an extremely useful way to reduce human intervention and improve the
 efficiency of large parametric analysis. Multiple efforts have been made with
 this regard and there are several existing EnergyPlus-based parametric
-simulation tools developed as shown in Table \@ref(tab:pat-sum). Some tools consist of graphical user interfaces
-(GUIs) built on EnergyPlus while some use general-purpose scripting languages
-with a full complement of programming features and libraries [@Roth2018].
+simulation tools developed, as shown in Table \@ref(tab:pat-sum). Some tools
+consist of graphical user interfaces (GUIs) built on EnergyPlus while some use
+general-purpose scripting languages with a full complement of programming
+features and libraries [@Roth2018].
 
 ```{r pat-sum, eval = TRUE, include = TRUE, echo = FALSE}
 compare <- data.table::fread(here::here("data-raw/compare.csv"))
@@ -147,10 +148,10 @@ for energy modeling and can be used to efficiently create or modify models,
 manage individual or multiple simulations, and visualize results. OpenStudio
 has its own format (`.OSM`) and schema for EnergyPlus model representation
 which will eventually be translated into EnergyPlus models. Parametric Analysis
-Tools (PAT) a GUI application that is part of OpenStudio toolkit. It aims to
+Tools (PAT) is a GUI application that is part of OpenStudio toolkit. It aims to
 enable customizable and shareable parametric descriptions of ECMs
-[@Parker2014]. It leverages OpenStudio Measures which are reusable script
-written in Ruby language to manipulate OpenStudio models can be used to compare
+[@Parker2014]. It leverages OpenStudio Measures which are reusable scripts
+written in Ruby programming language to manipulate OpenStudio models can be used to compare
 manually specified combinations of measures, optimize designs, calibrate models
 and perform parametric sensitivity analysis. Ladybug and Honeybee are plug-ins
 developed for Rhino Grasshopper [@Roudsari2013]. Ladybug is capable to import
@@ -159,14 +160,14 @@ Honeybee can create, run and visualize the OpenStudio and EnergyPlus simulation
 results. Both Ladybug and Honeybee take full advantage of the visual scripting
 interfaces provided by Grasshopper [@Tabadkani2019]. Since the primary input
 files of EnergyPlus are all ASCII text-based, it is possible to update building
-energy models by directly process and manipulate the text files, without taking
+energy models by directly processing and manipulating the text files, without taking
 into account the complex hierarchical structure in the model components. There
 are several applications that take this approach. jEplus [@Yi2020] is a
-software written in Java to perform complex parametric analysis on multiple
+software written in Java programming language to perform complex parametric analysis on multiple
 design parameters. It allows users to describe the parameters and their values
-using customized symbols in a graphical user interface, automatically create
+using customized symbols in a graphical user interface, and automatically create
 parametric models using text-substitution [@Zhang2010a]. Modelkit
-[@BigLadderSoftware2020] is a free and open-source framework for parametric
+[@BigLadderSoftware2020] is another free and open-source framework for parametric
 model using EnergyPlus. Compared to jEplus, it is capable of automating the
 generation and management of EnergyPlus models via its templates and scripting
 tools written in Ruby. MLE+ integrates EnergyPlus and scientific computation
@@ -175,12 +176,19 @@ implement and simulate advanced control algorithms of building systems
 [@Bernal2012; @Zhao2013b]. eppy [@Philip2020] is a library for manipulating
 EnergyPlus models programmatically via python programming language. It parses
 EnergyPlus IDF files into a python object and provides low-level programmatic
-access to EnergyPlus inputs. The tools mentioned above may have overlapping in
-features but they are tailored for different purposes and use cases, with the
-primary focus on ease the time-consuming and error-prone process of creating
-and managing parametric simulations. EpXL [ref] is an EnergyPlus Microsoft
-Excel user-interface that enables import/export of IDF data files, parametric
-analysis and optimization.
+access to EnergyPlus inputs. EpXL [@Schild2020] is an EnergyPlus
+Microsoft Excel user-interface written in Visual Basic for Applications (VBA)
+that enables import/export of IDF data files, parametric analysis and
+optimization. It is capable of displaying a compact tabular overview of input
+data and automatically importing simulation output into Excel, with a link for
+viewing the 3D model. GenOpt is a generic optimization programme that can be
+used with EnergyPlus to minimize an objective function with respect to multiple
+parameters [@Wetter2001]. It generates new input templates files by replacing
+the keywords with corresponding numerical values calculated using a
+mathematical optimization library. The tools mentioned above may have
+overlapping in features but they are tailored for different purposes and use
+cases, with the primary focus on ease the time-consuming and error-prone
+process of creating and managing parametric simulations.
 
 BES, with an iterative nature inside, can produce a large amount of data. A large
 part of the time has to be spent on the collection and processing of BES
