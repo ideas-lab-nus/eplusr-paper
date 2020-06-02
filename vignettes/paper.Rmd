@@ -24,10 +24,10 @@ footnote:
 abstract: |
   Building energy simulation (BES) has been widely adopted for the
   investigation of environmental and energy performance for different design
-  and retrofit alternatives. In BES, data-centric analytics is of commensurate
+  and retrofit alternatives. In BES, data-driven analytics is of commensurate
   importance in order to turn BES results into understanding, insight, and
   knowledge. However, there is no widely adopted solution to provide seamless
-  integration of BES and data-centric analytics. This paper presents a newly
+  integration of BES and data-driven analytics. This paper presents a newly
   developed framework 'eplusr' for conducting parametric analysis using
   EnergyPlus via the R programming language. With a data-centric design
   philosophy, the proposed framework focuses on better and more seamless
