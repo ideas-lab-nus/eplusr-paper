@@ -1,12 +1,9 @@
-Name,Type of interface,Free,Platform,Interfacing language,Open source,Data exploration,Optimization support,Calibration support,Structure output,Note
-OpenStudio PAT,GUI,Yes,Windows & macOS & Linux,C++ & Ruby,Yes,?,Yes,No,No,
-DesignBuilder,GUI,No* (30-day free),Windows,C#,No,,Yes,No,No,Only max to 2 variables are allowed
-Simergy,GUI,Yes* (Simergy Standard),Windows,?,No,,Yes,No,No,
-Ladybug & Honeybee,GUI,Yes*,Windows,Python,Yes,,Yes,No,No,
-jEplus,GUI,Yes*,Windows & macOS & Linux,Java,Yes,,Yes,No,No,
-Modelkit,GUI,Yes,Windows,Ruby,No,,No,No,No,
-MLE+,GUI,Yes,Windows,Matlab,Yes,,No,No,No,
-EpXL,GUI,Yes,Windows,VB,Yes,,Yes,No,No,
-GenOpt,GUI,Yes,Windows & macOS & Linux,Java,Yes,,Yes,No,No,Mainly for optimization
-ExCalibBEM,GUI,Yes,Windows,VB,No,,No,No,No,Based on GenOpt
-eppy,TUI,Yes,Windows & macOS & Linux,Python,Yes,,No,No,No,
+Name,Cross-platform,GUI,Open-source,Semantic API,API language,Optimization support,Calibration support,Data extraction,SQL-based structural output,Post-processing capabilities
+OpenStudio PAT,X,X,X,X,Ruby,X,,X,X,H
+Ladybug & Honeybee,,X,X,X,Python,,,X,,H
+jEplus,X,X,X,,-,X,,X,X,H
+Modelkit,,X,,,Ruby,,,,,L
+MLE+,,X,X,,Matlab,X,,,,L
+EpXL,,X,X,,VBA,X,,X,,H
+GenOpt,X,X,X,,-,X,,,,L
+eppy,X,,X,,Python,,,X,,H
