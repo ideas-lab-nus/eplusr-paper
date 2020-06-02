@@ -58,7 +58,7 @@ jobs:
           path: check
 
       - name: Build paper
-        run: Rscript -e "rmarkdown::render('vignettes/paper.Rmd', output_dir = here::here('paper'))"
+        run: Rscript -e "rmarkdown::render('vignettes/paper.Rmd', output_dir = here::here('vignettes'))"
 
       - name: Upload
         uses: actions/upload-artifact@v2
