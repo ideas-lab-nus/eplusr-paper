@@ -257,40 +257,39 @@ Despite the culture of reluctance and a lack of requirements or incentives to
 publish the code used in generating the results, the reasons why BES is usually
 not easy to reproduce is mainly caused by 2 aspects:
 
-(a) A lack of seamless integration of BES and data-driven analytics workflows
+1. A lack of seamless integration of BES and data-driven analytics workflows.
 
-When conducting BES, most users prefer to use GUI applications which makes it
-intuitive and easy to execute certain particular tasks. However, GUI tools have
-constraints on flexibility as the users have to specify exactly what and how
-features of the design can be manipulated and often are not be able to provide
-a good workflow for repeating that task across a wider range of situations on
-different systems. In this case, manual steps have to be performed using other
-tools, such as a spreadsheet or command-line tools, which introduces
-additional transcription burden and results in a non-reproducible process
-[@Macumber2012]. Sometimes, custom solutions have to be created from scratch to
-automate part portions of the workflows, which may lead to new inefficiencies
-and potential errors.
+   When conducting BES, most users prefer to use GUI applications which makes it
+   intuitive and easy to execute certain particular tasks. However, GUI tools have
+   constraints on flexibility as the users have to specify exactly what and how
+   features of the design can be manipulated and often are not be able to provide
+   a good workflow for repeating that task across a wider range of situations on
+   different systems. In this case, manual steps have to be performed using other
+   tools, such as a spreadsheet or command-line tools, which introduces
+   additional transcription burden and results in a non-reproducible process
+   [@Macumber2012]. Sometimes, custom solutions have to be created from scratch to
+   automate part portions of the workflows, which may lead to new inefficiencies
+   and potential errors.
 
-One of the goals of BES is to turn raw simulation data into understanding,
-insight, and knowledge. BES projects often encompass an iterative workflow of
-raw design data importing and tidying, parametric input file generation and
-modification, simulation result collection, processing and analyses, and
-finally, conclusion visualization. Most of the time, data analytics of BES
-results is of commensurate importance with the model itself. Currently,
-there is no widely adopted solution that is able to integrate all processes
-into one single platform.
+   One of the goals of BES is to turn raw simulation data into understanding,
+   insight, and knowledge. BES projects often encompass an iterative workflow of
+   raw design data importing and tidying, parametric input file generation and
+   modification, simulation result collection, processing and analyses, and
+   finally, conclusion visualization. Most of the time, data analytics of BES
+   results is of commensurate importance with the model itself. Currently,
+   there is no widely adopted solution that is able to integrate all processes
+   into one single platform.
 
-(b) The computational environment of the covering the whole BES
-steps is hard to setup
+2. Hard to setup the computational environment which covers the whole BES toolchain.
 
-BES often involves the use of multiple applications, software and platforms.
-To perform crucial scientific processes such as
-replicating the results, extending the approach or testing the conclusions in
-other contexts, the indispensable step is to install the software used by the
-original researchers, which sometimes can become immensely time-consuming if
-not impossible. It is easy to underestimate the significant barriers raised by
-a lack of familiar, intuitive, and widely adopted tools for addressing the
-challenges of computational reproducibility [@Boettiger2015].
+   BES often involves the use of multiple applications, software and platforms.
+   To perform crucial scientific processes such as
+   replicating the results, extending the approach or testing the conclusions in
+   other contexts, the indispensable step is to install the software used by the
+   original researchers, which sometimes can become immensely time-consuming if
+   not impossible. It is easy to underestimate the significant barriers raised by
+   a lack of familiar, intuitive, and widely adopted tools for addressing the
+   challenges of computational reproducibility [@Boettiger2015].
 
 In summary, multiple efforts have been made to improve the wide adoption of BES
 among researchers, designers and practitioners. However, an overall holistic
