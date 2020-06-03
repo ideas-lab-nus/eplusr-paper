@@ -205,7 +205,7 @@ EnergyPlus models programmatically via python programming language. It parses
 EnergyPlus IDF files into a python object and provides low-level programmatic
 access to EnergyPlus inputs. EpXL [@Schild2020] is an EnergyPlus
 Microsoft Excel user-interface written in Visual Basic for Applications (VBA)
-that enables import/export of IDF data files, parametric analysis and
+that enables import and export of IDF data files, parametric analysis and
 optimization. It is capable of displaying a compact tabular overview of input
 data and automatically importing simulation output into Excel, with a link for
 viewing the 3D model. GenOpt is a generic optimization programme that can be
@@ -295,7 +295,7 @@ not easy to reproduce is mainly caused by 2 aspects:
    there is no widely adopted solution that is able to integrate all processes
    into one single platform.
 
-2. Hard to setup the computational environment which covers the whole BES toolchain.
+2. Hard to setup the computational environment which covers the whole BES and data-driven analytics toolchain.
 
    BES often involves the use of multiple applications, software and platforms.
    To perform crucial scientific processes such as
@@ -309,14 +309,27 @@ not easy to reproduce is mainly caused by 2 aspects:
 In summary, multiple efforts have been made to improve the wide adoption of BES
 among researchers, designers and practitioners. However, an overall holistic
 framework to bridge the gap between the building energy simulation and data
-science domains is still undefined. There is still a need for an integrated
+science domains is still undefined. There is also a need for an integrated
 framework to provide a supportive environment to bring reproducible building
 energy modeling.
 
-In this paper, we introduce a new parametric simulation framework called eplusr
-[@Jia2020] using the R [@RCoreTeam2019] programming language.
-eplusr is different from existing frameworks because of its data-centric design
-philosophy. The main goals of this framework is to:
+In this paper, we introduce a new framework called 'eplusr' for integrating BES
+and data-driven analytics. Eplusr is different from existing frameworks because
+of its data-centric design philosophy. It provides a parametric simulation
+prototype with a unified data interface ensuring BES data is returned in a
+consistent format to match the semantics of the simulation results. This makes
+the BES data can be seamlessly integrated into data-driven analytics workflows
+with minor processing. The proposed framework also provides infrastructures to
+bring portable and reusable computation environment for BES, aiming to
+facilitate the reproducibility research in building energy domain. This paper
+first introduces the concepts and behind the framework and its modules, along
+with its implementation. Next, the applications of the framework using a medium
+office building model is presented, covering various topics including data
+exploration, parametric simulation, optimization and calibration.
+
+# Methodology
+
+The main goals of this framework is to:
 
 1. provide better and more seamless integration between BES and data-driven
    analytics tools. A unified data interface is developed which makes sure all
@@ -331,8 +344,6 @@ philosophy. The main goals of this framework is to:
 3. provide infrastructure to bring portable and reusable computation
    environment for building energy model using, which aims to facilitate
    the reproducibility research in building energy domain.
-
-# Eplusr framework overview
 
 Fig. \@ref(fig:architecture) shows an overview of the eplusr framework. Eplusr contains 2 main parts:
 
