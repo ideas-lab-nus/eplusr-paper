@@ -131,7 +131,7 @@ time-consuming and error-prone. Parametric simulation task automation has been a
 be an extremely useful way to reduce human intervention and improve the
 efficiency of large parametric analysis. Multiple efforts have been made with
 this regard and there are several existing free EnergyPlus-based parametric
-simulation tools developed, as shown in Table \@ref(tab:pat-sum). Some tools
+simulation frameworks developed, as shown in Table \@ref(tab:pat-sum). Some frameworks
 consist of graphical user interfaces (GUIs) built on EnergyPlus while some use
 general-purpose scripting languages with a full complement of programming
 features and libraries [@Roth2018].
@@ -178,7 +178,7 @@ which will eventually be translated into EnergyPlus models. Parametric Analysis
 Tools (PAT) is a GUI application that is part of OpenStudio toolkit. It aims to
 enable customizable and shareable parametric descriptions of ECMs
 [@Parker2014]. It leverages OpenStudio Measures which are reusable scripts
-written in Ruby programming language to manipulate OpenStudio models can be used to compare
+written in Ruby programming language to manipulate OpenStudio models and can be used to compare
 manually specified combinations of measures, optimize designs, calibrate models
 and perform parametric sensitivity analysis. Ladybug and Honeybee are plug-ins
 developed for Rhino Grasshopper [@Roudsari2013]. Ladybug is capable to import
@@ -212,7 +212,7 @@ viewing the 3D model. GenOpt is a generic optimization programme that can be
 used with EnergyPlus to minimize an objective function with respect to multiple
 parameters [@Wetter2001]. It generates new input templates files by replacing
 the keywords with corresponding numerical values calculated using a
-mathematical optimization library. The tools mentioned above may have
+mathematical optimization library. The frameworks mentioned above may have
 overlapping in features but they are tailored for different purposes and use
 cases, with the primary focus on ease the time-consuming and error-prone
 process of creating and managing parametric simulations.
