@@ -217,23 +217,41 @@ overlapping in features but they are tailored for different purposes and use
 cases, with the primary focus on ease the time-consuming and error-prone
 process of creating and managing parametric simulations.
 
-BES, with an iterative nature inside, can produce a large amount of data. A large
-part of the time has to be spent on the collection and processing of BES
-simulation data. Even some BES tools provide summary reports with various
-details, it is still quite common in BES to perform post-processing and apply
-customized and more advanced algorithms to the simulation results. However,
-fewer efforts have been made in terms of providing a seamless integrated
-approach to bridge the gap between building energy model and data-centric
-analytics. There is a growing body of scientific literature on the application
-of advanced mathematical algorithms for building design [@Kiss2020]. Researches
-on parametric building energy simulations that employ data mining algorithms
-upon large amounts of simulations have emerged [@BurakGunay2019]. Open-source
-programming environments such as R and Python have become widely used research
+Data-driven analytics are complementary with BES in nature [@Srivastava2019]
+aiming to build systems and algorithms to discover knowledge, detect patterns,
+and generate useful insights and predictions from BES data [@Molina-Solana2017;
+@BurakGunay2019]. It encompasses the whole data science process, beginning from
+data extraction and cleaning, and extending to data analysis, description and
+summarization. BES, with an iterative nature inside, can produce a large amount
+of data. The volumes of BES data have clearly overwhelmed traditional data
+analysis methods such as spreadsheets and ad-hoc queries with large amount of
+factors to be considered [@Kim2011]. Moreover, the output of common BES tools
+is not always friendly in format for applying these methods which makes data
+pre-processing an essential but time-consuming and laborious process for any
+data-driven analytics for BES data. This highlights the potential areas for
+improvements in data extraction and result presentation in a clear and
+intuitive manner for data analytics. Even some BES tools provide summary
+reports with various details, it is still quite common in BES to perform
+post-processing and apply customized and more advanced algorithms to the
+simulation results. Currently, there is a growing body of scientific literature
+on the application of advanced mathematical algorithms for building design
+using BES [@Kiss2020]. Researches on parametric building energy simulations
+that employ data mining algorithms upon large amounts of simulations have
+emerged [@BurakGunay2019]. Solutions in most existing frameworks have limited
+post-processing capacities and are not flexible enough to enable a clear
+understanding and control on how the BES data is being transformed
+[@Miller2013; @Attia2013a]. Open-source programming environments such as R
+[@RCoreTeam2019] and Python [@Oliphant2007] are promising on providing
+solutions for large-scale data analytics and have become widely used research
 tools that provide access to many well-documented packages for various data
-mining, machine learning and data visualization applications. However, the
-output of common BES tools is not always friendly in format for applying these
-tools, which highlights the potential areas for improvements in data extraction
-and result presentation in a clear and intuitive manner for data analytics.
+mining, machine learning and data visualization applications [@Lowndes2017;
+@Molina-Solana2017]. However, fewer efforts have been made in terms of
+providing a seamless integrated approach to bridge the gap between BES and
+data-driven analytics. Results of a survey of 448 building energy
+management professionals in the U.S. show that there is a need of improving the
+efficacy and integration of data-driven analytics and BES in the building
+energy management domain, and efforts should be made to develop integrated
+tools that are capable of leveraging both methods [@Srivastava2019].
 
 BES is a complex domain that involves multiple scientific processes and is
 often a time-intensive, error-prone and hard-to-reproducible process.
@@ -245,14 +263,11 @@ attention throughout the scientific community and the public at large
 more than 70% of them failed to reproduce another scientist's experiments, and
 more than 50% failed to reproduce their own experiments. Moreover, more than
 half of them agreed that there was a significant crisis of reproducibility
-[@Baker2016a].
-
-As BES becomes more and more integral to many aspects of architecture design,
-and decision-making processes, computational reproducibility has become an issue of
-increasing importance to researchers, designers and practitioners. Lack of
-credibility in BES results due to a lack quality and reproducibility is widely
-considered a problem by the energy model community [@Fleming2012].
-
+[@Baker2016a]. As BES becomes more and more integral to many aspects of architecture design,
+and decision-making processes, computational reproducibility has become an
+issue of increasing importance to researchers, designers and practitioners.
+Lack of credibility in BES results due to a lack quality and reproducibility is
+widely considered a problem by the energy model community [@Fleming2012].
 Despite the culture of reluctance and a lack of requirements or incentives to
 publish the code used in generating the results, the reasons why BES is usually
 not easy to reproduce is mainly caused by 2 aspects:
