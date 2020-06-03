@@ -153,8 +153,8 @@ compare %>%
     .[Name == "Ladybug & Honeybee",  Name := "Ladybug \\& Honeybee"] %>%
     knitr::kable(booktabs = TRUE, format = "latex", linesep = "", escape = FALSE,
         align = c("l", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c"),
-        caption = "Comparison of parametric simulation framework based on EnergyPlus") %>%
-    kableExtra::kable_styling(full_width = TRUE, font_size = 7) %>%
+        caption = "Comparison of parametric simulation frameworks based on EnergyPlus") %>%
+    kableExtra::kable_styling(full_width = TRUE, font_size = 7, latex_options = "hold_position") %>%
     kableExtra::column_spec(1, "2.8cm") %>%
     kableExtra::column_spec(2, "1.3cm") %>%
     kableExtra::column_spec(3, "0.4cm") %>%
