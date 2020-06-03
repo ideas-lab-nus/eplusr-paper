@@ -1,5 +1,5 @@
 Name,Cross-platform,GUI,Open-source,Semantic API,API language,Optimization support,Calibration support,Data extraction,SQL-based structural output,Post-processing capabilities
-OpenStudio PAT,X,X,X,X,Ruby,X,,X,X,H
+OpenStudio PAT,X,X,X,X,Ruby,X,X,X,X,H
 Ladybug & Honeybee,,X,X,X,Python,,,X,,H
 jEplus,X,X,X,,-,X,,X,X,H
 Modelkit,,X,,,Ruby,,,,,L
