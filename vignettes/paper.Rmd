@@ -281,7 +281,7 @@ Despite the culture of reluctance and a lack of requirements or incentives to
 publish the code used in generating the results, the reasons why BES is usually
 not easy to reproduce is mainly caused by 2 aspects:
 
-1. A lack of seamless integration of BES and data-driven analytics workflows.
+1. *A lack of seamless integration of BES and data-driven analytics workflows*
 
    When conducting BES, most users prefer to use GUI applications which makes it
    intuitive and easy to execute certain particular tasks. However, GUI tools have
@@ -295,6 +295,8 @@ not easy to reproduce is mainly caused by 2 aspects:
    automate part portions of the workflows, which may lead to new inefficiencies
    and potential errors.
 
+   \vspace{5pt}
+
    One of the goals of BES is to turn raw simulation data into understanding,
    insight, and knowledge. BES projects often encompass an iterative workflow of
    raw design data importing and tidying, parametric input file generation and
@@ -304,7 +306,7 @@ not easy to reproduce is mainly caused by 2 aspects:
    there is no widely adopted solution that is able to integrate all processes
    into one single platform.
 
-2. Hard to setup the computational environment which covers the whole BES and data-driven analytics toolchain.
+2. *Hard to setup the computational environment which covers the whole BES and data-driven analytics toolchain*
 
    BES often involves the use of multiple applications, software and platforms.
    To perform crucial scientific processes such as
