@@ -139,35 +139,44 @@ features and libraries [@Roth2018].
 \setlength{\tabcolsep}{0.1pt}
 \renewcommand{\arraystretch}{1.3}
 ```{r pat-sum, eval = TRUE, include = TRUE, echo = FALSE}
-compare <- data.table::fread(here::here("data-raw/compare.csv"),
-    colClasses = c(`Calibration support` = "character")
-)
-data.table::setnames(compare,
-    c("Optimization support", "Post-processing capabilities"),
-    c(paste0("Optimization support", kableExtra::footnote_marker_number(1, "latex")),
-      paste0("Post-processing capabilities", kableExtra::footnote_marker_number(2, "latex"))
-    )
-)
+compare <- data.table::fread(here::here("data-raw/compare.csv"))
+
+# use tick symbol
+compare[, c(names(compare)) := lapply(.SD, function (val) {val[val == "X"] <- "\\cmark";val})]
+
+# columns that should be further described in footnotes
+cols <- c("Semantic API", "Support optimization", "Data extraction", "Post-processing capabilities")
+data.table::setnames(compare, cols, paste0(cols, kableExtra::footnote_marker_number(seq_along(cols), "latex")))
 
 compare %>%
     .[Name == "Ladybug & Honeybee",  Name := "Ladybug \\& Honeybee"] %>%
     knitr::kable(booktabs = TRUE, format = "latex", linesep = "", escape = FALSE,
         align = c("l", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c"),
         caption = "Comparison of parametric simulation frameworks based on EnergyPlus") %>%
-    kableExtra::kable_styling(full_width = TRUE, font_size = 7, latex_options = "hold_position") %>%
+    kableExtra::kable_styling(font_size = 7, latex_options = "hold_position") %>%
+    # have to manually specify the column width since 'full_width' cannot be used here
+    # ref: https://github.com/haozhu233/kableExtra/issues/39
     kableExtra::column_spec(1, "2.8cm") %>%
     kableExtra::column_spec(2, "1.3cm") %>%
     kableExtra::column_spec(3, "0.4cm") %>%
     kableExtra::column_spec(4, "1.3cm") %>%
     kableExtra::column_spec(5, "1.1cm") %>%
     kableExtra::column_spec(6, "1.3cm") %>%
-    kableExtra::footnote(
-        number_title = "Note:",
-        number = c(
-            "Only built-in features are considered",
-            "'H' indicates 'High' and 'L' indicates 'Low'"
-        )
-    )
+    kableExtra::column_spec(7, "1.6cm") %>%
+    kableExtra::column_spec(8, "1.6cm") %>%
+    kableExtra::column_spec(9, "1.5cm") %>%
+    kableExtra::column_spec(10, "1.6cm") %>%
+    kableExtra::column_spec(11, "1.6cm") %>%
+    kableExtra::add_footnote(threeparttable = TRUE, notation = "number", c(
+        # Semantic API
+        "Further abstraction classes to directly perform geometry transformations, HVAC system manipulation and etc.",
+        # Support optimization
+        "Only built-in features are considered. So as for calibration support. Some frameworks can be further coupled with other software or libraries to perform optimizations",
+        # Data extraction
+        "Features of extracting further customized summary data, instead of solely based on EnergyPlus built-in functionalities",
+        # Post-processing capabilities
+        "The capabilities of performing further data analyses on the extracted simulation results. 'H', 'M' and 'L' indicates 'High', 'Medium' and 'Low', respectively"
+    ))
 ```
 
 OpenStudio [@Guglielmetti2011] is a free open-source software toolkit designed
