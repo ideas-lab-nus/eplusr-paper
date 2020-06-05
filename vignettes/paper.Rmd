@@ -139,6 +139,8 @@ features and libraries [@Roth2018].
 \setlength{\tabcolsep}{0.1pt}
 \renewcommand{\arraystretch}{1.3}
 ```{r pat-sum, eval = TRUE, include = TRUE, echo = FALSE}
+# TODO: Add references for mentioned frameworks after changing the bibliography
+#       style to numeric
 compare <- data.table::fread(here::here("data-raw/compare.csv"))
 
 # use tick symbol
@@ -191,7 +193,9 @@ compare %>%
         "The capabilities of extracting and modifying data from weather files",
         # Post-processing capabilities
         "The capabilities of performing further data analyses on the extracted simulation results. 'H', 'M' and 'L' indicates 'High', 'Medium' and 'Low', respectively"
-    ))
+    )) %>%
+    # change footnote font size manually
+    gsub("\\small", "\\scriptsize", x = ., fixed = TRUE)
 ```
 
 OpenStudio [@Guglielmetti2011] is a free open-source software toolkit designed
