@@ -266,7 +266,7 @@ post-processing capacities and are not flexible enough to enable a clear
 understanding and control on how the BES data is being transformed
 [@Miller2013; @Attia2013a]. Open-source programming environments such as R
 [@RCoreTeam2019] and Python [@Oliphant2007] are promising on providing
-solutions for large-scale data analytics and have become widely used research
+solutions for large-scale data analytics and have become widely-used research
 tools that provide access to many well-documented packages for various data
 mining, machine learning and data visualization applications [@Lowndes2017;
 @Molina-Solana2017]. However, fewer efforts have been made in terms of
