@@ -41,7 +41,7 @@ abstract: |
   demonstrates the streamlined workflow of using this framework to conduct data
   exploration, parametric simulation, multi-objective optimization, and
   Bayesian calibration.
-journal: "Automation in Construction"
+journal: "Energy and Buildings"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 layout: 3p, times
