@@ -403,7 +403,7 @@ particularly well suited for vectorized programming languages like R, because
 the layout ensures that values of different variables from the same observation
 are always paired [@Wickham2014; @Wickham2017] and is always fit for directly
 handling by the *tidyverse* ecosystem, which is a language for solving
-data-driven analytics challenges using R [@Wickham2019a].
+data-driven analytics challenges using R [@Wickham2019].
 
 The tidy data interface is the key implementation in this framework to achieve
 provide better and more seamless integration between BES and data-driven
@@ -622,7 +622,7 @@ eplusr framework:
    programming
 1. BES engine, including EnergyPlus of specified version and the eplusr R
    package
-1. Data analytics toolkits, including a collection of tidyverse [@Wickham2019a]
+1. Data analytics toolkits, including a collection of tidyverse [@Wickham2019]
    R packages for data import, tidying, manipulation, visualisation and
    programming
 1. Literate programming environment, including R Markdown related R packages
