@@ -3,6 +3,9 @@
 % line breaking in long footnots
 \usepackage{threeparttable}
 
+% appendix in toc
+\usepackage[title,titletoc]{appendix}
+
 % cross-reference code chunks
 % Reference: https://stackoverflow.com/questions/50702942/does-rmarkdown-allow-captions-and-references-for-code-chunks
 \usepackage{floatrow}
@@ -25,6 +28,9 @@
 \renewenvironment{Shaded}{}{}
 
 \newcommand{\note}[2][]{ \textcolor{blue}{\{\textbf{#1:} #2\}}}
+
+% add section numbers in bookmark
+\hypersetup{bookmarksnumbered=true}
 
 % add support for tick symbol
 \usepackage{pifont}

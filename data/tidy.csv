@@ -1,0 +1,11 @@
+case,datetime,key_value,name,reporting_frequency,units,value
+MediumOffice,2020-01-01 01:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,36320495.3160455
+MediumOffice,2020-01-01 02:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,35064025.6083761
+MediumOffice,2020-01-01 03:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,46530650.3293621
+MediumOffice,2020-01-01 04:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,35895919.1899039
+MediumOffice,2020-01-01 05:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,47946059.1225154
+MediumOffice,2020-01-01 06:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,36608006.7824911
+MediumOffice,2020-01-01 07:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,48884214.8404646
+MediumOffice,2020-01-01 08:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,35559973.2843042
+MediumOffice,2020-01-01 09:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,29831494.3314863
+MediumOffice,2020-01-01 10:00:00,VAV_1,Air System Total Heating Energy,Hourly,J,16375913.0466906
