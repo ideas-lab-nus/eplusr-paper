@@ -140,6 +140,23 @@ consist of graphical user interfaces (GUIs) built on EnergyPlus while some use
 general-purpose scripting languages with a full complement of programming
 features and libraries [@Roth2018].
 
+<!--
+knitr::kable does not supprt references in cells.
+Have to use text cross-reference feature brought in bookdown.
+It's ugly but works
+
+Ref: https://github.com/haozhu233/kableExtra/issues/214
+-->
+
+(ref:pat) [@Guglielmetti2011]
+(ref:ladybug) [@Roudsari2013]
+(ref:jeplus) [@Yi2020]
+(ref:modelkit) [@BigLadderSoftware2020]
+(ref:mle) [@Bernal2012]
+(ref:epxl) [@Schild2020]
+(ref:genopt) [@Wetter2001]
+(ref:eppy) [@Schild2020]
+
 \setlength{\tabcolsep}{0.1pt}
 \renewcommand{\arraystretch}{1.3}
 ```{r pat-sum, eval = TRUE, include = TRUE, echo = FALSE}
@@ -151,7 +168,7 @@ compare <- data.table::fread(here::here("data/compare.csv"))
 compare[, c(names(compare)) := lapply(.SD, function (val) {val[val == "X"] <- "\\cmark";val})]
 
 # columns that should be further described in footnotes
-cols <- c("Semantic API", "Support optimization", "Data extraction", "Weather data handling", "Post-processing capabilities")
+cols <- c("Semantic API", "Supports optimization", "Data extraction", "Weather data handling", "Post-processing capabilities")
 data.table::setnames(compare, cols, paste0(cols, kableExtra::footnote_marker_number(seq_along(cols), "latex")))
 
 compare %>%

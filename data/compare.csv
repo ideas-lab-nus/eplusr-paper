@@ -1,9 +1,9 @@
-Name,Cross-platform,GUI,Open-source,Semantic API,API language,Support optimization,Support calibration,Data extraction,SQL-based structural output,Weather data handling,Post-processing capabilities
-OpenStudio PAT,X,X,X,X,Ruby,X,X,X,X,X,H
-Ladybug & Honeybee,,X,X,X,Python,,,X,,X,M
-jEplus,X,X,X,,-,X,,X,X,,H
-Modelkit,,X,,,Ruby,,,,,,L
-MLE+,,X,X,,Matlab,X,,,,,L
-EpXL,,X,X,,VBA,X,,X,,,M
-GenOpt,X,X,X,,-,X,,,,,L
-eppy,X,,X,,Python,,,X,,,H
+Name,Cross-platform,GUI,Open-source,Semantic API,API language,Supports optimization,Supports calibration,Data extraction,SQL-based structural output,Weather data handling,Post-processing capabilities
+OpenStudio PAT (ref:pat) , X , X , X , X , Ruby   , X , X , X , X , X , H
+Ladybug \& Honeybee (ref:ladybug),   , X , X , X , Python ,   ,   , X ,   , X , M
+jEplus (ref:jeplus), X , X , X ,   , -      , X ,   , X , X ,   , H
+Modelkit (ref:modelkit),   , X ,   ,   , Ruby   ,   ,   ,   ,   ,   , L
+MLE+ (ref:mle),   , X , X ,   , Matlab , X ,   ,   ,   ,   , L
+EpXL (ref:epxl),   , X , X ,   , VBA    , X ,   , X ,   ,   , M
+GenOpt (ref:genopt), X , X , X ,   , -      , X ,   ,   ,   ,   , L
+eppy (ref:eppy), X ,   , X ,   , Python ,   ,   , X ,   ,   , H
