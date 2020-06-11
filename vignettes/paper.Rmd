@@ -1075,6 +1075,12 @@ Sustainability in the Tropics (SinBerBEST) Program. BEARS has been established
 by the University of California, Berkeley as a center for intellectual
 excellence in research and education in Singapore.
 
+# References {#references .unnumbered}
+
+<div id="refs"></div>
+
+\clearpage
+
 `\begin{appendices}`{=latex}
 
 \renewcommand{\thesection}{\Alph{section}.}
@@ -1182,7 +1188,7 @@ aircon_out_mon <- aircon_out %>%
     mutate(type = case_when(
         str_detect(name, "Heating") ~ "Heating",
         str_detect(name, "Cooling") ~ "Cooling"
-    )) %>% 
+    )) %>%
     # add floor area served by each air-conditioning system
     left_join(storey, c("key_value" = "air_system")) %>%
     # calculate the monthly averaged heating and cooling demands in MJ/m2
@@ -1698,7 +1704,3 @@ ggsave(here("figures/uncertainties.png"), p_uncert_post, width = 6, height = 3, 
 ```
 
 `\end{appendices}`{=latex}
-
-\clearpage
-
-# References {#references .unnumbered}
