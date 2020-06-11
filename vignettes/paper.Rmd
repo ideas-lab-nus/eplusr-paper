@@ -44,6 +44,7 @@ abstract: |
 journal: "Energy and Buildings"
 date: "`r Sys.Date()`"
 bibliography: references.bib
+csl: elsevier-with-titles.csl
 layout: 3p, times
 colorlinks: true
 link-citations: true
