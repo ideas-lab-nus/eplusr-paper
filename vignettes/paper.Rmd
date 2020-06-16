@@ -395,104 +395,107 @@ computational reproducibility [@Boettiger2015].
 
 # Methodology
 
-Fig. \@ref(fig:architecture) shows an architecture overview of the eplusr
-framework which contains two main components, including a free open-source
-library written in R programming language and a computation environment for
-reproducible BES encapsulated using Docker containerisation [@Merkel2014]. The
-eplusr R package aims to provide better and more seamless integration between
-BES engine EnergyPlus and R-programming data-driven analytics environment
-through a parametric simulation prototype together with a tidy data
-[@Wickham2014] interface. It takes advantages of the EnergyPlus SQLite output
-and formats parametric BES output data in a tidy form that matches the
-semantics of the simulation results and thus makes it can be easily fed to
-various existing data-driven analytics workflows in R. The eplusr R package is
-distributed using CRAN (The Comprehensive R Archive Network) with the MIT
-license [@Jia2020] and the source code is hosted publicly in a
-version-controlled repository via GitHub^[GitHub Repository:
-https://github.com/hongyuanjia/eplusr]. The Docker containerisation for BES
-aims to provide infrastructure to bring portable and reusable computation
-environment to facilitate the reproducibility research in building energy
-modeling domain. The pre-built images are publicly available through Docker
-Hub^[Docker Hub Link: https://hub.docker.com/r/hongyuanjia/eplusr]. A further
-detailed description of the tidy data interface (Section
-\@ref(sec:eplusr-tidy)) and the parametric simulation prototype (Section
-\@ref(sec:eplusr-parametric)) of the R package, and the concepts and components
+In order to achieve a seamless integration between BES and data-driven
+analytics, a framework shown in Fig. \@ref(fig:architecture) has been
+developed, which contains three main components:
+
+1. Tidy data [@Wickham2014] interface for structuring BES inputs and outputs for seamless
+   integration with data analytics workflow
+2. Parametric prototype for conducting flexible and extensible parametric simulations
+3. Computation environment based on Docker containerisation [@Merkel2014] for
+   reproducible BES to facilitate reproducibility research in BES domain
+
+The first two components have been packaged into a free open-source library
+"eplusr"^[GitHub Repository: https://github.com/hongyuanjia/eplusr] written in
+R programming language, while the last has been encapsulated using Docker
+containerisation^[Docker Hub Link:
+https://hub.docker.com/r/hongyuanjia/eplusr].
+A further detailed description of the tidy data interface (Section
+\@ref(sec:eplusr-tidy)), the parametric simulation prototype (Section
+\@ref(sec:eplusr-parametric)), and the concepts and components
 of the Docker containerisation for BES (Section \@ref(sec:docker)) is introduced.
 
-```{r architecture, echo = FALSE, eval = TRUE, fig.cap = "Eplusr framework architecture", out.width = "40%", fig.pos = "H"}
+
+```{r architecture, echo = FALSE, eval = TRUE, fig.cap = "An architecture overview of the proposed framework which includes three main components: (1) Tidy data interface, (2) Parametric Prototype and (3) Computation environment for reproducible BES using Docker containerisation", out.width = "40%"}
 knitr::include_graphics(here("figures/overview.png"))
 ```
 
 ## Tidy data interface {#sec:eplusr-tidy}
 
-The tidy data interface is implemented through three modules in the eplusr R
-package, including I/O Processing & Parser Module, Model API Module and Tidy
-Data Extractor Module. The concept of tidy data format was first proposed by
-@Wickham2014, which is a standard way of mapping the meaning of a dataset to
-its structure. In tidy data, each variable forms a column, each observation
-forms a row and each type of observational unit forms a table. This structure
-makes it easy for an analyst or a computer to extract needed variables and is
-particularly well suited for vectorized programming languages like R, because
-the layout ensures that values of different variables from the same observation
-are always paired [@Wickham2014; @Wickham2017] and is always fit for directly
-handling by the *tidyverse* ecosystem, which is a language for solving
-data-driven analytics challenges using R [@Wickham2019].
+The concept of tidy data format was first proposed by Wickham [@Wickham2014],
+which is a standard way of mapping the meaning of a dataset to its structure.
+In tidy data, each variable forms a column, each observation forms a row and
+each type of observational unit forms a table.
+This structure makes it easy for an analyst or a computer to extract needed
+variables and is particularly well suited for vectorized programming languages
+like R, because the layout ensures that values of different variables from the
+same observation are always paired [@Wickham2014; @Wickham2017] and is well
+fitted for directly handling by the *tidyverse* ecosystem, which is a language for
+solving data-driven analytics challenges using R [@Wickham2019].
 
-The tidy data interface is the key implementation in this framework to achieve
-provide better and more seamless integration between BES and data-driven
-analytics. It is th reflection of the data-centric design philosophy of the
-framework and is designed to facilitate exploration and analysis of the BES
-models and simulation outputs, and to simplify the development of BES analytics
-tools that work well together. This interface aims to:
+Table (a) in Fig. \@ref(fig:tidy-format) shows an example of the standard
+format from EnergyPlus CSV table output, while Table (b) gives the tidy
+representation of the same underlying data using the Tidy data interface.
+Through the structure of Table (a) provides efficient storage for completely
+crossed designs, it violates with the Tidy principles, as variables form both
+the rows and columns and column headers are values, not variable names.
+A number of values are concatenated in column headers, including variable `Key
+Value`, `Variable Name`, `Units` and `Reporting Frequency`.
+Additional data cleaning efforts are needed to work with this structure,
+especially considering the missing values (`NA` in row 2 and 4 in Table (a))
+introduced by the aggregation of various reporting frequencies, which may
+add new inefficiencies and potential errors.
+In Table (b), values in column headers have been extracted and converted into
+separate columns and a new variable called `Value` is used to store the
+concatenated data values from the previously separate columns.
+Moreover, instead of presenting date and time as strings in Table (a), the Tidy
+data interface splits its components into four new variables, including
+`Month`, `Day`, `Hour` and `Minute`.
+Taken together, Table (b) forms a nine-variable tidy table and each variable
+matches the semantics of simulation output.
+Considering the times of data analysis operations to be performed on the values
+in a variable, the advantage of structuring values in a simple and standard way
+stands out. It can facilitate initial exploration and analysis of data and to
+simplify the development of data analysis tools that work well together
+[@Wickham2014].
 
-* Provide tidy data representation of BES models and weathers
-* Provide BES model modification APIs to take tidy data input
-* Provide interfaces to query BES output and return resulting data in tidy format
+```{r tidy-format, echo = FALSE, eval = TRUE, fig.cap = "An example of tidy BES output data representation using Tidy data interface where Table (a) is the standard output format of EnergyPlus CSV table and Table (b) is the tidy representation of the same underlying data using the Tidy data interface", out.width = "60%"}
+knitr::include_graphics(here("figures/tidy-format.png"))
+```
 
-Each of them will be discussed in details in the following sections.
+The tidy data interface is implemented through three modules shown in Fig.
+\@ref(fig:architecture), including
+(1) I/O Processing & Parser Module for tidy data representation of BES inputs,
+(2) Model API Module for tidy data model modification APIs, and
+(3) Tidy Data Extractor Module for querying and structuring BES outputs in tidy format.
+Each will be described in the following sections.
 
-### Tidy data representation of BES models and weathers
+### Tidy data representation of BES inputs
 
 The I/O processing & parser module shown in Fig. \@ref(fig:architecture) aims
 to read, parse and represent EnergyPlus models and weathers in relational tidy
 format tables, providing the flexibility to extract and modify BES models and
-weathers using numbers of structured data toolkits available in R.
+weathers using structured data toolkits available in R.
 
-EnergyPlus requires a very detailed and data-intensive text input format called
-Input Data File (IDF), with its own data format schema named Input Data
-Dictionary (IDD). In eplusr, data of an IDF and the corresponding IDD are
-stored as Relational Databases (RD) and encapsulated into an `Idf` object and
-`Idd` object, respectively. RD was first proposed by @Codd1990 and has become
-the dominant database model for a number of Relational Database Management
-Systems (RDMS). It organizes data in a set of rectangular tables with rows and
-columns. Each table has a primary key which is a unique identifier constructed
+EnergyPlus Input Data File (IDF) is based on the data schema that is defined in
+Input Data Dictionary (IDD).
+In the proposed framework, data of an IDF and the corresponding IDD are stored
+as Relational Databases (RD) and encapsulated into an `Idf` object and `Idd`
+object, respectively.
+RD was first proposed by Codd [@Codd1990] and has become the dominant database
+model for a number of Relational Database Management Systems (RDMS).
+It organizes data in a set of rectangular tables with rows and columns.
+Each table has a primary key which is a unique identifier constructed
 from one or more columns and a table is linked to another by including the
-other table's primary key which is called a foreign key for that table. This
-feature helps keep the data integrity and reduce any data redundancy. Fetching
-the required data is achieved by using join queries and conditional statements
-to combine all or any number of related tables.
-
+other table's primary key which is called a foreign key for that table.
 Fig. \@ref(fig:data-structure) shows the relationships among tables in an `Idf`
-and `Idd` object with the primary keys presented in light blue color. The IDD
-data is stored in four tables of (1) `group`, (2) `class` and (3) `field` to
-retain the hierarchy structure of the data schema, and (4) `reference` to store
-the referencing relations among various fields. Similarly, the core IDF data is
-stored in three tables of (1) `object`, (2) `value`, and (3) `reference` to
-keep the referencing relations among various field values. The RD data
-structure follows the idea of database normalization where each fact is
-expressed in only one place, and enables fast table joining among entities and
-variables. To modify an IDF is equal to change the data in `Idf` tables
-accordingly, in the context of specific `Idd` data. Based on this data
-structure, an extensive rule-based data model validator has been developed in
-the library to check the integrity of `Idf` values during parsing and any
-modifications.
-
-To support analyses of weather data in BES-based environmentally-informed
-design and model calibration process, the I/O processing & parser module
-contains a `Epw` class to create, parse, and modify EnergyPlus EPW weather
-files. The `Epw` class stores weather metadata and core weather data into a
-list of tidy tables that can be easily extracted and fed into time-series
-analytics libraries in R.
+and `Idd` object with the primary keys presented in light blue color.
+The RD data structure follows the idea of database normalization where each
+fact is expressed in only one place, similar with the Tidy principle.
+This feature helps keep the data integrity and reduce any data redundancy, and
+enables fast table joining among entities and variables.
+To modify an IDF is equal to change the data in `Idf` tables accordingly, in
+the context of specific `Idd` data.
 
 ```{r data-structure, echo = FALSE, eval = TRUE, fig.cap = "Data structure of an Idf and Idd object", out.width = "70%"}
 knitr::include_graphics(here("figures/data_structure.png"))
@@ -500,120 +503,95 @@ knitr::include_graphics(here("figures/data_structure.png"))
 
 ### Tidy data input API for BES model modifications
 
-The Model API module shown in Fig. \@ref(fig:architecture) aims to provide
-flexible, rich-featured and user-friendly interfaces to perform queries and
-modifications on EnergyPlus models programmatically. In total, more than ten
-methods have been developed. Each method will validate input data to make sure
-any modification result complies with the underlying IDD.
+The Model API module enables to perform queries and modifications on EnergyPlus
+models programmatically.
+Flexibly-scoped interfaces have been developed to modify field values in a
+model, including single-object level, grouped-object level, and whole-class
+level, enabling to alter a number of objects at the same time.
+Both `Idf` and `IdfObject` class provide a `to_table()` method to extract
+certain or all parts of a model into one tidy `data.table` object, which is an
+extension of R's table representation but extremely optimized for fast
+computation [@Dowle2019].
+The `load()` and `update()` methods in `Idf` class can take that tidy data as
+input, and respectively create and modify models accordingly.
+Thus, the Model API module provides a novel model-editing workflow with
+tidy-data centered, composed by table extraction, transformation and insertion.
 
-The Model API module provides flexibly-scoped interfaces to modify field values
-in a model, including single-object level, grouped-object level, and
-whole-class level, enabling to alter large number of objects using few lines of
-code. Both `Idf` and `IdfObject` class provide a `to_table()` method to
-extract certain or all parts of a model into one tidy `data.table` object,
-which is an extension of R's table representation but extremely optimized for
-fast computation [@Dowle2019]. This makes it possible to directly adjust energy
-models by table data transformation, utilizing advanced algorithms that R
-provides. The `load()` and `update()` methods in `Idf` class can take that tidy
-data as input, and respectively create and modify models accordingly.
+### Tidy data representation of BES inputs
 
-### Tidy data extractor for BES outputs {#sec:eplusr-tidy-extractor}
+The Tidy Data Extractor module is designed to extract and represent EnergyPlus
+simulation outputs in relational tidy format tables.
+It introduces a `EplusSql` class that utilizes EnergyPlus SQLite output format
+to extract simulation results.
+SQLite is a mature and widely-employed RDMS [@Owens2006].
+The main benefits of using the EnergyPlus SQLite output format are that it
+contains all of the data in standard reports, variable output, meter outputs
+and a number of standard input and output summaries, and thus makes it possible
+to build tidy-data interfaces to retrieve various kinds of simulation results
+using a single file.
 
-The tidy data extractor module shown in Fig. \@ref(fig:architecture) aims to
-extract and represent EnergyPlus simulation outputs in relational tidy format
-tables. Instead of directly reading and manipulating EnergyPlus CSV and HTML
-output files, the tidy data extractor module introduces a `EplusSql` class that
-utilizes EnergyPlus SQLite output format to extract simulation results. SQLite
-is a mature and widely-employed RDMS [@Owens2006]. The main benefits of using
-the EnergyPlus SQLite output format are that it contains all of the data in
-standard reports, variable output, meter outputs and a number of standard input
-and output summaries, and thus makes it possible to build tidy-data interfaces
-to retrieve various kinds of simulation results based on a single file.
+Fig. \@ref(fig:tidy-extractor) shows an implementation overview of the data
+extractor for EnergyPlus variable and meter outputs.
+The primary keys are highlighted with light blue color in and fields that can
+be specified through the interface are highlighted with light purple color.
+Interfaces have been developed to retrieve outputs of given variables and
+meters with certain key identifiers, at specified time, simulation run periods,
+reporting frequencies and units.
+It is achieved by sending SQL (Structured Query Language) queries, a
+domain-specific language for RDMS, to the simulation output SQLite database.
+The results are outcomes of joining operations on four tables, including
+`Time`, `EnvironmentPeriods`, `ReportDataDictionary` and `ReportData`.
+However, the time components in the SQL outputs fail to assemble a complete
+time-series data, due to missing a year specification^[A `Year` field was added in recent version
+of EnergyPlus. But old versions of EnergyPlus are still widely used.], making it
+impossible to directly apply time-series-based algorithms. To solve this issue,
+a year derivation algorithm is implemented that calculates a proper year value
+for each run period based on the five time columns and compose a complete
+series of `POSIXct` values, which is the standard date-time class in R.
 
-The `EplusSql` class provides four main methods to extract tidy data, including
-`read_table()` for the standard input and output summaries, ,
-`report_data_dict()` for the variable and meter dictionary, `report_data()` for
-the variable and meter outputs, and `tabular_data()` for the standard reports.
-Fig. \@ref(fig:tidy-extractor) shows the schematic of the `report_data()`
-method implementation and the other three methods follow similar design
-philosophy. The extractor interface provides features to retrieve results of
-given variables and meters with certain key identifier, at specified time,
-simulation run period, reporting frequency and unit. It achieves this by
-sending SQL (Structured Query Language) queries, a domain-specific language for
-RDMS to the simulation output SQLite database. The resulting tidy tables will a
-result of table joining using four tables, including `Time`,
-`EnvironmentPeriods`, `ReportDataDictionary` and `ReportData`, where `Time`
-contains the time of simulation, including month, day, hour, day of the week
-and etc, `EnvironmentPeriods` contains the names and types of the simulated run
-periods, `ReportDataDictionary` table provides the dictionary of reported
-variables and meters including key identifiers, variable names, units and
-reported frequencies, and `ReportData` contains the actual values of reported
-variables. The primary keys are highlighted with light blue color in and fields
-that can be specified through the interface are highlighted with light purple
-color. \@ref(fig:tidy-extractor).
-
-```{r tidy-extractor, echo = FALSE, eval = TRUE, fig.cap = "Schematic of the tidy data extractor for variable and meter outputs", out.width = "80%"}
+```{r tidy-extractor, echo = FALSE, eval = TRUE, fig.cap = "Overview of the tidy data extractor for variable and meter outputs", out.width = "80%"}
 knitr::include_graphics(here("figures/result_extraction_interface.png"))
 ```
 
-However, the result returned by the SQL queries does not contain a complete
-time-series data because the `Time` table stores the time of simulation in five
-separate columns of `Month`, `Day`, `Hour`, `Minute` and `DayType` (day of the
-week), without a year specification^[A `Year` field was added in recent version
-of EnergyPlus. But old versions of EnergyPlus are still widely used.]. This makes it
-impossible to directly apply to the result with time-series-based algorithms in
-R. To solve this issue, a year derivation algorithm is implemented that
-calculates a proper year value for each run period based on the five time
-columns and compose a complete series of `POSIXct` values, which is the
-standard date-time class in R.
-
 ## The parametric prototype {#sec:eplusr-parametric}
 
-The parametric prototype provides a set of abstractions to ease the process of
-parametric model generation, design alternative evaluation and large parametric
-simulation management. It is implemented through two modules in the eplusr R
-package, including Simulation Manager Module, and Parametric Prototype Module.
+The parametric prototype in the framework provides a set of abstractions to
+ease the process of parametric model generation, design alternative evaluation
+and large parametric simulation management. An overview of the parametric
+prototype implementation is shown in Fig. \@ref(fig:parametric).
 
-The `ParametricJob` class is the workhorse of the parametric prototype
-implementation, as shown in Fig. \@ref(fig:data-structure). It inherits from
-the `EplusGroupJob` class in the Simulation Manager Module and is capable of
-effectively managing multiple simulation jobs. Fig. \@ref(fig:parametric) shows
-the workflow of conducting parametric simulations using this framework.
-
-```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "70%", fig.pos = "H"}
+```{r parametric, echo = FALSE, eval = TRUE, fig.cap = "Workflow of a parametric simulation", out.width = "70%"}
 knitr::include_graphics(here("figures/parametric.png"))
 ```
 
-A `ParametricJob` object is initialized using a seed model and a weather file.
+A parametric simulation is initialized using a seed model and a weather file.
 Design alternatives are specified by applying a *measure* function to the seed
 model. The concept of *measure* in the prototype is inspired by similar concept
 in OpenStudio [@Guglielmetti2011] but tailored for flexibility and
-extensibility. A measure is simply an R function that takes an `Idf` object and
-any other parameters (e.g. $t_1$ to $t_5$ in Fig. \@ref(fig:parametric)) as
-input, and returns a set of modified `Idf` objects as output, making it
-possible to leverage all the modules that the eplusr R package provides and any
-applicable advanced statistical methods and libraries existing in R. This
-implementation enables users to deploy customized applications to parameterize
-and formulate the design alternatives. After a measure is defined, the method
-`apply_measure()` takes it and other parameter values specified to create a set
-of parametric models for later simulations. Calling the `run()` method will
-run all parametric simulations in parallel and place each simulation outputs in a
-separate folder. All simulation metadata will keep updating during the whole
-time and can be retrieved using the `status()` method for further
-investigations.
+extensibility.
+A measure is simply an R function that takes an `Idf` object and any other
+parameters (e.g. $t_1$ to $t_5$ in Fig. \@ref(fig:parametric)) as input, and
+returns a set of modified `Idf` objects as output, making it possible to
+leverage other modules in the framework and apply statistical methods and
+libraries existing in R to generate design options.
+After a measure is defined, the method `apply_measure()` takes it and other
+parameter values specified to create a set of models, and the `run()` method
+will run all parametric simulations in parallel and place each simulation
+outputs in a separate folder.
+All simulation metadata will keep updating during the whole time and can be
+retrieved using the `status()` method for further investigations.
 
-The `ParametricJob` class leverages the tidy data extractor described in
-Section \@ref(sec:eplusr-tidy-extractor) to retrieve parametric simulation
+The `ParametricJob` class leverages the Tidy data interface to retrieve parametric simulation
 results in tidy format. Despite of that, a number of methods are also provided
-to read various output files, including errors (`eplusout.err`), report data
+to read various output files, including simulation errors (`eplusout.err`), report data
 dictionary (`eplusout.rdd`) and meter data dictionary (`eplusout.mdd`). For all
-result tidy tables, an extra column containing the simulation job identifiers
+resulting tidy tables, an extra column containing the simulation job identifiers
 is prepended in each table and can be used as an index or key for further data
 transformations, analyses and visualisation to compare simulated design options.
 
 The proposed parametric prototype is designed to be simple yet flexible and
 extensible. One good example of the extensibility of this framework is the
-epluspar [@Jia2020a] R package, which provides new classes for conducting
+epluspar^[GitHub Repository: https://github.com/hongyuanjia/epluspar] R package, which provides new classes for conducting
 specific parametric analysis on EnergyPlus models, including sensitivity
 analysis using Morris method [@Morris1991] and Bayesian calibration using the
 method proposed by @Chong2017. All the new classes introduced are based on the
@@ -624,18 +602,17 @@ in Section \@ref(sec:applications).
 
 ## Computation environment for reproducible BES {#sec:docker}
 
-The Docker containerisation for BES, as shown in Fig. \@ref(fig:architecture),
+The Docker containerisation for BES
 aims to provide infrastructure to bring portable and reusable computation
-environment to facilitate the reproducible BES application. @Peng2015
+environment to facilitate the reproducible BES application. Peng [@Peng2015]
 summarized two major components to a successful reproducible research: (1)
 data, i.e. the availability of raw data from the experiment, and (2) code, i.e.
 the availability of the statistical code and documentation to reproduce the
 results. In the context of BES, these will be (1) the building energy models
 and (2) the code to perform simulations and following data-driven analytics.
-However, the model and data are only parts of the whole BES computational
-environment. The complex and rapidly changing nature of computer environments
+However, the complex and rapidly changing nature of computer environments
 makes it immensely challenging to reproduce the same workflow and results even
-with the original data and code are available. To solve this issue, a
+with the original data and code are available. To address this issue, a
 reproducible BES computation environment has been developed based on the Docker
 containerisation technology, enabling to capture the full software stack
 including all software dependencies in a portable and reusable images.
@@ -662,7 +639,7 @@ eplusr framework:
    for dynamic document generation
 
 The first three have been described in previous sections. Literate programming
-is a programming paradigm introduced by @Knuth1984 in which the explanation of
+is a programming paradigm introduced by Knuth [@Knuth1984] in which the explanation of
 a computer program is given, together with snippets of source code. Recently,
 there have been significant efforts to develop literate programming
 infrastructure to reproducibly perform and communicate data analyses, including
@@ -683,9 +660,9 @@ reproducible analytics.
 
 The source files of Docker configuration were written in several text files
 so-called Dockerfiles and are publicly available and hosted via GitHub^[GitHub
-Repository: https://github.com/hongyuanjia/eplusr-docker]. Thus further
+Repository: https://github.com/hongyuanjia/eplusr-docker]. Further
 evolutions can be taken to make the computation environment tailored for
-different audience and use purposes. The docker approach is particularly well
+different audience and use purposes. The docker approach is
 suited for moving between local and cloud platforms when a web-based integrated
 development environment is available, such as RStudio Server [@Boettiger2015],
 providing the scalability potential for large cloud-based BES computation.
