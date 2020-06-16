@@ -24,23 +24,19 @@ footnote:
 abstract: |
   Building energy simulation (BES) has been widely adopted for the
   investigation of environmental and energy performance for different design
-  and retrofit alternatives. In BES, data-driven analytics is of commensurate
-  importance in order to turn BES results into understanding, insight, and
-  knowledge. However, there is no widely adopted solution to provide seamless
-  integration of BES and data-driven analytics. This paper presents a newly
-  developed framework 'eplusr' for conducting parametric analysis using
-  EnergyPlus via the R programming language. With a data-centric design
+  and retrofit alternatives. In BES, data-driven analytics is vital for
+  interpreting and analyzing BES results to reveal trends and provide useful
+  insights. However, seamless integration between BES and data-driven analytics
+  current does not exist. This paper presents 'eplusr' for conducting
+  parametric analysis using EnergyPlus via the R programming language.
+  With a data-centric design
   philosophy, the proposed framework focuses on better and more seamless
   integration between BES and data-driven analytics. It provides a Tidy data
   format for BES that matches the semantics of the simulation results which can
   be easily fed to various data analytics workflows in R. The framework also
   provides an infrastructure to bring portable and reusable computation
   environment for building energy modeling using, which aims to facilitate the
-  reproducibility research in building energy domain. This paper discusses the
-  philosophy behind the framework, its architecture and core capabilities, and
-  demonstrates the streamlined workflow of using this framework to conduct data
-  exploration, parametric simulation, multi-objective optimization, and
-  Bayesian calibration.
+  reproducibility research in building energy domain.
 journal: "Energy and Buildings"
 date: "`r Sys.Date()`"
 bibliography: references.bib
@@ -70,7 +66,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   out.width = "\\columnwidth",
   fig.path = "../figures/",
-  fig.pos = "ht"
+  fig.pos = "!htb"
 )
 
 # code chunk cross-ref
@@ -98,47 +94,89 @@ run_sim <- FALSE
 
 # Highlights {.unnumbered}
 
-1. A framework integrates EnergyPlus with data science through R
-2. The framework includes a parametric simulation  with flexibility and extensibility
-3. Tidy data format is introduced to facilitate data-driven analytics of BES research
-4. Docker together with R project management can be adopted to bring reproducible BESs
+1. Developed an R package for seamless EnergyPlus data analytics applications
+2. Structures inputs/outputs format for seamless integration with data analytics workflow
+3. Facilitates reproducible simulations through Docker with R project management
+4. Enables flexible and extensible parametric simulations
 
 # Introduction
 
-Building energy simulation (BES) is increasingly being used for the analysis and
-prediction of building energy consumption, measurement and verification,
-life-cycle carbon evaluation and cost analysis of energy conservation measures
-(ECMs) [@Chong2017; @Kneifel2010]. It has played a growing role in the design
-and operation of low energy, high-performance buildings and development of
-policies that drive the achievement of reducing energy use and greenhouse-gas
-emissions in the buildings sector [@Hong2018].
+Building energy simulation (BES) is increasingly being used throughout the
+building's life-cycle for the analysis and prediction of building energy
+consumption, measurement and verification, carbon evaluation and cost analysis
+of energy conservation measures (ECMs) [@Chong2017; @Kneifel2010].
+It has played a growing role in the design and operation of low energy,
+high-performance buildings and development of policies that drive the
+achievement of reducing energy use and greenhouse-gas emissions in the
+buildings sector [@Hong2018].
 
-BES offers an alternative approach that encourages customized, integrated design
-solutions and the development of BES tools has been pronounced over the decades
-[@Hong2000; @Hong2018]. The core tools in the BES field are the whole-building
-energy simulation programs which provide users with key building performance
-indicators such as energy use and demand, temperature, humidity, and costs
-[@Crawley2008a]. Among them, EnergyPlus is one of the widely used whole
-building energy simulation tools [@Crawley2001] and has been adopted as a core
-component or a building simulation engine of energy performance assessment in
-both free and commercial building design and analysis tools [@See2011; @DesignBuilderSoftwareLtd2020; @Guglielmetti2011; @Yi2020; @Roudsari2013].
+BES offers an alternative approach that encourages customized, integrated
+design solutions and the development of BES tools has been pronounced over the
+decades [@Hong2000; @Hong2018].
+The core tools in the BES field are the whole-building energy simulation
+programs which provide users with key building performance indicators such as
+energy use and demand, temperature, humidity, and costs [@Crawley2008a].
+However, BES, with an iterative nature inside, can produce a large amount
+of data. The volumes of BES data have clearly overwhelmed traditional data
+analysis methods such as spreadsheets and ad-hoc queries with large amount of
+factors to be considered [@Kim2011].
+Solutions in most existing frameworks have limited post-processing capacities
+on BES results, and are not flexible enough to enable a clear understanding and
+control on how the BES data is being transformed [@Miller2013; @Attia2013a].
+According to a survey of 448 building energy management professionals in the
+U.S., there is a need of improving the efficacy and integration of data-driven
+analytics and BES in the building energy management domain, and efforts should
+be made to develop integrated tools that are capable of leveraging both methods
+[@Srivastava2019].
+
+As BES becomes more and more integral to many aspects of architecture design,
+and decision-making processes, computational reproducibility has become an
+issue of increasing importance to researchers, designers and practitioners.
+Lack of credibility in BES results due to a lack quality and reproducibility is
+widely considered a problem by the energy model community [@Fleming2012].
+Despite the culture of reluctance and a lack of requirements or incentives to
+publish the code used in generating the results [@Boettiger2015], the
+reproducible issue in BES are mainly caused by the absence of (1) an integrated
+workflow between BES and data-driven analytics and (2) a portable and reusable
+computation environment encapsulating essential software and applications to
+perform it.
+
+To address those issues, in this paper, we introduce a new framework for
+integrating BES and data-driven analytics.
+The framework is different from existing ones because of its data-centric
+design philosophy.
+The objectives are (1) to provide better and more seamless integration between
+BES engine EnergyPlus and R-programming data-driven analytics environment
+through a parametric simulation prototype together with a tidy data
+[@Wickham2014] interface and (2) to build infrastructures for portable and
+reusable BES computation environment to facilitate reproducibility research
+in building energy domain.
+This paper first introduces the concepts and behind the framework and its
+modules, along with its implementation. Next, the applications of the framework
+using a medium office building model are presented, covering various topics
+including data exploration, parametric simulation, optimization and
+calibration.
+
+# State of the art
+
+## Parametric simulation frameworks
 
 Parametric analysis in BES has been a powerful approach to enable investigation
 of environmental and energy performance for different design and retrofit
-alternatives. Choosing the appropriate combination of design options is
-a complex task that requires the management of a large amount of information
-on the properties of design options and the simulation of their performance
-[@Purup2020]. Parametric analysis involves tedious file management tasks,
-repeated entry of model parameters, the application of design transformations
-and the execution of large-scale analyses [@Macumber2012], which can be
-time-consuming and error-prone. Parametric simulation task automation has been approved to
-be an extremely useful way to reduce human intervention and improve the
-efficiency of large parametric analysis. Multiple efforts have been made with
-this regard and there are several existing free EnergyPlus-based parametric
-simulation frameworks developed, as shown in Table \@ref(tab:pat-sum). Some frameworks
-consist of graphical user interfaces (GUIs) built on EnergyPlus while some use
-general-purpose scripting languages with a full complement of programming
-features and libraries [@Roth2018].
+alternatives.
+Choosing the appropriate combination of design options is a complex task that
+requires the management of a large amount of information on the properties of
+design options and the simulation of their performance [@Purup2020].
+However, parametric analysis involves tedious file management tasks, repeated
+entry of model parameters, the application of design transformations and the
+execution of large-scale analyses [@Macumber2012], which can be time-consuming
+and error-prone.
+Parametric simulation task automation has been proven to be an extremely useful
+way to reduce human intervention and improve the efficiency of large parametric
+analysis [@Roth2018].
+As shown in Table \@ref(tab:pat-sum), this led to the development of various
+free parametric simulation frameworks based on EnergyPlus [@Crawley2001], one
+of the widely used whole building energy simulation tools.
 
 <!--
 knitr::kable does not supprt references in cells.
@@ -155,13 +193,11 @@ Ref: https://github.com/haozhu233/kableExtra/issues/214
 (ref:mle) [@Bernal2012]
 (ref:epxl) [@Schild2020]
 (ref:genopt) [@Wetter2001]
-(ref:eppy) [@Schild2020]
+(ref:eppy) [@Philip2020]
 
 \setlength{\tabcolsep}{0.1pt}
 \renewcommand{\arraystretch}{1.3}
 ```{r pat-sum, eval = TRUE, include = TRUE, echo = FALSE}
-# TODO: Add references for mentioned frameworks after changing the bibliography
-#       style to numeric
 compare <- data.table::fread(here::here("data/compare.csv"))
 
 # use tick symbol
@@ -174,27 +210,27 @@ data.table::setnames(compare, cols, paste0(cols, kableExtra::footnote_marker_num
 compare %>%
     .[Name == "Ladybug & Honeybee",  Name := "Ladybug \\& Honeybee"] %>%
     knitr::kable(booktabs = TRUE, format = "latex", linesep = "", escape = FALSE,
-        align = c("l", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c"),
+        align = c("l", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c"),
         caption = "Comparison of parametric simulation frameworks based on EnergyPlus") %>%
     kableExtra::kable_styling(font_size = 7, latex_options = "hold_position") %>%
     # have to manually specify the column width since 'full_width' cannot be used here
     # ref: https://github.com/haozhu233/kableExtra/issues/39
     # name
-    kableExtra::column_spec(1, "2.8cm") %>%
+    kableExtra::column_spec(1, "2.9cm") %>%
     # cross-platform
     kableExtra::column_spec(2, "1.2cm") %>%
     # GUI
-    kableExtra::column_spec(3, "0.5cm") %>%
+    kableExtra::column_spec(3, "0.45cm") %>%
     # Open-source
     kableExtra::column_spec(4, "1.1cm") %>%
     # Semantic API
-    kableExtra::column_spec(5, "1.1cm") %>%
+    kableExtra::column_spec(5, "1.0cm") %>%
     # API language
-    kableExtra::column_spec(6, "1.3cm") %>%
+    kableExtra::column_spec(6, "1.2cm") %>%
     # Support optimization
-    kableExtra::column_spec(7, "1.6cm") %>%
+    kableExtra::column_spec(7, "1.5cm") %>%
     # Support calibration
-    kableExtra::column_spec(8, "1.6cm") %>%
+    kableExtra::column_spec(8, "1.5cm") %>%
     # Data extraction
     kableExtra::column_spec(9, "1.4cm") %>%
     # SQL-based structural output
@@ -203,9 +239,11 @@ compare %>%
     kableExtra::column_spec(11, "1.3cm") %>%
     # Post-process capabilities
     kableExtra::column_spec(12, "1.6cm") %>%
+    # BIM Interoperability
+    kableExtra::column_spec(13, "1.6cm") %>%
     kableExtra::add_footnote(threeparttable = TRUE, notation = "number", c(
         # Semantic API
-        "Further abstraction classes to directly perform geometry transformations, HVAC system manipulation and etc.",
+        "Further abstraction classes to directly perform geometry transformations, HVAC system manipulation, etc.",
         # Support optimization
         "Only built-in features are considered. So as for calibration support. Some frameworks can be further coupled with other software or libraries to perform optimizations",
         # Data extraction
@@ -219,91 +257,101 @@ compare %>%
     gsub("\\small", "\\scriptsize", x = ., fixed = TRUE)
 ```
 
+Some frameworks in Table \@ref(tab:pat-sum) consist of graphical user
+interfaces (GUIs) built on EnergyPlus while some use general-purpose scripting
+languages accompanied by a suite of programming features and libraries
+[@Roth2018].
 OpenStudio [@Guglielmetti2011] is a free open-source software toolkit designed
 for energy modeling and can be used to efficiently create or modify models,
-manage individual or multiple simulations, and visualize results. OpenStudio
-has its own format (`.OSM`) and schema for EnergyPlus model representation
-which will eventually be translated into EnergyPlus models. Parametric Analysis
-Tools (PAT) is a GUI application that is part of OpenStudio toolkit. It aims to
-enable customizable and shareable parametric descriptions of ECMs
-[@Parker2014]. It leverages OpenStudio Measures which are reusable scripts
-written in Ruby programming language to manipulate OpenStudio models and can be used to compare
-manually specified combinations of measures, optimize designs, calibrate models
-and perform parametric sensitivity analysis. Ladybug and Honeybee are plug-ins
-developed for Rhino Grasshopper [@Roudsari2013]. Ladybug is capable to import
-and analyze EnergyPlus standard weather data (EPW) in Grasshopper, while
-Honeybee can create, run and visualize the OpenStudio and EnergyPlus simulation
-results. Both Ladybug and Honeybee take full advantage of the visual scripting
-interfaces provided by Grasshopper [@Tabadkani2019]. Since the primary input
-files of EnergyPlus are all ASCII text-based, it is possible to update building
-energy models by directly processing and manipulating the text files, without taking
-into account the complex hierarchical structure in the model components. There
-are several applications that take this approach. jEplus [@Yi2020] is a
-software written in Java programming language to perform complex parametric analysis on multiple
-design parameters. It allows users to describe the parameters and their values
-using customized symbols in a graphical user interface, and automatically create
-parametric models using text-substitution [@Zhang2010a]. Modelkit
-[@BigLadderSoftware2020] is another free and open-source framework for parametric
-model using EnergyPlus. Compared to jEplus, it is capable of automating the
-generation and management of EnergyPlus models via its templates and scripting
-tools written in Ruby. MLE+ integrates EnergyPlus and scientific computation
-and design capacities of Matlab for controller design and can be used to
-implement and simulate advanced control algorithms of building systems
-[@Bernal2012; @Zhao2013b]. eppy [@Philip2020] is a library for manipulating
-EnergyPlus models programmatically via python programming language. It parses
-EnergyPlus IDF files into a python object and provides low-level programmatic
-access to EnergyPlus inputs. EpXL [@Schild2020] is an EnergyPlus
-Microsoft Excel user-interface written in Visual Basic for Applications (VBA)
-that enables import and export of IDF data files, parametric analysis and
-optimization. It is capable of displaying a compact tabular overview of input
-data and automatically importing simulation output into Excel, with a link for
-viewing the 3D model. GenOpt is a generic optimization programme that can be
-used with EnergyPlus to minimize an objective function with respect to multiple
-parameters [@Wetter2001]. It generates new input templates files by replacing
-the keywords with corresponding numerical values calculated using a
-mathematical optimization library. The frameworks mentioned above may have
-overlapping in features but they are tailored for different purposes and use
-cases, with the primary focus on ease the time-consuming and error-prone
-process of creating and managing parametric simulations.
+manage individual or multiple simulations, and visualize results.
+OpenStudio has its own format (`.OSM`) and schema for EnergyPlus model
+representation which will eventually be translated into EnergyPlus models.
+Parametric Analysis Tools (PAT) is a GUI application that is part of OpenStudio
+toolkit. It aims to enable customizable and shareable parametric descriptions
+of ECMs [@Parker2014]. It leverages OpenStudio Measures which are reusable
+scripts written in Ruby programming language to manipulate OpenStudio models
+and can be used to compare manually specified combinations of measures,
+optimize designs, calibrate models and perform parametric sensitivity analysis.
+Ladybug and Honeybee are plug-ins developed for Rhino Grasshopper
+[@Roudsari2013; @Tabadkani2019]. Ladybug is used to import and analyze Energy
+standard weather data (EPW) while Honeybee is used to create, run, and
+visualize OpenStudio and EnergyPlus simulation results.
+Both OpenStudio and Honeybee have built further abstractions that are capable
+of performing building geometry transformation and restructuring HVAC (Heating,
+Ventilation and Air-Conditioning) systems, and provide supports for BIM
+(Building Information Modeling) interoperability.
+Since the primary Input Data Files (IDFs) of EnergyPlus are all ASCII
+text-based, several applications directly update the building energy models by
+processing and manipulating the text files, without taking into account the
+complex hierarchical structure in the model components.
+jEplus [@Yi2020] is a software written in Java programming language to perform
+complex parametric analysis on multiple design parameters. It allows users to
+describe the parameters and their values using customized symbols via a GUI and
+automatically create parametric models using text-substitution [@Zhang2010a].
+Modelkit [@BigLadderSoftware2020] automates generation and management of
+EnergyPlus models via its templates and scripting tools written in Ruby.
+These frameworks are designed for simplicity and flexibility, and are mainly
+focusing on generating parametric models based on an existing seed model,
+instead of creating a new one from scratch.
+For further customized automation tasks, several frameworks are interfacing
+EnergyPlus with scripting programming languages.
+MLE+ integrates EnergyPlus and scientific computation and design capacities of
+Matlab for controller design and can be used to implement and simulate advanced
+control algorithms of building systems [@Bernal2012; @Zhao2013b].
+EpXL [@Schild2020] is an EnergyPlus Microsoft Excel user-interface written in
+Visual Basic for Applications (VBA) that enables import and export of IDF data
+files, parametric analysis and optimization. It is capable of displaying a
+compact tabular overview of input data and automatically importing simulation
+output into Excel, with a link for viewing the 3D model.
+eppy [@Philip2020] is a library for interfacing EnergyPlus with Python
+programming language. It parses EnergyPlus models into a Python object and
+provides low-level programmatic access to EnergyPlus inputs.
+<!-- transition -->
+GenOpt is a generic optimization programme that can be used with EnergyPlus
+with respect to multiple parameters [@Wetter2001]. It generates new input
+templates files by replacing the keywords with corresponding numerical values
+calculated using a mathematical optimization library.
+The frameworks mentioned above may have overlappings in features but they are
+tailored for different purposes and use cases, with the primary focus on ease
+the time-consuming and error-prone process of creating and managing parametric
+simulations.
 
-Data-driven analytics are complementary with BES in nature [@Srivastava2019]
-aiming to build systems and algorithms to discover knowledge, detect patterns,
-and generate useful insights and predictions from BES data [@Molina-Solana2017;
-@BurakGunay2019]. It encompasses the whole data science process, beginning from
-data extraction and cleaning, and extending to data analysis, description and
-summarization. BES, with an iterative nature inside, can produce a large amount
-of data. The volumes of BES data have clearly overwhelmed traditional data
-analysis methods such as spreadsheets and ad-hoc queries with large amount of
-factors to be considered [@Kim2011]. Moreover, the output of common BES tools
-is not always friendly in format for applying these methods which makes data
-pre-processing an essential but time-consuming and laborious process for any
-data-driven analytics for BES data. This highlights the potential areas for
-improvements in data extraction and result presentation in a clear and
-intuitive manner for data analytics. Even some BES tools provide summary
-reports with various details, it is still quite common in BES to perform
-post-processing and apply customized and more advanced algorithms to the
-simulation results. Currently, there is a growing body of scientific literature
-on the application of advanced mathematical algorithms for building design
-using BES [@Kiss2020]. Researches on parametric building energy simulations
-that employ data mining algorithms upon large amounts of simulations have
-emerged [@BurakGunay2019]. Solutions in most existing frameworks have limited
-post-processing capacities and are not flexible enough to enable a clear
-understanding and control on how the BES data is being transformed
-[@Miller2013; @Attia2013a]. Open-source programming environments such as R
-[@RCoreTeam2019] and Python [@Oliphant2007] are promising on providing
-solutions for large-scale data analytics and have become widely-used research
-tools that provide access to many well-documented packages for various data
-mining, machine learning and data visualization applications [@Lowndes2017;
-@Molina-Solana2017]. However, fewer efforts have been made in terms of
-providing a seamless integrated approach to bridge the gap between BES and
-data-driven analytics. Results of a survey of 448 building energy
-management professionals in the U.S. show that there is a need of improving the
-efficacy and integration of data-driven analytics and BES in the building
-energy management domain, and efforts should be made to develop integrated
-tools that are capable of leveraging both methods [@Srivastava2019].
+## Data-driven analytics of BES data
+
+The use of data-driven analytics techniques to increase energy efficiency is
+attracting a great deal of attention and interest [@Molina-Solana2017].
+Currently, there is a growing body of scientific literature on the application
+of advanced mathematical algorithms for building design using BES [@Kiss2020].
+Generally, data-driven analytics encompasses the whole data analysis process
+beginning with data extraction and cleaning, and extends to data analysis,
+description and summarization [@Molina-Solana2017; @BurakGunay2019].
+Most of the time, data analytics of BES results is of commensurate importance
+with the model itself.
+However, the output of common BES tools is not always friendly in format for
+applying these methods which makes data pre-processing an essential but
+time-consuming and laborious process for any data-driven analytics for BES
+data.
+This highlights the potential areas for improvements in data extraction and
+result presentation in a clear and intuitive manner for data analytics.
+Even some BES tools provide summary reports with various details, it is still
+quite common in BES to perform post-processing and apply customized and more
+advanced algorithms to the simulation results.
+Unfortunately, most existing frameworks listed in Table \@ref(tab:pat-sum) have
+limited capacities with this regard.
+Open-source programming environments such as R [@RCoreTeam2019] and Python
+[@Oliphant2007] are promising on providing solutions for large-scale data
+analytics and have become widely-used research tools that provide access to
+many well-documented packages for various data mining, machine learning and
+data visualization applications [@Lowndes2017; @Molina-Solana2017].
+Even though the recent survey [@Srivastava2019] has highlighted the urgent need
+for an integrated solution, fewer efforts have been made in terms of providing
+a seamless integrated approach to bridge the gap between BES and data-driven
+analytics.
+
+## Reproducible research of BES
 
 BES is a complex domain that involves multiple scientific processes and is
-often a time-intensive, error-prone and hard-to-reproducible process.
+often a hard-to-reproducible process.
 Reproducibility is defined as the ability to recompute data analytic results,
 given an observed data set and knowledge of the data analysis pipeline
 [@Peng2015]. Reproducible research has received an increasing level of
@@ -312,71 +360,38 @@ attention throughout the scientific community and the public at large
 more than 70% of them failed to reproduce another scientist's experiments, and
 more than 50% failed to reproduce their own experiments. Moreover, more than
 half of them agreed that there was a significant crisis of reproducibility
-[@Baker2016a]. As BES becomes more and more integral to many aspects of architecture design,
-and decision-making processes, computational reproducibility has become an
-issue of increasing importance to researchers, designers and practitioners.
-Lack of credibility in BES results due to a lack quality and reproducibility is
-widely considered a problem by the energy model community [@Fleming2012].
-Despite the culture of reluctance and a lack of requirements or incentives to
-publish the code used in generating the results, the reasons why BES is usually
-not easy to reproduce is mainly caused by 2 aspects:
-
-1. *A lack of seamless integration of BES and data-driven analytics workflows*
-
-   When conducting BES, most users prefer to use GUI applications which makes it
-   intuitive and easy to execute certain particular tasks. However, GUI tools have
-   constraints on flexibility as the users have to specify exactly what and how
-   features of the design can be manipulated and often are not be able to provide
-   a good workflow for repeating that task across a wider range of situations on
-   different systems. In this case, manual steps have to be performed using other
-   tools, such as a spreadsheet or command-line tools, which introduces
-   additional transcription burden and results in a non-reproducible process
-   [@Macumber2012]. Sometimes, custom solutions have to be created from scratch to
-   automate part portions of the workflows, which may lead to new inefficiencies
-   and potential errors.
-
-   \vspace{5pt}
-
-   One of the goals of BES is to turn raw simulation data into understanding,
-   insight, and knowledge. BES projects often encompass an iterative workflow of
-   raw design data importing and tidying, parametric input file generation and
-   modification, simulation result collection, processing and analyses, and
-   finally, conclusion visualization. Most of the time, data analytics of BES
-   results is of commensurate importance with the model itself. Currently,
-   there is no widely adopted solution that is able to integrate all processes
-   into one single platform.
-
-2. *Hard to setup the computational environment which covers the whole BES and data-driven analytics toolchain*
-
-   BES often involves the use of multiple applications, software and platforms.
-   To perform crucial scientific processes such as
-   replicating the results, extending the approach or testing the conclusions in
-   other contexts, the indispensable step is to install the software used by the
-   original researchers, which sometimes can become immensely time-consuming if
-   not impossible. It is easy to underestimate the significant barriers raised by
-   a lack of familiar, intuitive, and widely adopted tools for addressing the
-   challenges of computational reproducibility [@Boettiger2015].
-
-In summary, multiple efforts have been made to improve the wide adoption of BES
-among researchers, designers and practitioners. However, an overall holistic
-framework to bridge the gap between the building energy simulation and data
-science domains is still undefined. There is also a need for an integrated
-framework to provide a supportive environment to bring reproducible building
-energy modeling.
-
-In this paper, we introduce a new framework called 'eplusr' for integrating BES
-and data-driven analytics. Eplusr is different from existing frameworks because
-of its data-centric design philosophy. It provides a parametric simulation
-prototype with a unified data interface ensuring BES data is returned in a
-consistent format to match the semantics of the simulation results. This makes
-the BES data can be seamlessly integrated into data-driven analytics workflows
-with minor processing. The proposed framework also provides infrastructures to
-bring portable and reusable computation environment for BES, aiming to
-facilitate the reproducibility research in building energy domain. This paper
-first introduces the concepts and behind the framework and its modules, along
-with its implementation. Next, the applications of the framework using a medium
-office building model is presented, covering various topics including data
-exploration, parametric simulation, optimization and calibration.
+[@Baker2016a].
+Currently, improving computational reproducibility has become an importance
+step to increase the credibility in BES results [@Fleming2012].
+The reasons for the BES reproducible issue are two-fold:
+(1) missing seamless integration between simulation and data analysis workflows and
+(2) absence of a portable and reusable computation environment.
+Most users prefer to use GUI applications which makes it intuitive and easy to
+execute certain particular tasks.
+However, GUI tools have constraints on flexibility as the users have to specify
+exactly what and how features of the design can be manipulated and often are
+not be able to provide a good workflow for repeating that task across a wider
+range of situations on different systems.
+In this case, manual steps have to be performed using other tools, such as a
+spreadsheet or command-line tools, which introduces additional transcription
+burden and results in a non-reproducible process [@Macumber2012].
+Sometimes, custom solutions have to be created from scratch to automate part
+portions of the workflows, which may lead to new inefficiencies and potential
+errors. Currently, there is no widely adopted solution that is able to
+integrate all processes into one single platform.
+Currently there is no existing framework to seamlessly integrate essential
+scientific processes of BES projects together, including raw design data
+importing and tidying, parametric input file generation and modification,
+simulation result collection, processing and analyses, and finally,
+summarization and visualization.
+BES often involves the use of multiple applications, software and platforms.
+To perform crucial scientific processes such as replicating the results,
+extending the approach or testing the conclusions in other contexts, the
+indispensable step is to install the software used by the original researchers,
+which sometimes can become immensely time-consuming if not impossible.
+It is easy to underestimate the significant barriers raised by a lack of
+familiar, intuitive, and widely adopted tools for addressing the challenges of
+computational reproducibility [@Boettiger2015].
 
 # Methodology
 
