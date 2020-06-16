@@ -1049,6 +1049,11 @@ to perform sophisticated geometry transformation including surface matching and
 rotation. Operations such as creating or replacing one whole HVAC system may
 also be time-consuming processes.
 
+# Supplementary materials {-}
+
+The supplementary files include code and datasets used in this article. More
+is available at https://github.com/ideas-lab-nus/eplusr-paper.
+
 # Acknowledgements {-}
 
 This research was funded by the Republic of Singapore's National Research
