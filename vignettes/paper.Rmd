@@ -605,8 +605,9 @@ development of data analysis tools that work well together [@Wickham2014].
 knitr::include_graphics(here("figures/tidy-format.png"))
 ```
 
-Fig. \@ref(fig:tidy-extractor) shows an implementation overview of the data
-extractor for EnergyPlus variable and meter outputs using EnergyPlus SQLite output.
+Fig. \@ref(fig:tidy-extractor) shows an implementation overview of the tidy
+data interface for EnergyPlus variable and meter outputs using EnergyPlus
+SQLite output.
 SQLite is a mature and widely-employed RDMS [@Owens2006].
 The main benefit of using the EnergyPlus SQLite output format is that it
 contains all of the data in standard reports, variable and meter output, and
@@ -1166,7 +1167,7 @@ bridge the gap between the building energy simulation and data science domains.
 
 Eplusr differs from existing frameworks by its data-centric design philosophy.
 It provides a tidy data interface for BES that matches the semantics of the
-simulation results with the data representation. The tidy data extractor
+simulation results with the data representation. The tidy data interface
 provides the possibility to query BES outputs with various types of
 specifications, which makes it easy and straightforward to extract simulation
 results from any time period and for any variables in a consistent manner. The
