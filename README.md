@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/ideas-lab-nus/eplusr-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/eplusr-paper/actions)
+status](https://github.com/ideas-lab-nus/eplusr-paper/workflows/eplusr-paper/badge.svg)](https://github.com/ideas-lab-nus/eplusr-paper/actions)
 <!-- badges: end -->
 
 This repository contains the data and code for paper:
