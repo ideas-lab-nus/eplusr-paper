@@ -23,30 +23,21 @@ Journal <- "Energy and Buildings"
 [![R build status](https://github.com/ideas-lab-nus/eplusr-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/eplusr-paper/actions)
 <!-- badges: end -->
 
-This repository contains the data and code for our paper:
+This repository contains the data and code for paper:
 
-> `r Author`, (2020). _`r Title`_. `r Journal` <https://doi.org/xxx/xxx>
-
-Our pre-print is online here:
-
-> `r Author`, (2020). _`r Title`_. `r Journal`, Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
-
+> `r Author`, (2020). _`r Title`_. (In review)
 
 ### How to cite
 
 Please cite this compendium as:
 
-> `r Author`, (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
+> `r Author`, (`r format(Sys.Date(), "%Y")`). _Compendium of R code and data for `r Title`_. Accessed `r format(Sys.Date(), "%d %b %Y")`.
 
 ### How to download or install
 
 **(a) Option 1: Download the compiled draft PDF**
 
-The latest compiled draft PDF can be downloaded from the `Artifacts`.
-
-```{r, echo = FALSE, out.width = "30%"}
-knitr::include_graphics("figures/artifact.png")
-```
+The latest compiled draft PDF can be downloaded from the `Actions` &#8594; `Artifacts`.
 
 **(b) Option 2: Download the compendium and compile the PDF**
 

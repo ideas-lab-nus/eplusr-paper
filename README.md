@@ -9,17 +9,10 @@
 status](https://github.com/ideas-lab-nus/eplusr-paper/workflows/build-paper/badge.svg)](https://github.com/ideas-lab-nus/eplusr-paper/actions)
 <!-- badges: end -->
 
-This repository contains the data and code for our paper:
+This repository contains the data and code for paper:
 
 > Hongyuan Jia and Adrian Chong, (2020). *A framework for integrating
-> building energy simulation and data-driven analytics*. Energy and
-> Buildings <https://doi.org/xxx/xxx>
-
-Our pre-print is online here:
-
-> Hongyuan Jia and Adrian Chong, (2020). *A framework for integrating
-> building energy simulation and data-driven analytics*. Energy and
-> Buildings, Accessed 29 May 2020. Online at <https://doi.org/xxx/xxx>
+> building energy simulation and data-driven analytics*. (In review)
 
 ### How to cite
 
@@ -27,16 +20,14 @@ Please cite this compendium as:
 
 > Hongyuan Jia and Adrian Chong, (2020). *Compendium of R code and data
 > for A framework for integrating building energy simulation and
-> data-driven analytics*. Accessed 29 May 2020. Online at
-> <https://doi.org/xxx/xxx>
+> data-driven analytics*. Accessed 05 Jul 2020.
 
 ### How to download or install
 
 **(a) Option 1: Download the compiled draft PDF**
 
-The latest compiled draft PDF can be downloaded from the `Artifacts`.
-
-<img src="figures/artifact.png" width="30%" />
+The latest compiled draft PDF can be downloaded from the `Actions` →
+`Artifacts`.
 
 **(b) Option 2: Download the compendium and compile the PDF**
 
