@@ -1,0 +1,12 @@
+Name,Simulation engine,Cross-platform,Free,GUI,Open-source,API language,Semantic API,Supports optimization,Supports calibration,BIM interoperability
+IESVE (ref:iesve),IESVE,,,X,,Python,X,X,X,X
+IDA ICE (ref:idaice),IDA ICE,,,X,,,,X,,X
+eQUEST (ref:equest),DOE-2,,X,X,,,,,,
+DesignBuilder (ref:designbuilder),EnergyPlus,,,X,,"C\#, Python",,X,,X
+OpenStudio PAT (ref:pat) ,EnergyPlus,X,X,X ,X,Ruby   ,X,X,X,X
+Ladybug \& Honeybee (ref:ladybug),EnergyPlus,   ,X,X,X,Python ,X,   ,   ,X
+jEplus (ref:jeplus),EnergyPlus,X,X,X,X,,   ,X,   ,
+Modelkit (ref:modelkit),EnergyPlus,   ,X,,   ,Ruby   ,   ,   ,   ,
+MLE+ (ref:mle),EnergyPlus,   ,X,X,X,Matlab ,   ,X,   ,
+EpXL (ref:epxl),EnergyPlus,   ,X,X,X,VBA    ,   ,X,   ,
+eppy (ref:eppy),EnergyPlus,X,X,   ,X,Python ,   ,   ,   ,

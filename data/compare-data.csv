@@ -1,0 +1,12 @@
+Name,Weather data handling,Further data extraction,SQL-based structural output,Post-processing capabilities
+IESVE (ref:iesve),X,X,,XXX
+IDA ICE (ref:idaice),,X,,XX
+eQUEST (ref:equest),,X,,X
+DesignBuilder (ref:designbuilder),,X,X,XX
+OpenStudio PAT (ref:pat) , X ,X,X ,XXX
+Ladybug \& Honeybee (ref:ladybug), X ,X,   ,XX
+jEplus (ref:jeplus),   ,X,X,XXX
+Modelkit (ref:modelkit),   ,   ,   ,X
+MLE+ (ref:mle),   ,   ,   ,X
+EpXL (ref:epxl),   ,X,   ,XX
+eppy (ref:eppy),   ,X,   ,XXX
