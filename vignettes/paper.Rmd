@@ -40,7 +40,7 @@ abstract: |
   The framework also provides an infrastructure to bring portable and reusable
   computational environment for building energy modeling to facilitate
   reproducibility research.
-journal: "Energy and Buildings"
+journal: "Automation in Construction"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 csl: elsevier-with-titles.csl
