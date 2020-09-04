@@ -380,8 +380,6 @@ compare_data <- data.table::fread(here::here("data/compare-data.csv"))
 
 # use tick symbol
 compare_data[, c(names(compare_data)[2:4]) := lapply(.SD, function (val) {val[val == "X"] <- "\\cmark";val}), .SDcols = names(compare_data)[2:4]]
-# use star symbol
-compare_data[, c(names(compare_data)[5]) := lapply(.SD, function (val) {val <- stringi::stri_dup("\\ding{72}", stringi::stri_count_fixed(val, "X"));val}), .SDcols = names(compare_data)[5]]
 
 # columns that should be further described in footnotes
 cols <- c("Weather data handling", "SQL-based structural output", "Further data extraction", "Post-processing capabilities")
@@ -413,7 +411,7 @@ compare_data %>%
         # Data extraction
         "The capabilities of extracting further customized summary data, instead of solely based on the built-in functionalities of the simulation engine",
         # Post-processing capabilities
-        "The capabilities of performing further data analyses on the extracted simulation results. The number of stars indicates the relative capabilities"
+        "The capabilities of performing further data analyses on the extracted simulation results."
     )) %>%
     # change footnote font size manually
     gsub("\\small", "\\scriptsize", x = ., fixed = TRUE)
