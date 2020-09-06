@@ -815,18 +815,18 @@ a derived year value using the algorithm described in Section
 Moreover, the tidy data interface also provides a number of additional columns
 shown in Fig. \@ref(fig:tidy-extractor), which makes it quite convenient and
 straightforward to directly perform further data transformations.
-Lines 93 -- 107 in Listing \@ref(code:basic) demonstrate the benefits of the
+Lines 59 -- 123 in Listing \@ref(code:basic) demonstrate the benefits of the
 tidy format in selecting columns using `select()`, subsetting rows using
 `filter()`, sorting rows using `arrange()`, adding new variables using
 `mutate()`, summarizing data using a combination of `group_by()` and
 `summarize()`, joining tables using `left_join()`, and data visualization using
 `ggplot()`.
 
-Based on the building energy consumption data (line 39 in Listing
-\@ref(code:basic)) and the building area (line 36 in Listing
-\@ref(code:basic)), the electricity EUI breakdown from various end-use
+Based on the building energy consumption data (line 42 in Listing
+\@ref(code:basic)) and the building area (line 39 in Listing
+\@ref(code:basic)), the electricity consumption breakdown from various end-use
 categories was calculated, and a pie chart was created (shown in Fig.
-\@ref(fig:eui)) using only 13 lines of codes (line 56 -- 77 in Listing
+\@ref(fig:eui)) using only 16 lines of codes (line 60 -- 81 in Listing
 \@ref(code:basic)). From Fig. \@ref(fig:eui), we can see that most of the
 energy has been consumed by interior electric equipment, followed by indoor
 lighting.
@@ -835,18 +835,18 @@ density (LPD) may have a promising potential in improving the overall energy
 performance.
 We will perform further investigations on this in Section \@ref(sec:param).
 
-```{r eui, echo = FALSE, eval = TRUE, fig.cap = "Annual electricity EUI breakdown", out.width = "50%"}
+```{r eui, echo = FALSE, eval = TRUE, fig.cap = "Annual electricity consumption breakdown in $\\mathrm{kWh}/(\\mathrm{m}^2 \\mathrm{a})$", out.width = "50%"}
 knitr::include_graphics(here::here("figures/eui.png"))
 ```
 
 Fig. \@ref(fig:aircon-out) shows the profile of monthly heating and cooling
 demands in a unit of $\mathrm{MJ}/\mathrm{m}^2$. It is calculated based on the zone
-metadata (line 42 in Listing \@ref(code:basic)) and hourly air system heating
-and cooling energy outputs (lines 46 -- 50 in Listing \@ref(code:basic)). With
+metadata (line 45 in Listing \@ref(code:basic)) and hourly air system heating
+and cooling energy outputs (lines 49 -- 53 in Listing \@ref(code:basic)). With
 the tidy format and additional metadata columns, these two data fit well in the
 data pipeline, making it straightforward and intuitive to perform data
 transformation and visualization. Fig. \@ref(fig:aircon-out) is a result of
-only around 30 lines of code (line 41 -- 50 and 79 -- 119 in Listing
+only around 30 lines of code (line 41 -- 53 and 84 -- 123 in Listing
 \@ref(code:basic)). In Fig. \@ref(fig:aircon-out), we can
 see that during the transition seasons, including March, April, October, and
 November, the heating and cooling demands are relatively small compared to
@@ -878,7 +878,7 @@ knitr::include_graphics(here::here("figures/parametric-simulation.png"))
 
 Measures are functions that describe how an energy model should be modified
 based on input parameter values.
-Lines 4 -- 14 in Listing \@ref(code:param) shows a simple measure that modifies
+Lines 8 -- 18 in Listing \@ref(code:param) shows a simple measure that modifies
 the LPD.
 The core code is line 14 that assigns all related fields in a whole class to
 input values, taking advantage of the flexibly-scoped OOP model API.
@@ -897,7 +897,7 @@ combined measure `ecm` is used to create six models with various combinations
 of LPD and plug loads control strategies.
 
 After calling the `run()` method to conduct parallel runs of simulations (line
-67 in Listing \@ref(code:param)), the tidy data interface can be used to
+60 in Listing \@ref(code:param)), the tidy data interface can be used to
 extract any simulation outputs of interest from the SQL database using
 `report_data()`, `tabular_data()`, etc.
 In this example, the building energy consumptions of all six
@@ -1021,10 +1021,10 @@ In this example, we have twenty individuals per generation, resulting in a
 total of two thousand annual energy simulations.
 Once one of the conditions specified in `terminator()` is met, all populations
 and Pareto set can be extracted into two tidy tables for further analyses,
-using the `population()` and `pareto_set()` method (Lines 126 and 129 in Listing
+using the `population()` and `pareto_set()` method (Lines 130 and 133 in Listing
 \@ref(code:moo)).
 Fig. \@ref(fig:pareto) shows the Pareto front of discomfort hours and total
-carbon emissions generated using lines 132 -- 139 in Listing \@ref(code:moo).
+carbon emissions generated using lines 135 -- 143 in Listing \@ref(code:moo).
 The final Pareto font contained 20 unique solutions.
 
 ```{r pareto, echo = FALSE, eval = TRUE, fig.cap = "Pareto front of discomfort hours and carbon emissions", out.width = "40%"}
@@ -1082,7 +1082,7 @@ measured variables into EnergyPlus output variables (listed in RDD) and meters
 using schedule files or other techniques.
 The next step is to specify the observable input and output variables for the
 calibration using the `input()` and `output()` methods in `BayesCalibJob` class
-(lines 29 -- 39 in Listing \@ref(code:bc)).
+(lines 30 -- 40 in Listing \@ref(code:bc)).
 
 Following the Bayesian calibration guidelines described in [@Chong2018],
 the epluspar R package also introduces a `SensitivityJob` class based on the
@@ -1090,42 +1090,42 @@ parametric prototype to perform calibration parameter screening with the Morris
 method.
 In `BayesCalibJob` class, the calibration parameters, together with the number
 of EnergyPlus simulations, can be described using either the `param()` method
-(lines 41 -- 45 in Listing \@ref(code:bc)) or the `apply_measure()` method.
+(lines 42 -- 46 in Listing \@ref(code:bc)) or the `apply_measure()` method.
 Each calibration parameter should be given a lower and upper bound value.
 Once the calibration parameters are given, the Latin Hypercube Sampling (LHS)
 algorithm will be used to generate parameter sample values based on the lower
-and upper bound and the simulation number (lines 47 -- 48 in Listing
+and upper bound and the simulation number (lines 48 -- 49 in Listing
 \@ref(code:bc)).
 The benefit of LHS is that it will try to cover as much as possible in the
 multi-dimensional space of the calibration parameters.
 
-After completing all simulations using the `eplus_run()` method (lines 50 -- 51
+After completing all simulations using the `eplus_run()` method (lines 51 -- 52
 in Listing \@ref(code:bc)), the `data_sim()` method gathers all simulated data of
 calibration input and output variables and aggregates the data into the same
-time frequency as the actual measured data (lines 53 -- 54 in Listing
+time frequency as the actual measured data (lines 54 -- 55 in Listing
 \@ref(code:bc)).
 Method `data_bc()` will combine measured data and simulated data, and transform
 them into a list with the proper format for the Bayesian calibration algorithm
-(lines 56 -- 60 in Listing \@ref(code:bc)) written in probabilistic programming
+(lines 60 -- 61 in Listing \@ref(code:bc)) written in probabilistic programming
 language Stan.
 With all data required specified, the `stan_run()` method is used to call the
-Stan program (lines 62 -- 63 in Listing \@ref(code:bc)).
+Stan program (lines 63 -- 64 in Listing \@ref(code:bc)).
 Once completed, the posterior distributions of calibration parameters and
 predicted output variable values can be retrieved using method `post_dist()`
 and `prediction()`, respectively (lines 66 -- 70 in Listing \@ref(code:bc)).
 The uncertainty statistical indicators, including Normalized Mean Biased
 Error (NMBE) and Coefficient of Variation of the Root Mean Squared Error
-(CVRMSE) can be retrieved using the `evaluate()` method.
+(CVRMSE) can be retrieved using the `evaluate()` method (lines 72 -- 73 in Listing \@ref(code:bc)).
 Each method returns a tidy table that is well fit for the tidyverse data
 pipeline for data transformation and visualization.
 
 Fig. \@ref(fig:dist-post) gives a density plot showing the posterior
-distributions of calibrated fan total efficiency, created using lines 74 -- 79
+distributions of calibrated fan total efficiency, created using lines 75 -- 80
 in Listing \@ref(code:bc). The mean value of the posterior distribution was
 0.60, which is quite close to the actual value of 0.59 specified in the
 original model. Fig. \@ref(fig:uncertainties) gives a box plot showing the
 distribution of CVRMSE and NMBE per Markov Chain Monte Carlo (MCMC) sampling,
-created using lines 81 -- 85 in Listing \@ref(code:bc). The mean NMBE value was
+created using lines 82 -- 86 in Listing \@ref(code:bc). The mean NMBE value was
 quite close to zero, and the average CVRMSE is around 3.0%. Both values met the
 thresholds of CVRMSE $\leq$ 15% and NMBE $\leq$ 5% set by ASHRAE [@ASHRAE2014].
 The satisfactory results are expected since we use synthetic data. However,
@@ -1291,9 +1291,11 @@ eui <- end_use %>%
 # plot a pie chart to show EUI breakdown
 p_eui <- eui %>%
     filter(category != "Total End Uses") %>%
-    mutate(category = as_factor(sprintf("%s [%.2f%%]", category, proportion, "%"))) %>%
+    mutate(category = as_factor(category),
+           ypos = rev(cumsum(rev(proportion))- 0.5*rev(proportion))) %>%
     ggplot(aes("", proportion, fill = category)) +
     geom_bar(stat = "identity", width = 1, color = "black", size = 0.2) +
+    geom_text(aes(y = ypos, label = {eui[eui < 0.1] <- NA; eui})) +
     coord_polar("y", start = 0)
 
 # calculate air-conditioned floor area per storey
