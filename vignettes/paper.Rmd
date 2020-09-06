@@ -116,7 +116,7 @@ buildings sector [@Hong2018].
 
 BES offers an alternative approach that encourages customized, integrated
 design solutions, and the development of BES tools has been pronounced over the
-decades [@Hong2000; @Hong2018].
+decades [@Hong2000; @Hong2018; @Chen2017Automatic].
 The core tools are the whole-building energy simulation
 programs that provide users with key building performance indicators such as
 energy use and demand, temperature, humidity, and costs [@Crawley2008a].
@@ -189,7 +189,7 @@ task that requires the management of a large amount of information on the
 properties of design options and the simulation of their performance
 [@Purup2020].
 Parametric energy simulation is often needed to take into account the
-uncertainties and variability of different design variables.
+uncertainties and variability of different design variables [@Tian2018review].
 However, parametric analysis involves tedious file management tasks, repeated
 entry of model parameters, the application of design transformations and the
 execution of large-scale analyses [@Macumber2012], which can be time-consuming
@@ -341,7 +341,7 @@ simulations.
 ## Data-driven analytics of BES data
 
 Currently, there is a growing body of scientific literature on the application
-of advanced mathematical algorithms for building design using BES [@Kiss2020].
+of advanced mathematical algorithms for building design using BES [@Kiss2020; @Wei2018review].
 Generally, data-driven analytics encompasses the whole data analysis process
 beginning with data extraction and cleaning, and extends to data analysis,
 description and summarization [@Molina-Solana2017; @BurakGunay2019].
@@ -785,7 +785,7 @@ This example demonstrates the data exploration process of obtaining (1) energy
 use intensity (EUI) and (2) heating and cooling demand profile using annual
 simulation results.
 The energy use intensity (EUI) is one key indicator for building energy
-performance, and its breakdown can provide potential directions of where ECMs
+performance [@Yoon2017Objective], and its breakdown can provide potential directions of where ECMs
 should be applied to reduce energy usage. When evaluating the feasibility of
 free-cooling applications in buildings, the heating and cooling demand profile
 plays an essential role in the determination of the potential.
@@ -1047,7 +1047,7 @@ knitr::include_graphics(here::here("figures/parallel.png"))
 
 Model calibration is an essential process to achieve greater confidence in BES
 results. In recent years there has been an increasing application of Bayesian
-approaches for BES calibration [@Chong2017]. Bayesian calibration is carried
+approaches for BES calibration [@Chong2017;@Tian2016Identifying;@Yi2019Parameter]. Bayesian calibration is carried
 out following the statistical formulation proposed by Kennedy and O'Hagan
 [@Chong2018]. This example demonstrates the model calibration workflow
 using the epluspar R package. The epluspar R package implements the Bayesian
