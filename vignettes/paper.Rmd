@@ -40,7 +40,7 @@ abstract: |
   The framework also provides an infrastructure to bring portable and reusable
   computational environment for building energy modeling to facilitate
   reproducibility research.
-journal: "Automation in Construction"
+journal: "Energy and Buildings"
 date: "`r Sys.Date()`"
 bibliography: references.bib
 csl: elsevier-with-titles.csl
@@ -116,7 +116,7 @@ buildings sector [@Hong2018].
 
 BES offers an alternative approach that encourages customized, integrated
 design solutions, and the development of BES tools has been pronounced over the
-decades [@Hong2000; @Hong2018].
+decades [@Hong2000; @Hong2018; @Chen2017Automatic].
 The core tools are the whole-building energy simulation
 programs that provide users with key building performance indicators such as
 energy use and demand, temperature, humidity, and costs [@Crawley2008a].
@@ -149,8 +149,7 @@ The framework is different from existing ones because of its data-centric
 design philosophy.
 The objectives are (1) to provide better and more seamless integration between
 BES engine EnergyPlus and R-programming data-driven analytics environment
-through a parametric simulation prototype with structured inputs and outputs
-format and (2) to build infrastructures for portable and reusable BES
+and (2) to build infrastructures for portable and reusable BES
 computational environment to facilitate reproducibility research in building
 energy domain.
 Section 2 describes the state of the art of related research and development.
@@ -190,7 +189,7 @@ task that requires the management of a large amount of information on the
 properties of design options and the simulation of their performance
 [@Purup2020].
 Parametric energy simulation is often needed to take into account the
-uncertainties and variability of different design variables.
+uncertainties and variability of different design variables [@Tian2018review].
 However, parametric analysis involves tedious file management tasks, repeated
 entry of model parameters, the application of design transformations and the
 execution of large-scale analyses [@Macumber2012], which can be time-consuming
@@ -342,7 +341,7 @@ simulations.
 ## Data-driven analytics of BES data
 
 Currently, there is a growing body of scientific literature on the application
-of advanced mathematical algorithms for building design using BES [@Kiss2020].
+of advanced mathematical algorithms for building design using BES [@Kiss2020; @Wei2018review].
 Generally, data-driven analytics encompasses the whole data analysis process
 beginning with data extraction and cleaning, and extends to data analysis,
 description and summarization [@Molina-Solana2017; @BurakGunay2019].
@@ -380,8 +379,6 @@ compare_data <- data.table::fread(here::here("data/compare-data.csv"))
 
 # use tick symbol
 compare_data[, c(names(compare_data)[2:4]) := lapply(.SD, function (val) {val[val == "X"] <- "\\cmark";val}), .SDcols = names(compare_data)[2:4]]
-# use star symbol
-compare_data[, c(names(compare_data)[5]) := lapply(.SD, function (val) {val <- stringi::stri_dup("\\ding{72}", stringi::stri_count_fixed(val, "X"));val}), .SDcols = names(compare_data)[5]]
 
 # columns that should be further described in footnotes
 cols <- c("Weather data handling", "SQL-based structural output", "Further data extraction", "Post-processing capabilities")
@@ -413,7 +410,7 @@ compare_data %>%
         # Data extraction
         "The capabilities of extracting further customized summary data, instead of solely based on the built-in functionalities of the simulation engine",
         # Post-processing capabilities
-        "The capabilities of performing further data analyses on the extracted simulation results. The number of stars indicates the relative capabilities"
+        "The capabilities of performing further data analyses on the extracted simulation results."
     )) %>%
     # change footnote font size manually
     gsub("\\small", "\\scriptsize", x = ., fixed = TRUE)
@@ -788,7 +785,7 @@ This example demonstrates the data exploration process of obtaining (1) energy
 use intensity (EUI) and (2) heating and cooling demand profile using annual
 simulation results.
 The energy use intensity (EUI) is one key indicator for building energy
-performance, and its breakdown can provide potential directions of where ECMs
+performance [@Yoon2017Objective], and its breakdown can provide potential directions of where ECMs
 should be applied to reduce energy usage. When evaluating the feasibility of
 free-cooling applications in buildings, the heating and cooling demand profile
 plays an essential role in the determination of the potential.
@@ -818,18 +815,18 @@ a derived year value using the algorithm described in Section
 Moreover, the tidy data interface also provides a number of additional columns
 shown in Fig. \@ref(fig:tidy-extractor), which makes it quite convenient and
 straightforward to directly perform further data transformations.
-Lines 93 -- 107 in Listing \@ref(code:basic) demonstrate the benefits of the
+Lines 59 -- 124 in Listing \@ref(code:basic) demonstrate the benefits of the
 tidy format in selecting columns using `select()`, subsetting rows using
 `filter()`, sorting rows using `arrange()`, adding new variables using
 `mutate()`, summarizing data using a combination of `group_by()` and
 `summarize()`, joining tables using `left_join()`, and data visualization using
 `ggplot()`.
 
-Based on the building energy consumption data (line 39 in Listing
-\@ref(code:basic)) and the building area (line 36 in Listing
-\@ref(code:basic)), the electricity EUI breakdown from various end-use
+Based on the building energy consumption data (line 42 in Listing
+\@ref(code:basic)) and the building area (line 39 in Listing
+\@ref(code:basic)), the electricity consumption breakdown from various end-use
 categories was calculated, and a pie chart was created (shown in Fig.
-\@ref(fig:eui)) using only 13 lines of codes (line 56 -- 77 in Listing
+\@ref(fig:eui)) using only 15 lines of codes (line 60 -- 82 in Listing
 \@ref(code:basic)). From Fig. \@ref(fig:eui), we can see that most of the
 energy has been consumed by interior electric equipment, followed by indoor
 lighting.
@@ -838,18 +835,18 @@ density (LPD) may have a promising potential in improving the overall energy
 performance.
 We will perform further investigations on this in Section \@ref(sec:param).
 
-```{r eui, echo = FALSE, eval = TRUE, fig.cap = "Annual electricity EUI breakdown", out.width = "50%"}
+```{r eui, echo = FALSE, eval = TRUE, fig.cap = "Annual electricity consumption breakdown in $\\mathrm{kWh}/(\\mathrm{m}^2 \\mathrm{a})$", out.width = "50%"}
 knitr::include_graphics(here::here("figures/eui.png"))
 ```
 
 Fig. \@ref(fig:aircon-out) shows the profile of monthly heating and cooling
 demands in a unit of $\mathrm{MJ}/\mathrm{m}^2$. It is calculated based on the zone
-metadata (line 42 in Listing \@ref(code:basic)) and hourly air system heating
-and cooling energy outputs (lines 46 -- 50 in Listing \@ref(code:basic)). With
+metadata (line 45 in Listing \@ref(code:basic)) and hourly air system heating
+and cooling energy outputs (lines 49 -- 53 in Listing \@ref(code:basic)). With
 the tidy format and additional metadata columns, these two data fit well in the
 data pipeline, making it straightforward and intuitive to perform data
 transformation and visualization. Fig. \@ref(fig:aircon-out) is a result of
-only around 30 lines of code (line 41 -- 50 and 79 -- 119 in Listing
+only around 30 lines of code (line 41 -- 53 and 84 -- 124 in Listing
 \@ref(code:basic)). In Fig. \@ref(fig:aircon-out), we can
 see that during the transition seasons, including March, April, October, and
 November, the heating and cooling demands are relatively small compared to
@@ -881,7 +878,7 @@ knitr::include_graphics(here::here("figures/parametric-simulation.png"))
 
 Measures are functions that describe how an energy model should be modified
 based on input parameter values.
-Lines 4 -- 14 in Listing \@ref(code:param) shows a simple measure that modifies
+Lines 8 -- 18 in Listing \@ref(code:param) shows a simple measure that modifies
 the LPD.
 The core code is line 14 that assigns all related fields in a whole class to
 input values, taking advantage of the flexibly-scoped OOP model API.
@@ -900,7 +897,7 @@ combined measure `ecm` is used to create six models with various combinations
 of LPD and plug loads control strategies.
 
 After calling the `run()` method to conduct parallel runs of simulations (line
-67 in Listing \@ref(code:param)), the tidy data interface can be used to
+60 in Listing \@ref(code:param)), the tidy data interface can be used to
 extract any simulation outputs of interest from the SQL database using
 `report_data()`, `tabular_data()`, etc.
 In this example, the building energy consumptions of all six
@@ -1024,10 +1021,10 @@ In this example, we have twenty individuals per generation, resulting in a
 total of two thousand annual energy simulations.
 Once one of the conditions specified in `terminator()` is met, all populations
 and Pareto set can be extracted into two tidy tables for further analyses,
-using the `population()` and `pareto_set()` method (Lines 126 and 129 in Listing
+using the `population()` and `pareto_set()` method (Lines 130 and 133 in Listing
 \@ref(code:moo)).
 Fig. \@ref(fig:pareto) shows the Pareto front of discomfort hours and total
-carbon emissions generated using lines 132 -- 139 in Listing \@ref(code:moo).
+carbon emissions generated using lines 135 -- 143 in Listing \@ref(code:moo).
 The final Pareto font contained 20 unique solutions.
 
 ```{r pareto, echo = FALSE, eval = TRUE, fig.cap = "Pareto front of discomfort hours and carbon emissions", out.width = "40%"}
@@ -1050,7 +1047,7 @@ knitr::include_graphics(here::here("figures/parallel.png"))
 
 Model calibration is an essential process to achieve greater confidence in BES
 results. In recent years there has been an increasing application of Bayesian
-approaches for BES calibration [@Chong2017]. Bayesian calibration is carried
+approaches for BES calibration [@Chong2017;@Tian2016Identifying;@Yi2019Parameter]. Bayesian calibration is carried
 out following the statistical formulation proposed by Kennedy and O'Hagan
 [@Chong2018]. This example demonstrates the model calibration workflow
 using the epluspar R package. The epluspar R package implements the Bayesian
@@ -1085,7 +1082,7 @@ measured variables into EnergyPlus output variables (listed in RDD) and meters
 using schedule files or other techniques.
 The next step is to specify the observable input and output variables for the
 calibration using the `input()` and `output()` methods in `BayesCalibJob` class
-(lines 29 -- 39 in Listing \@ref(code:bc)).
+(lines 30 -- 40 in Listing \@ref(code:bc)).
 
 Following the Bayesian calibration guidelines described in [@Chong2018],
 the epluspar R package also introduces a `SensitivityJob` class based on the
@@ -1093,42 +1090,42 @@ parametric prototype to perform calibration parameter screening with the Morris
 method.
 In `BayesCalibJob` class, the calibration parameters, together with the number
 of EnergyPlus simulations, can be described using either the `param()` method
-(lines 41 -- 45 in Listing \@ref(code:bc)) or the `apply_measure()` method.
+(lines 42 -- 46 in Listing \@ref(code:bc)) or the `apply_measure()` method.
 Each calibration parameter should be given a lower and upper bound value.
 Once the calibration parameters are given, the Latin Hypercube Sampling (LHS)
 algorithm will be used to generate parameter sample values based on the lower
-and upper bound and the simulation number (lines 47 -- 48 in Listing
+and upper bound and the simulation number (lines 48 -- 49 in Listing
 \@ref(code:bc)).
 The benefit of LHS is that it will try to cover as much as possible in the
 multi-dimensional space of the calibration parameters.
 
-After completing all simulations using the `eplus_run()` method (lines 50 -- 51
+After completing all simulations using the `eplus_run()` method (lines 51 -- 52
 in Listing \@ref(code:bc)), the `data_sim()` method gathers all simulated data of
 calibration input and output variables and aggregates the data into the same
-time frequency as the actual measured data (lines 53 -- 54 in Listing
+time frequency as the actual measured data (lines 54 -- 55 in Listing
 \@ref(code:bc)).
 Method `data_bc()` will combine measured data and simulated data, and transform
 them into a list with the proper format for the Bayesian calibration algorithm
-(lines 56 -- 60 in Listing \@ref(code:bc)) written in probabilistic programming
+(lines 60 -- 61 in Listing \@ref(code:bc)) written in probabilistic programming
 language Stan.
 With all data required specified, the `stan_run()` method is used to call the
-Stan program (lines 62 -- 63 in Listing \@ref(code:bc)).
+Stan program (lines 63 -- 64 in Listing \@ref(code:bc)).
 Once completed, the posterior distributions of calibration parameters and
 predicted output variable values can be retrieved using method `post_dist()`
 and `prediction()`, respectively (lines 66 -- 70 in Listing \@ref(code:bc)).
 The uncertainty statistical indicators, including Normalized Mean Biased
 Error (NMBE) and Coefficient of Variation of the Root Mean Squared Error
-(CVRMSE) can be retrieved using the `evaluate()` method.
+(CVRMSE) can be retrieved using the `evaluate()` method (lines 72 -- 73 in Listing \@ref(code:bc)).
 Each method returns a tidy table that is well fit for the tidyverse data
 pipeline for data transformation and visualization.
 
 Fig. \@ref(fig:dist-post) gives a density plot showing the posterior
-distributions of calibrated fan total efficiency, created using lines 74 -- 79
+distributions of calibrated fan total efficiency, created using lines 75 -- 80
 in Listing \@ref(code:bc). The mean value of the posterior distribution was
 0.60, which is quite close to the actual value of 0.59 specified in the
 original model. Fig. \@ref(fig:uncertainties) gives a box plot showing the
 distribution of CVRMSE and NMBE per Markov Chain Monte Carlo (MCMC) sampling,
-created using lines 81 -- 85 in Listing \@ref(code:bc). The mean NMBE value was
+created using lines 82 -- 86 in Listing \@ref(code:bc). The mean NMBE value was
 quite close to zero, and the average CVRMSE is around 3.0%. Both values met the
 thresholds of CVRMSE $\leq$ 15% and NMBE $\leq$ 5% set by ASHRAE [@ASHRAE2014].
 The satisfactory results are expected since we use synthetic data. However,
@@ -1294,9 +1291,11 @@ eui <- end_use %>%
 # plot a pie chart to show EUI breakdown
 p_eui <- eui %>%
     filter(category != "Total End Uses") %>%
-    mutate(category = as_factor(sprintf("%s [%.2f%%]", category, proportion, "%"))) %>%
+    mutate(category = as_factor(category),
+           ypos = rev(cumsum(rev(proportion))- 0.5*rev(proportion))) %>%
     ggplot(aes("", proportion, fill = category)) +
     geom_bar(stat = "identity", width = 1, color = "black", size = 0.2) +
+    geom_text(aes(y = ypos, label = {eui[eui < 0.1] <- NA; eui})) +
     coord_polar("y", start = 0)
 
 # calculate air-conditioned floor area per storey
