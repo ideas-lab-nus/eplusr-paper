@@ -149,8 +149,7 @@ The framework is different from existing ones because of its data-centric
 design philosophy.
 The objectives are (1) to provide better and more seamless integration between
 BES engine EnergyPlus and R-programming data-driven analytics environment
-through a parametric simulation prototype with structured inputs and outputs
-format and (2) to build infrastructures for portable and reusable BES
+and (2) to build infrastructures for portable and reusable BES
 computational environment to facilitate reproducibility research in building
 energy domain.
 Section 2 describes the state of the art of related research and development.
