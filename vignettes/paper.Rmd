@@ -1718,6 +1718,7 @@ tmp$RunPeriod <- NULL
 tmp$add(RunPeriod = list("test", 7, 1, NULL, 7, 3))
 # add variables of interest to output
 tmp$Output_Variable <- NULL
+tmp$Output_Meter <- NULL
 tmp$add(Output_Variable = list("VAV_1_Fan", "Fan Electric Power", "Hourly"))
 # get rid of design day variable output data
 tmp$SimulationControl$set(run_simulation_for_sizing_periods = "No")
@@ -1726,9 +1727,9 @@ tmp$save(tempfile(fileext = ".idf"))
 # run simulation
 job <- tmp$run(path_weather)
 # extract fan electric power in 6-hourly frequency
-fan_power <- job$report_data(all = TRUE) %>%
+fan_power <- job$report_data(name = "Fan Electric Power", all = TRUE) %>%
     epluspar:::report_dt_aggregate("6 hour") %>%
-    eplusr:::report_dt_to_wide()
+    epluspar:::report_dt_to_wide()
 # insert Gaussian noise
 fan_power <- fan_power %>%
     select(-`Date/Time`) %>%
@@ -1739,6 +1740,8 @@ fan_power <- fan_power %>%
 
 # load library
 library(epluspar)
+
+idf$save(file.path(tempdir(), "MediumOffice.idf"), overwrite = TRUE)
 
 # create a `BayesCalibJob` object:
 bc <- bayes_job(idf, path_weather)
