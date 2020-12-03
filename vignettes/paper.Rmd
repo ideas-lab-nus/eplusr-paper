@@ -854,7 +854,7 @@ summer and winter seasons, indicating the potential of free-cooling
 applications.
 
 ```{r aircon-out, echo = FALSE, eval = TRUE, fig.cap = "Monthly heating and cooling demand profile", out.width = "50%"}
-knitr::include_graphics(here::here("figures/aircon-out.png"))
+knitr::include_graphics(here::here("figures/mtr_temp.png"))
 ```
 
 ## Parametric simulation {#sec:param}
@@ -1242,8 +1242,20 @@ idf$SimulationControl$Run_Simulation_for_Weather_File_Run_Periods <- "Yes"
 # make sure energy consumption is presented in kWh
 idf$OutputControl_Table_Style$Unit_Conversion <- "JtoKWH"
 
+# add meter outputs to get hourly time-series energy consumption
+meters <- c(
+    "Cooling:Electricity",
+    "Heating:Electricity",
+    "InteriorLights:Electricity",
+    "ExteriorLights:Electricity",
+    "InteriorEquipment:Electricity",
+    "Fans:Electricity",
+    "Pumps:Electricity"
+)
+idf$add(Output_Meter := list(meters, "Hourly"))
+
 # save the modified model into a temporary folder
-idf$save(file.path(tempdir(), "MediumOffice.idf"))
+idf$save(file.path(tempdir(), "MediumOffice.idf"), overwrite = TRUE)
 
 # run annual simulation
 job <- idf$run(path_weather)
@@ -1253,92 +1265,74 @@ job <- idf$run(path_weather)
 #######################
 
 # read building area from Standard Reports
-area <- job$tabular_data(table_name = "Building Area", wide = TRUE)[[1L]]
+area <- job$tabular_data(table_name = "Building Area", wide = TRUE)[[1]]
 
-# read building energy consumption from Standard Reports
-end_use <- job$tabular_data(table_name = "End Uses", wide = TRUE)[[1L]]
-
-# read zone metadata from Standard Input and Output
-zones <- job$read_table("Zones")
-
-# read hourly air-conditioning system output with all additional metadata for
-# the annual simulation from Variable Output
-aircon_out <- job$report_data(
-    name = sprintf("air system total %s energy", c("heating", "cooling")),
+# extract energy consumption from Output Meter
+mtr <- job$report_data(name = meters,
     environment_name = "annual",
-    all = TRUE
+    interval = 60, all = TRUE
+)
+
+# extract outdoor air dry-bulb temperature from Output Variable
+temp <- job$report_data(
+    name = "site outdoor air drybulb temperature",
+    environment_name = "annual",
+    interval = 60
 )
 
 #########################
 # Data-driven analytics #
 #########################
 
-# calculate Energy Use Intensity (EUI) for electricity
-eui <- end_use %>%
-    # only select columns of interest
-    select(category = row_name, electricity = `Electricity [kWh]`) %>%
-    # get rid of category with empty energy consumption
-    filter(electricity > 0.0) %>%
-    # order by value
-    arrange(-electricity) %>%
-    # calculate EUI
-    mutate(eui = round(electricity / area$'Area [m2]'[1], digits = 2)) %>%
-    # calculate proportion of each category
-    mutate(proportion = round(eui / eui[1] * 100, digits = 2)) %>%
-    # remove electricity column
-    select(-electricity)
+# calculate monthly energy consumption per total floor area
+mtr_monthly <- mtr %>%
+    # group by month and energy consumption subcategory
+    group_by(month, name) %>%
+    summarize(
+        date = lubridate::date(datetime)[1],
+        value = sum(value) / area[["Area [m2]"]][1]
+    )
 
-# plot a pie chart to show EUI breakdown
-p_eui <- eui %>%
-    filter(category != "Total End Uses") %>%
-    mutate(category = as_factor(category),
-           ypos = rev(cumsum(rev(proportion))- 0.5*rev(proportion))) %>%
-    ggplot(aes("", proportion, fill = category)) +
-    geom_bar(stat = "identity", width = 1, color = "black", size = 0.2) +
-    geom_text(aes(y = ypos, label = {eui[eui < 0.1] <- NA; eui})) +
-    coord_polar("y", start = 0)
+# colorblind-friendly palette
+pal_cb <- c(
+    Heating = "#CC79A7", Cooling = "#0072B2", Fans = "#56B4E9",
+    InteriorLights = "#F0E442", ExteriorLights = "#999999",
+    InteriorEquipment = "#E69F00", Pumps = "#D55E00"
+)
+# plot an area chart to show energy consumption over months
+p_eui <- mtr_monthly %>%
+    mutate(name = str_replace(name, ":Electricity", "")) %>%
+    mutate(name = fct_relevel(name, names(pal_cb))) %>%
+    filter(name != "Pumps") %>%
+    ggplot(aes(date, value, fill = name)) +
+    geom_area() +
+    scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b", expand = c(0, 0)) +
+    scale_y_continuous("Energy consumption [kWh/m2]",
+        labels = scales::label_number(0.1, 1/3.6E6), limits = c(0, 20*3.6E6),
+        expand = c(0, 0)
+    ) +
+    scale_fill_manual(values = pal_cb, labels = names(pal_cb)) +
+    guides(fill = guide_legend(title = NULL, nrow = 2)) +
+    theme_classic() +
+    theme(legend.position = c(0.5, 0.9))
 
-# calculate air-conditioned floor area per storey
-storey <- zones %>%
-    # exclude plenum zones
-    filter(is_part_of_total_area == 1) %>%
-    # group by centroid height
-    group_by(centroid_height = round(centroid_z, digits = 4)) %>%
-    # calculate total floor area
-    summarise(floor_area = sum(floor_area)) %>%
-    ungroup() %>%
-    # add storey index
-    arrange(centroid_height) %>%
-    mutate(storey = seq_len(n()), air_system = paste("VAV", storey, sep = "_")) %>%
-    select(air_system, floor_area)
+# extract energy consumption of heating and cooling with outdoor air temperature
+mtr_temp <- mtr %>%
+    filter(str_detect(name, "Heating|Cooling")) %>%
+    mutate(name = str_replace(name, ":Electricity", "")) %>%
+    left_join(temp %>% select(datetime, value), "datetime", suffix = c("", "_temp"))
 
-# get monthly heating and cooling demands per served area
-aircon_out_mon <- aircon_out %>%
-    # only consider weekdays
-    filter(!day_type %in% c("Holiday", "Saturday", "Sunday")) %>%
-    # add an identifier column to indicate cooling and heating condition
-    mutate(type = case_when(
-        str_detect(name, "Heating") ~ "Heating",
-        str_detect(name, "Cooling") ~ "Cooling"
-    )) %>%
-    # add floor area served by each air-conditioning system
-    left_join(storey, c("key_value" = "air_system")) %>%
-    # calculate the monthly averaged heating and cooling demands in MJ/m2
-    group_by(month, type, air_system = key_value) %>%
-    summarise(system_output = sum(value) / 1e6 / floor_area[1]) %>%
-    ungroup()
-
-# plot a pie chart to show the heating and cooling demand profile
-p_aircon_out <- aircon_out_mon %>%
-    mutate(month = as.factor(month)) %>%
-    mutate(system_output = case_when(
-        type == "Heating" ~ -system_output,
-        type == "Cooling" ~ system_output
-    )) %>%
-    ggplot() +
-    geom_col(aes(month, system_output, group = type, fill = type), position = "dodge") +
-    facet_wrap(vars(air_system), ncol = 1) +
-    labs(x = "", y = "Heating and cooling demands / MJ m-2")
+# plot scatter chart of energy against outdoor air temperature
+p_mtr_temp <- mtr_temp %>%
+    mutate(name = fct_relevel(name, "Heating")) %>%
+    filter(value > 0) %>%
+    ggplot(aes(value_temp, value, color = name)) +
+    geom_point(size = 0.8, alpha = 0.3) +
+    scale_x_continuous(expression("Outdoor air dry-bulb temperature / "*degree*"C")) +
+    scale_y_continuous("Electricity / GJ", labels = scales::label_number(scale = 1E-9)) +
+    theme_classic() +
+    guides(color = guide_legend(title = NULL, nrow = 1)) +
+    theme(legend.position = c(0.5, 0.98))
 ```
 
 ```{r basic-post-process, echo = FALSE, eval = run_sim}
@@ -1350,27 +1344,9 @@ mess <- job$report_data(
     wide = TRUE, month = 1, day = 1, hour = 1:10)[, -"case"]
 data.table::fwrite(mess, here("data/mess.csv"))
 
-# colorblind-friendly palette
-pal_cb <- c(
-    "#999999", #1
-    "#E69F00", #2
-    "#CC79A7", #3
-    "#56B4E9", #4
-    "#009E73", #5
-    "#F0E442", #6
-    "#0072B2", #7
-    "#D55E00"  #8
-)
+ggsave(here::here("figures/eui.png"), p_eui, width = 6, height = 3.5, dpi = 600)
 
-p_eui_post <- p_eui +
-    theme_void() +
-    scale_fill_manual(values = pal_cb) +
-    theme(plot.margin = unit(c(-1.0, 0, -1.0, -1.0), "cm"))
-ggsave(here("figures/eui.png"), p_eui_post, width = 6, height = 3.5, dpi = 600)
-
-p_aircon_out_post <- p_aircon_out +
-    scale_fill_manual(values = pal_cb[c(4, 3)])
-ggsave(here("figures/aircon-out.png"), p_aircon_out_post, width = 6, height = 6, dpi = 600)
+ggsave(here::here("figures/mtr_temp.png"), p_mtr_temp, width = 6, height = 3.5, dpi = 600)
 ```
 
 # Code for parametric simulation
@@ -1794,8 +1770,9 @@ bc$data_field(fan_power)
 # get input data for Stan
 bc$data_bc()
 
+options(mc.cores = parallel::detectCores())
 # run Bayesian calibration using Stan
-res <- bc$stan_run(iter = 50, chains = 2)
+res <- bc$stan_run(iter = 400, chains = 3)
 
 # extract posterior distributions of calibration parameter
 dist <- bc$post_dist()
