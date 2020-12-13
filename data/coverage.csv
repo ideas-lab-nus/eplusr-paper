@@ -1,0 +1,13 @@
+Component,Sub-component,Type,Tests,Coverage (%)
+I/O processors,Relational database,IDD,292,98.6
+,,IDF,1247,91.4
+,,EPW,106,89.7
+,OOP model API,Idd,858,93.4
+,,Idf,218,99.5
+,,Epw,202,93.7
+,Tidy data interface,EplusSql,102,92.3
+Parametric manager,Simulation Manager,EplusJob,222,74.4
+,,EplusGroupJob,65,69.4
+,,ParametricJob,90,83.1
+Other,,Utilities,245,78.6
+Total,,,3647,90.5

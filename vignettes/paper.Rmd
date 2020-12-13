@@ -37,13 +37,13 @@ abstract: |
   better and more seamless integration between BES and data-driven analytics.
   It provides structured inputs/outputs format that can be easily piped into
   data analytics workflows.
-  The framework also provides an infrastructure to bring portable and reusable
+  The R package also provides an infrastructure to bring portable and reusable
   computational environment for building energy modeling to facilitate
   reproducibility research.
 journal: "Energy and Buildings"
 date: "`r Sys.Date()`"
 bibliography: references.bib
-csl: elsevier-with-titles.csl
+biblio-style: elsarticle-num
 layout: 3p, times
 colorlinks: true
 link-citations: true
@@ -54,6 +54,7 @@ output:
       in_header: header.tex
     base_format: rticles::elsevier_article
     keep_tex: yes
+    citation_package: natbib
 ---
 
 ```{r setup, include = FALSE}
@@ -120,18 +121,22 @@ decades [@Hong2000; @Hong2018; @Chen2017Automatic].
 The core tools are the whole-building energy simulation
 programs that provide users with key building performance indicators such as
 energy use and demand, temperature, humidity, and costs [@Crawley2008a].
+
+Data-driven analytics are essential steps to discover knowledge, detect
+patterns, and generate useful insights and predictions from BES data.
 However, BES, with an iterative nature inside, can produce a large amount
 of data. The volumes of the data have overwhelmed traditional data
 analysis methods such as spreadsheets and ad-hoc queries with a large number of
 factors to be considered [@Kim2011].
-Solutions in most existing software and applications have limited
-post-processing capacities on BES results. They are not flexible enough to
-enable a clear understanding and control of how the data is being transformed
-[@Miller2013; @Attia2013a].
+The literature review reveals that solutions in most existing software and
+applications have limited post-processing capacities on BES results. They are
+not flexible enough to enable a clear understanding and control of how the data
+is being transformed [@Miller2013; @Attia2013a].
 According to a survey of 448 building energy management professionals in the
 U.S., there is a need to improve the efficacy and integration between
 data-driven analytics and BES, and efforts should be made to develop integrated
 tools that are capable of leveraging both methods [@Srivastava2019].
+However, few studies were found with this regard.
 
 As BES becomes more integral to many aspects of architecture design and
 decision-making processes, computational reproducibility has become increasingly
@@ -142,23 +147,8 @@ Issues in simulation reproducibility are mainly caused by the absence of (1) an
 integrated workflow between BES and data-driven analytics and (2) a portable
 and reusable computational environment encapsulating essential software and
 applications to perform it.
-
-To address these issues, this paper introduces a new framework for integrating
-BES and data-driven analytics.
-The framework is different from existing ones because of its data-centric
-design philosophy.
-The objectives are (1) to provide better and more seamless integration between
-BES engine EnergyPlus and R-programming data-driven analytics environment
-and (2) to build infrastructures for portable and reusable BES
-computational environment to facilitate reproducibility research in building
-energy domain.
-Section 2 describes the state of the art of related research and development.
-Section 3 introduces the concepts behind the framework, along with its implementation.
-Section 4 demonstrates the applications of the framework using a medium office
-building model with four examples, covering various topics, including data
-exploration, parametric simulation, optimization and calibration.
-
-# State of the art
+Currently, there are very few cases in the literature focus on providing a
+solution to reproducible research in BES domain.
 
 ## BES software and applications
 
@@ -457,20 +447,45 @@ It is easy to underestimate the significant barriers raised by a lack of
 familiar, intuitive, and widely adopted tools for addressing the challenges of
 computational reproducibility [@Boettiger2015].
 
+## Aim and objectives
+
+This paper introduces a new framework for integrating BES and data-driven
+analytics.
+The framework is different from existing ones because of its data-centric
+design philosophy.
+The objectives are (1) to provide better and more seamless integration between
+BES engine EnergyPlus and R-programming data-driven analytics environment
+and (2) to build infrastructures for portable and reusable BES
+computational environment to facilitate reproducibility research in building
+energy domain.
+Section 2 introduces the concepts behind the framework, along with its implementation.
+Section 3 demonstrates the applications of the framework using a medium office
+building model with four examples, covering various topics, including data
+exploration, parametric simulation, optimization and calibration.
+Section 4 discusses the advantages and limitations compared to existing tools
+and applications.
+
 # Methodology
 
 To achieve seamless integration between BES and data-driven analytics, we
-propose a framework consisting of the following (Fig. \@ref(fig:architecture)):
+propose a framework consisting of 3 components with different purposes (Fig. \@ref(fig:architecture)):
 
 1. I/O processors for structuring BES inputs and outputs for seamless
-   integration with data analytics workflow.
-2. A parametric prototype for conducting flexible and extensible parametric
-   simulations.
+   integration with data analytics workflow. A unified data interface is
+   developed which makes sure all simulation data are always stored in a
+   consistent form that matches the semantics of the simulation results and
+   thus can be easily fed to various data mining and machine learning
+   algorithms using existing tools in R.
+2. A parametric manager for conducting flexible and extensible parametric
+   simulations. It can be integrated with existing tools in R to perform
+   sensitivity analysis, model calibration and optimization.
 3. A computational environment that is based on Docker containerization
    [@Merkel2014] to facilitate reproducibility research in the energy
-   simulation domain.
+   simulation domain. It provides infrastructure for portable and reusable
+   computation environment and provides the scalability potential for large
+   cloud-based BES computation.
 
-The first two components have been packaged into a free, open-source R package
+The first 2 components have been packaged into a free, open-source R package
 *eplusr*^[GitHub Repository: https://github.com/hongyuanjia/eplusr] which is
 distributed using CRAN (The Comprehensive R Archive Network).
 The third component has been encapsulated using Docker containerization and is
@@ -558,7 +573,7 @@ knitr::include_graphics(here("figures/OOP-API.png"))
 
 ### Tidy data interface {#sec:eplusr-tidy}
 
-The Tidy Data Interface module is designed to extract and represent EnergyPlus
+The tidy data interface module is designed to extract and represent EnergyPlus
 simulation results from the SQLite output into tidy tables.
 The concept of tidy data format was first proposed by Wickham [@Wickham2014],
 as a standard way of mapping the meaning of a dataset to its structure.
@@ -629,9 +644,9 @@ date-time class in R.
 knitr::include_graphics(here("figures/result-extraction-interface.png"))
 ```
 
-## Parametric prototype {#sec:eplusr-parametric}
+## Parametric manager {#sec:eplusr-parametric}
 
-The parametric prototype in the framework provides a set of abstractions to
+The parametric manager in the framework provides a set of abstractions to
 ease the process of parametric model generation, design alternative evaluation,
 and large parametric simulation management. An overview of the parametric
 prototype implementation is shown in Fig. \@ref(fig:parametric).
@@ -659,7 +674,7 @@ retrieved using the `status()` method for further investigations.
 
 The `ParametricJob` class leverages the tidy data interface to retrieve
 parametric simulation results in a tidy format.
-Despite that, a number of methods are also provided to read various output
+Besides that, a number of methods are also provided to read various output
 files, including simulation errors (`eplusout.err`), report data dictionary
 (`eplusout.rdd`), and meter data dictionary (`eplusout.mdd`).
 For all resulting tidy tables, an extra column containing the simulation job
@@ -667,7 +682,7 @@ identifiers is prepended in each table. It can be used as an index or key for
 further data transformations, analyses and visualization to compare results of
 different simulated design options.
 
-The proposed parametric prototype is designed to be simple yet flexible and
+The proposed parametric manager is designed to be simple yet flexible and
 extensible.
 One good example of the extensibility of this framework is the epluspar^[GitHub
 Repository: https://github.com/hongyuanjia/epluspar] R package, which provides
@@ -754,6 +769,68 @@ suited for moving between local and cloud platforms when a web-based integrated
 development environment is available, such as RStudio Server [@Boettiger2015],
 providing the scalability potential for large cloud-based BES computation.
 
+## Quality assurance and quality control
+
+In the proposed framework, several builtin quality assurance and quality
+control (QAQC) procedures have been implemented in terms of (1) model input data
+validation and (2) simulation error summary.
+With the structured model inputs and simulation outputs, new QAQC procedures
+can be developed in a consistent and scalable way.
+
+An extensive rule-based data model validator has been developed to check the
+integrity of model data.
+It includes 13 different checks, covering common errors including missing
+required objects and fields, duplicated unique objects, conflicted object
+names, invalid object references and etc.
+The validator is automatically triggered whenever any methods are called to
+modify an `Idf` object, including the parametric model generation process using
+the `apply_measure()` method as well.
+It can also be manually executed using the `validate()` method in the `Idf` class.
+The validator directly reports to the users a list of issues with detailed reasons and possible solutions.
+This helps to avoid any possible input errors before attempting simulations.
+
+Building energy models are usually developed through an iterative process with trials and errors.
+EnergyPlus generates an error file (ERR) after every simulation which contains
+all the warnings and errors that occur during the run.
+The proposed framework implemented an ERR parser to collect simulation debug
+information and summarize error messages.
+The simulation manager has an `errors()` method to parse ERR for both single
+simulation and parametric simulations.
+In addition, the tidy data interface will check if the simulation
+completes successfully and will issue a warning message otherwise to remind
+users that the collected data is not reliable.
+
+Besides, efforts have been made to the code quality assurance of the proposed
+framework. The eplusr package in the framework follows the Test-Driven
+Development (TDD) process.
+Currently, there are more than 3600 unit tests which covers around 90% of the
+total codebase. Table \@ref(tab:test-coverage) gives a summary of the unit
+tests and code coverage.
+The released version of eplusr is distributed via CRAN which runs all the tests
+automatically on Windows, macOS, Linux and Solaris at each eplusr submission
+and also each new release of the R language itself.
+The development version is held in a GitHub public repository with Continuous
+Integration (CI) using GitHub Actions which runs all the tests whenever any
+code changes occur.
+For the reproducible BES computational environment, automated build has been
+setup via Docker Hub.
+It will validate Dockerfiles source code hosted on GitHub, automatically build
+and push images to the Docker repository whenever changes occur.
+
+```{r test-coverage, eval = TRUE, include = TRUE, echo = FALSE}
+coverage <- data.table::fread(here::here("data/coverage.csv"))
+
+coverage %>%
+    knitr::kable(booktabs = TRUE, format = "latex", linesep = "",
+        caption = "Summary of tests and code coverage of the eplusr package") %>%
+    kableExtra::kable_styling(font_size = 7, latex_options = "hold_position") %>%
+    kableExtra::column_spec(1, "2.8cm") %>%
+    kableExtra::column_spec(2, "2.8cm") %>%
+    kableExtra::column_spec(3, "1.5cm") %>%
+    kableExtra::column_spec(4, "2.0cm") %>%
+    kableExtra::column_spec(5, "2.0cm")
+```
+
 # Applications {#sec:applications}
 
 To show how the eplusr framework can be used, examples are presented in four
@@ -803,8 +880,8 @@ Listing \@ref(code:basic) shows the R code to achieve it.
 knitr::include_graphics(here::here("figures/data-exploration.png"))
 ```
 
-Lines 38 -- 53 in Listing \@ref(code:basic) shows how to use methods
-`tabular_data()`, `read_table()` and `report_data()` provided by the tidy data
+Lines 51 -- 64 in Listing \@ref(code:basic) shows how to use methods
+`tabular_data()` and `report_data()` provided by the tidy data
 interface to extract building area and building energy consumption, zone
 metadata, and cooling and heating demands, with all formatted in a tidy
 representation.
@@ -813,48 +890,47 @@ the `report_data()` adds a time-series column `datetime` in `POSIXct` based on
 a derived year value using the algorithm described in Section
 \@ref(sec:eplusr-io).
 Moreover, the tidy data interface also provides a number of additional columns
-shown in Fig. \@ref(fig:tidy-extractor), which makes it quite convenient and
+shown in Fig. \@ref(fig:tidy-extractor), which makes it convenient and
 straightforward to directly perform further data transformations.
-Lines 59 -- 124 in Listing \@ref(code:basic) demonstrate the benefits of the
+Lines 71 -- 119 in Listing \@ref(code:basic) demonstrate the benefits of the
 tidy format in selecting columns using `select()`, subsetting rows using
 `filter()`, sorting rows using `arrange()`, adding new variables using
 `mutate()`, summarizing data using a combination of `group_by()` and
 `summarize()`, joining tables using `left_join()`, and data visualization using
 `ggplot()`.
 
-Based on the building energy consumption data (line 42 in Listing
-\@ref(code:basic)) and the building area (line 39 in Listing
-\@ref(code:basic)), the electricity consumption breakdown from various end-use
-categories was calculated, and a pie chart was created (shown in Fig.
-\@ref(fig:eui)) using only 15 lines of codes (line 60 -- 82 in Listing
-\@ref(code:basic)). From Fig. \@ref(fig:eui), we can see that most of the
-energy has been consumed by interior electric equipment, followed by indoor
-lighting.
+Based on the building energy consumption data (line 54 in Listing
+\@ref(code:basic)) and the building area (line 51 in Listing
+\@ref(code:basic)), the monthly electricity consumption breakdown from various end-use
+categories was calculated, and a stacked area chart was created (shown in Fig.
+\@ref(fig:eui)) (line 93 -- 107 in Listing
+\@ref(code:basic)). From Fig. \@ref(fig:eui), we can see that throughout the
+year, most of the energy has been consumed by interior electric equipment,
+followed by indoor lighting.
 It indicates that ECMs which help to reduce the plug loads and lighting power
 density (LPD) may have a promising potential in improving the overall energy
 performance.
 We will perform further investigations on this in Section \@ref(sec:param).
 
-```{r eui, echo = FALSE, eval = TRUE, fig.cap = "Annual electricity consumption breakdown in $\\mathrm{kWh}/(\\mathrm{m}^2 \\mathrm{a})$", out.width = "50%"}
+```{r eui, echo = FALSE, eval = TRUE, fig.cap = "Monthly electricity consumption breakdown in $\\mathrm{kWh}/\\mathrm{m}^2$", out.width = "50%"}
 knitr::include_graphics(here::here("figures/eui.png"))
 ```
 
-Fig. \@ref(fig:aircon-out) shows the profile of monthly heating and cooling
-demands in a unit of $\mathrm{MJ}/\mathrm{m}^2$. It is calculated based on the zone
-metadata (line 45 in Listing \@ref(code:basic)) and hourly air system heating
-and cooling energy outputs (lines 49 -- 53 in Listing \@ref(code:basic)). With
-the tidy format and additional metadata columns, these two data fit well in the
+Fig. \@ref(fig:signature) gives an energy signature diagram of outdoor air
+temperature against electricity consumption a unit of $\mathrm{GJ}$.
+It is calculated based on the hourly outdoor air dry-bulb temperature
+(line 60 -- 64 in Listing \@ref(code:basic)) and hourly cooling and heating
+electricity consumption extracted previously.
+With the tidy format and additional time-series column, these two data fit well in the
 data pipeline, making it straightforward and intuitive to perform data
-transformation and visualization. Fig. \@ref(fig:aircon-out) is a result of
-only around 30 lines of code (line 41 -- 53 and 84 -- 124 in Listing
-\@ref(code:basic)). In Fig. \@ref(fig:aircon-out), we can
-see that during the transition seasons, including March, April, October, and
-November, the heating and cooling demands are relatively small compared to
-summer and winter seasons, indicating the potential of free-cooling
-applications.
+transformation and visualization. In Fig. \@ref(fig:signature), we can
+see that there is an obvious one tailed pattern for the cooling electricity usage.
+There are large simultaneous heating and cooling operation hours, which may
+indicate further improvements of control strategies needed to minimize reheat.
+However, it is beyond the scope of this paper.
 
-```{r aircon-out, echo = FALSE, eval = TRUE, fig.cap = "Monthly heating and cooling demand profile", out.width = "50%"}
-knitr::include_graphics(here::here("figures/aircon-out.png"))
+```{r signature, echo = FALSE, eval = TRUE, fig.cap = "Energy signature diagram of outdoor temperature against electricity consumption", out.width = "50%"}
+knitr::include_graphics(here::here("figures/mtr_temp.png"))
 ```
 
 ## Parametric simulation {#sec:param}
@@ -1017,8 +1093,8 @@ evaluated.
 
 With all objectives, parameters, and operators specified, the optimization will
 start with the `run()` method.
-In this example, we have twenty individuals per generation, resulting in a
-total of two thousand annual energy simulations.
+In this example, we have 20 individuals per generation, resulting in a
+total of 2000 annual energy simulations.
 Once one of the conditions specified in `terminator()` is met, all populations
 and Pareto set can be extracted into two tidy tables for further analyses,
 using the `population()` and `pareto_set()` method (Lines 130 and 133 in Listing
@@ -1140,18 +1216,35 @@ knitr::include_graphics(here("figures/dist-post.png"))
 knitr::include_graphics(here("figures/uncertainties.png"))
 ```
 
-# Limitations
+# Discussion
 
+The four example applications have further confirmed the value of structured
+BES inputs and outputs in providing seamless integration between BES and
+data-driven analytics. The parametric manager also provides new possibilities
+to leverage existing advanced statistical modeling and machine learning tools
+with the consistent data structure in large-scale parametric simulations.
+Also, the parametric manager provides new possibilities to leverage existing
+advanced statistical modeling and machine learning tools with consistent data
+structure in large-scale of parametric simulations.
+Currently, more and more BES tools and interfaces adopt Docker and
+containerization to provide configurable technology stacks and take advantage
+of high-performance computing (HPC) and the merging cloud-based resources
+[@Ball2020open; @Karaguzel2019Open].
+To the authors' knowledge, the proposed framework is the first one
+that focuses on seamless integration between BES and data-driven analytics, and
+BES reproducibility.
+The data-centric design philosophy and open-sourced nature of the proposed framework can help advocate data-driven BES research with better credibility and transparency
+
+However, the framework presented has some limitations that should be acknowledged.
 The main limitation of the proposed framework lies in its R-oriented workflows,
 which currently may not be widely adopted in industry fields. Prospective users
 of the framework who do not know R must spend time learning how to use it. This
-drawback may be compensated by the growing user community.
-
-Since the eplusr framework is mainly focused on modifying existing BES models,
-instead of creating new ones from scratch, currently it has limited capacities
-to perform sophisticated geometry transformation, including surface matching
-and rotation. Operations such as creating or replacing one whole HVAC system
-may also be time-consuming processes.
+drawback may be compensated by the growing user community. Since the eplusr
+framework is mainly focused on modifying existing BES models, instead of
+creating new ones from scratch, currently it has limited capacities to perform
+sophisticated geometry transformation, including surface matching and rotation.
+Operations such as creating or replacing one whole HVAC system may also be
+time-consuming processes.
 
 # Conclusion
 
@@ -1242,8 +1335,20 @@ idf$SimulationControl$Run_Simulation_for_Weather_File_Run_Periods <- "Yes"
 # make sure energy consumption is presented in kWh
 idf$OutputControl_Table_Style$Unit_Conversion <- "JtoKWH"
 
+# add meter outputs to get hourly time-series energy consumption
+meters <- c(
+    "Cooling:Electricity",
+    "Heating:Electricity",
+    "InteriorLights:Electricity",
+    "ExteriorLights:Electricity",
+    "InteriorEquipment:Electricity",
+    "Fans:Electricity",
+    "Pumps:Electricity"
+)
+idf$add(Output_Meter := list(meters, "Hourly"))
+
 # save the modified model into a temporary folder
-idf$save(file.path(tempdir(), "MediumOffice.idf"))
+idf$save(file.path(tempdir(), "MediumOffice.idf"), overwrite = TRUE)
 
 # run annual simulation
 job <- idf$run(path_weather)
@@ -1253,92 +1358,75 @@ job <- idf$run(path_weather)
 #######################
 
 # read building area from Standard Reports
-area <- job$tabular_data(table_name = "Building Area", wide = TRUE)[[1L]]
+area <- job$tabular_data(table_name = "Building Area", wide = TRUE)[[1]]
 
-# read building energy consumption from Standard Reports
-end_use <- job$tabular_data(table_name = "End Uses", wide = TRUE)[[1L]]
-
-# read zone metadata from Standard Input and Output
-zones <- job$read_table("Zones")
-
-# read hourly air-conditioning system output with all additional metadata for
-# the annual simulation from Variable Output
-aircon_out <- job$report_data(
-    name = sprintf("air system total %s energy", c("heating", "cooling")),
+# extract hourly energy consumption from Output Meter with all meta data
+mtr <- job$report_data(name = meters,
     environment_name = "annual",
-    all = TRUE
+    interval = 60, all = TRUE
+)
+
+# extract hourly outdoor air dry-bulb temperature from Output Variable
+temp <- job$report_data(
+    name = "site outdoor air drybulb temperature",
+    environment_name = "annual",
+    interval = 60
 )
 
 #########################
 # Data-driven analytics #
 #########################
 
-# calculate Energy Use Intensity (EUI) for electricity
-eui <- end_use %>%
-    # only select columns of interest
-    select(category = row_name, electricity = `Electricity [kWh]`) %>%
-    # get rid of category with empty energy consumption
-    filter(electricity > 0.0) %>%
-    # order by value
-    arrange(-electricity) %>%
-    # calculate EUI
-    mutate(eui = round(electricity / area$'Area [m2]'[1], digits = 2)) %>%
-    # calculate proportion of each category
-    mutate(proportion = round(eui / eui[1] * 100, digits = 2)) %>%
-    # remove electricity column
-    select(-electricity)
+# calculate monthly energy consumption per total floor area
+mtr_monthly <- mtr %>%
+    # group by month and energy consumption subcategory
+    group_by(month, name) %>%
+    summarize(
+        date = lubridate::date(datetime)[1],
+        value = sum(value) / area[["Area [m2]"]][1]
+    )
 
-# plot a pie chart to show EUI breakdown
-p_eui <- eui %>%
-    filter(category != "Total End Uses") %>%
-    mutate(category = as_factor(category),
-           ypos = rev(cumsum(rev(proportion))- 0.5*rev(proportion))) %>%
-    ggplot(aes("", proportion, fill = category)) +
-    geom_bar(stat = "identity", width = 1, color = "black", size = 0.2) +
-    geom_text(aes(y = ypos, label = {eui[eui < 0.1] <- NA; eui})) +
-    coord_polar("y", start = 0)
+# extract energy consumption of heating and cooling with outdoor air temperature
+mtr_temp <- mtr %>%
+    filter(str_detect(name, "Heating|Cooling")) %>%
+    mutate(name = str_replace(name, ":Electricity", "")) %>%
+    left_join(temp %>% select(datetime, value), "datetime", suffix = c("", "_temp"))
 
-# calculate air-conditioned floor area per storey
-storey <- zones %>%
-    # exclude plenum zones
-    filter(is_part_of_total_area == 1) %>%
-    # group by centroid height
-    group_by(centroid_height = round(centroid_z, digits = 4)) %>%
-    # calculate total floor area
-    summarise(floor_area = sum(floor_area)) %>%
-    ungroup() %>%
-    # add storey index
-    arrange(centroid_height) %>%
-    mutate(storey = seq_len(n()), air_system = paste("VAV", storey, sep = "_")) %>%
-    select(air_system, floor_area)
+# colorblind-friendly palette
+pal_cb <- c(
+    Heating = "#CC79A7", Cooling = "#0072B2", Fans = "#56B4E9",
+    InteriorLights = "#F0E442", ExteriorLights = "#999999",
+    InteriorEquipment = "#E69F00", Pumps = "#D55E00"
+)
 
-# get monthly heating and cooling demands per served area
-aircon_out_mon <- aircon_out %>%
-    # only consider weekdays
-    filter(!day_type %in% c("Holiday", "Saturday", "Sunday")) %>%
-    # add an identifier column to indicate cooling and heating condition
-    mutate(type = case_when(
-        str_detect(name, "Heating") ~ "Heating",
-        str_detect(name, "Cooling") ~ "Cooling"
-    )) %>%
-    # add floor area served by each air-conditioning system
-    left_join(storey, c("key_value" = "air_system")) %>%
-    # calculate the monthly averaged heating and cooling demands in MJ/m2
-    group_by(month, type, air_system = key_value) %>%
-    summarise(system_output = sum(value) / 1e6 / floor_area[1]) %>%
-    ungroup()
+# plot an area chart to show energy consumption over months
+p_eui <- mtr_monthly %>%
+    mutate(name = str_replace(name, ":Electricity", "")) %>%
+    mutate(name = fct_relevel(name, names(pal_cb))) %>%
+    filter(name != "Pumps") %>%
+    ggplot(aes(date, value, fill = name)) +
+    geom_area() +
+    scale_x_date(NULL, date_breaks = "1 month", date_labels = "%b", expand = c(0, 0)) +
+    scale_y_continuous(expression("Energy consumption / ("*kWh/m^2*")"),
+        labels = scales::label_number(0.1, 1/3.6E6), limits = c(0, 20*3.6E6),
+        expand = c(0, 0)
+    ) +
+    scale_fill_manual(values = pal_cb, labels = names(pal_cb)) +
+    guides(fill = guide_legend(title = NULL, nrow = 2)) +
+    theme_classic() +
+    theme(legend.position = c(0.5, 0.9))
 
-# plot a pie chart to show the heating and cooling demand profile
-p_aircon_out <- aircon_out_mon %>%
-    mutate(month = as.factor(month)) %>%
-    mutate(system_output = case_when(
-        type == "Heating" ~ -system_output,
-        type == "Cooling" ~ system_output
-    )) %>%
-    ggplot() +
-    geom_col(aes(month, system_output, group = type, fill = type), position = "dodge") +
-    facet_wrap(vars(air_system), ncol = 1) +
-    labs(x = "", y = "Heating and cooling demands / MJ m-2")
+# plot scatter chart of energy against outdoor air temperature
+p_mtr_temp <- mtr_temp %>%
+    mutate(name = fct_relevel(name, "Heating")) %>%
+    filter(value > 0) %>%
+    ggplot(aes(value_temp, value, color = name)) +
+    geom_point(size = 0.8, alpha = 0.3) +
+    scale_x_continuous(expression("Outdoor air dry-bulb temperature / "*degree*"C")) +
+    scale_y_continuous("Electricity / GJ", labels = scales::label_number(scale = 1E-9)) +
+    theme_classic() +
+    guides(color = guide_legend(title = NULL, nrow = 1)) +
+    theme(legend.position = c(0.5, 0.98))
 ```
 
 ```{r basic-post-process, echo = FALSE, eval = run_sim}
@@ -1350,27 +1438,9 @@ mess <- job$report_data(
     wide = TRUE, month = 1, day = 1, hour = 1:10)[, -"case"]
 data.table::fwrite(mess, here("data/mess.csv"))
 
-# colorblind-friendly palette
-pal_cb <- c(
-    "#999999", #1
-    "#E69F00", #2
-    "#CC79A7", #3
-    "#56B4E9", #4
-    "#009E73", #5
-    "#F0E442", #6
-    "#0072B2", #7
-    "#D55E00"  #8
-)
+ggsave(here::here("figures/eui.png"), p_eui, width = 6, height = 3.5, dpi = 600)
 
-p_eui_post <- p_eui +
-    theme_void() +
-    scale_fill_manual(values = pal_cb) +
-    theme(plot.margin = unit(c(-1.0, 0, -1.0, -1.0), "cm"))
-ggsave(here("figures/eui.png"), p_eui_post, width = 6, height = 3.5, dpi = 600)
-
-p_aircon_out_post <- p_aircon_out +
-    scale_fill_manual(values = pal_cb[c(4, 3)])
-ggsave(here("figures/aircon-out.png"), p_aircon_out_post, width = 6, height = 6, dpi = 600)
+ggsave(here::here("figures/mtr_temp.png"), p_mtr_temp, width = 6, height = 3.5, dpi = 600)
 ```
 
 # Code for parametric simulation
@@ -1742,6 +1812,7 @@ tmp$RunPeriod <- NULL
 tmp$add(RunPeriod = list("test", 7, 1, NULL, 7, 3))
 # add variables of interest to output
 tmp$Output_Variable <- NULL
+tmp$Output_Meter <- NULL
 tmp$add(Output_Variable = list("VAV_1_Fan", "Fan Electric Power", "Hourly"))
 # get rid of design day variable output data
 tmp$SimulationControl$set(run_simulation_for_sizing_periods = "No")
@@ -1750,9 +1821,9 @@ tmp$save(tempfile(fileext = ".idf"))
 # run simulation
 job <- tmp$run(path_weather)
 # extract fan electric power in 6-hourly frequency
-fan_power <- job$report_data(all = TRUE) %>%
+fan_power <- job$report_data(name = "Fan Electric Power", all = TRUE) %>%
     epluspar:::report_dt_aggregate("6 hour") %>%
-    eplusr:::report_dt_to_wide()
+    epluspar:::report_dt_to_wide()
 # insert Gaussian noise
 fan_power <- fan_power %>%
     select(-`Date/Time`) %>%
@@ -1763,6 +1834,8 @@ fan_power <- fan_power %>%
 
 # load library
 library(epluspar)
+
+idf$save(file.path(tempdir(), "MediumOffice.idf"), overwrite = TRUE)
 
 # create a `BayesCalibJob` object:
 bc <- bayes_job(idf, path_weather)
@@ -1794,8 +1867,9 @@ bc$data_field(fan_power)
 # get input data for Stan
 bc$data_bc()
 
+options(mc.cores = parallel::detectCores())
 # run Bayesian calibration using Stan
-res <- bc$stan_run(iter = 50, chains = 2)
+res <- bc$stan_run(iter = 400, chains = 3)
 
 # extract posterior distributions of calibration parameter
 dist <- bc$post_dist()
