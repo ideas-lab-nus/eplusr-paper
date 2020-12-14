@@ -45,17 +45,7 @@ jobs:
           sudo -s eval "$sysreqs"
 
       - name: Install dependencies
-        run: Rscript -e "library(remotes)" -e "update(readRDS('depends.Rds'))" -e "remotes::install_cran('rcmdcheck')"
-
-      - name: Check
-        run: Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@master
-        with:
-          name: r-results
-          path: check
+        run: Rscript -e "library(remotes)" -e "update(readRDS('depends.Rds'))"
 
       - name: Build paper
         run: Rscript -e "rmarkdown::render('vignettes/paper.Rmd', output_dir = here::here('vignettes'))"
